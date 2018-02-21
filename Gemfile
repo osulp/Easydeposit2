@@ -1,47 +1,97 @@
 source 'https://rubygems.org'
 
+gem 'grape', '~> 0.19'
+gem 'rails', '~> 4.2.10'
+gem 'responders', '~> 2.4'
 
-# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.10'
-# Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+# Use sass-powered bootstrap
+gem 'bootstrap-sass', '~> 3.3.7'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
-# Use CoffeeScript for .coffee assets and views
-gem 'coffee-rails', '~> 4.1.0'
-# See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'uglifier', '~> 4.1'
+# JS Runtime. See https://github.com/rails/execjs#readme for more supported runtimes
+gem 'therubyracer'
 
-# Use jquery as the JavaScript library
+gem 'mysql2', '~> 0.4.10'
+
+# Use sqlite3 as the database for Active Record
+gem 'sqlite3'
+
+gem 'nokogiri', '>= 1.7.1'
+
+gem 'activerecord-import'
+# To use ActiveModel has_secure_password
+# gem 'bcrypt-ruby', '~> 3.0.0'
+gem 'bibtex-ruby'
+gem 'bio'
+gem 'citeproc-ruby', '~> 1.1'
+gem 'config'
+gem 'csl-styles', '~> 1.0'
+gem 'delayed_job'
+gem 'delayed_job_active_record'
+gem 'daemons'
+gem 'dotiw'
+gem 'faraday'
+gem 'high_voltage'
+gem 'htmlentities', '~> 4.3'
+gem 'httpclient', '~> 2.8'
+# Altmetric utilities related to the extraction, validation and normalization of various scholarly identifiers
+gem 'identifiers', '~> 0.10'
+# To use Jbuilder templates for JSON
+gem 'jbuilder'
 gem 'jquery-rails'
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-gem 'turbolinks'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.0'
-# bundle exec rake doc:rails generates the API under doc/api.
-gem 'sdoc', '~> 0.4.0', group: :doc
+gem 'kaminari'
+gem 'libv8'
+gem 'okcomputer' # for monitoring
+gem 'paper_trail'
+gem 'parallel'
+gem 'pry-rails'
+gem 'pubmed_search'
+gem 'rake'
+gem 'savon', '~> 2.12'
+gem 'simple_form'
+gem 'StreetAddress', '~> 1.0', '>= 1.0.6'
+gem 'turnout'
+gem 'whenever', require: false
+gem 'yaml_db'
 
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
-
-# Use Unicorn as the app server
-# gem 'unicorn'
-
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
+# -------------------
+gem 'honeybadger', '~> 3.3'
+gem 'retina_tag'
 
 group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'byebug'
+  gem 'dlss_cops' # includes rubocop
+  gem 'rails_db'
+  gem 'rspec'
+  gem 'rspec-rails', '~> 3.7'
 end
 
 group :development do
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
+  gem 'byebug'
+  gem 'pry-doc'
+  gem 'ruby-prof'
+  gem 'thin' # app server
+  gem 'web-console', '~> 3.3'
 end
 
+group :test do
+  gem 'capybara'
+  gem 'coveralls', '~> 0.8', require: false
+  gem 'database_cleaner'
+  gem 'equivalent-xml'
+  gem 'factory_bot_rails'
+  gem 'simplecov', '~> 0.13', require: false
+  gem 'single_cov'
+  gem 'vcr'
+  gem 'webmock'
+end
+
+group :deployment do
+  gem 'capistrano'
+  gem 'capistrano-passenger'
+  gem 'capistrano-rails'
+  gem 'capistrano-shell'
+  gem 'dlss-capistrano'
+  gem 'capistrano3-delayed-job', '~> 1.0'
+end
