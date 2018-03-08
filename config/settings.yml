@@ -1,0 +1,28 @@
+API_KEY: a fake key
+
+## Web Of Science Auth Config
+WOS:
+  enabled: true
+  ACCEPTED_DBS:
+    - WOS
+  AUTH_CODE: secret
+  LOG: log/web_of_science.log
+  LOG_LEVEL: warn
+
+DOI:
+  BASE_URI: https://dx.doi.org/
+
+HARVESTER:
+  USE_MIDDLE_NAME: false
+  USE_AUTHOR_IDENTITIES: false
+  INSTITUTION:
+    name: Oregon State University
+    address:
+      line1: ''
+      line2: ''
+      city: Corvallis
+      state: OR
+      country: USA
+
+## Ported from application.yml
+wos_source: wos
