@@ -4,14 +4,15 @@ module WebOfScience
 
   # A Web of Science (or Web of Knowledge) client
   # It uses the WSDL service definitions from WOS
+  # OSU subscribes to WoKSearchLite, not WoKSearchExpanded
   # See also:
   # https://clarivate.com/products/web-of-science/data-integration/
-  # http://ipscience-help.thomsonreuters.com/wosWebServicesExpanded/WebServicesExpandedOverviewGroup/Introduction.html
+  # http://ipscience-help.thomsonreuters.com/wosWebServicesLite/WebServicesLiteOverviewGroup/Introduction.html
   # It uses the savon gem for SOAP, see http://savonrb.com/version2/client.html
   class Client
     API_VERSION = '3.0'.freeze # Based on USER GUIDE July 7, 2015
     AUTH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate?wsdl'.freeze
-    SEARCH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WokSearch?wsdl'.freeze
+    SEARCH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl'.freeze
 
     API_SESSION_QUERY_LIMIT = 2000
 

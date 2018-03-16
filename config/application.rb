@@ -6,7 +6,7 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Easydeposit2
+module Sulbib
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -32,11 +32,28 @@ module Easydeposit2
     # lib/**/ load lib subdirectories 
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
+    # Auto-load API and its subdirectories
+    # config.paths.add 'app/api', glob: '**/*.rb'
+    # config.autoload_paths += Dir["#{Rails.root}/app/api/*"]    
     
-    #Allows for the application to use classes in
-    #lib
+    # Allows for the application to use classes in
+    # lib
     config.enable_dependency_loading = true
     config.autoload_paths << Rails.root.join('lib')
     
+    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+    # config.i18n.default_locale = :de
+    config.i18n.enforce_available_locales = true
+
+    # Configure the default encoding used in templates for Ruby 1.9.
+    config.encoding = 'utf-8'
+    
+    # Enable escaping HTML in JSON.
+    config.active_support.escape_html_entities_in_json = true
+
+    # Enable the asset pipeline
+    config.assets.enabled = true 
   end
 end

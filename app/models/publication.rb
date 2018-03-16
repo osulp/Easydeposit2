@@ -1,6 +1,5 @@
 class Publication < ActiveRecord::Base
     has_paper_trail on: [:destroy]
-    scope :with_active_author, -> { joins(:authors).where('authors.active_in_cap' => true).uniq }
   
     attr_accessor :pubhash_needs_update
   
@@ -24,11 +23,10 @@ class Publication < ActiveRecord::Base
       self.pages = pub_hash[:pages] if pub_hash[:pages].present?
       self.publication_type = pub_hash[:type] if pub_hash[:type].present?
       self.year = pub_hash[:year] if pub_hash[:year].present?
+      self.wos_uid ||= web_of_science_source_record.uid if web_of_science_source_record.present?
     end
   
-    has_one :batch_uploaded_source_record
-  
-    has_many :user_submitted_source_records
+    has_one :web_of_science_source_record, autosave: false
   
     has_many :publication_identifiers,
       autosave: true,
@@ -42,20 +40,10 @@ class Publication < ActiveRecord::Base
       after_add: :pubhash_needs_update!,
       after_remove: :pubhash_needs_update!
   
-    has_many :contributions,
-      autosave: true,
-      dependent: :destroy,
-      after_add: :pubhash_needs_update!,
-      after_remove: :pubhash_needs_update!
-  
     serialize :pub_hash, Hash
   
     def self.updated_after(date)
       where('publications.updated_at > ?', date)
-    end
-  
-    def self.find_or_create_by_pmid(pmid)
-      find_by_pmid(pmid) || SciencewireSourceRecord.get_pub_by_pmid(pmid) || PubmedSourceRecord.get_pub_by_pmid(pmid)
     end
   
     def self.find_by_doi(doi)
@@ -75,47 +63,7 @@ class Publication < ActiveRecord::Base
       Publication.includes(:publication_identifiers)
                  .find_by("publication_identifiers.identifier_type": 'WosUID', "publication_identifiers.identifier_value": uid)
     end
-  
-    # @return [Publication] new object, unsaved
-    def self.build_new_manual_publication(pub_hash, original_source_string)
-      existingRecord = UserSubmittedSourceRecord.find_or_initialize_by_source_data(original_source_string)
-      if existingRecord && existingRecord.publication
-        raise ActiveRecord::RecordNotUnique.new('Publication for user submitted source record already exists', nil)
-      end
-      Publication.new(active: true, pub_hash: pub_hash)
-                 .update_manual_pub_from_pub_hash(pub_hash, original_source_string)
-    end
-  
-    # @return [self]
-    def update_manual_pub_from_pub_hash(incoming_pub_hash, original_source_string)
-      self.pub_hash = incoming_pub_hash.merge(provenance: Settings.cap_provenance)
-      match = UserSubmittedSourceRecord.find_by_source_data(original_source_string)
-      match.publication = self if match # we may still throw this out w/o saving
-      r = user_submitted_source_records.first || match || user_submitted_source_records.build
-      r.assign_attributes(
-        is_active: true,
-        source_data: original_source_string,
-        title: title,
-        year: year
-      )
-      self.user_submitted_source_records = [r] if match # match is the only USSR not found/built via association
-      update_any_new_contribution_info_in_pub_hash_to_db
-      pubhash_needs_update! if persisted?
-      self
-    end
-  
-    # @return [self]
-    # @deprecated
-    def build_from_sciencewire_hash(new_sw_pub_hash)
-      self.pub_hash = new_sw_pub_hash
-      self.sciencewire_id = new_sw_pub_hash[:sw_id]
-      if pmid.present?
-        new_sw_pub_hash[:pmid] = pmid.to_s # Preserve the pmid just in case incoming sciencewire doc doesn't have PMID
-        add_any_pubmed_data_to_hash
-      end
-      self
-    end
-  
+
     # The expecation is that every time this method gets called, a save is about to happen,
     # either because it is part of before_save callbacks or because the caller does it explicitly.
     # Subparts are relieved from the burden of directly calling save themselves.
