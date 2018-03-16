@@ -16,3 +16,4 @@
 !/log/.keep
 /tmp
 config/settings.yml
+/.idea/*
