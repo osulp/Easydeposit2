@@ -1,11 +1,12 @@
 API_KEY: a fake key
 
 ## Web Of Science Auth Config
+## auth_code help page: http://ipscience-help.thomsonreuters.com/wosWebServicesExpanded/AuthenticationGroup/Authentication/Username_PW_Authentication.html 
 WOS:
   enabled: true
   ACCEPTED_DBS:
     - WOS
-  AUTH_CODE: secret
+  AUTH_CODE: a secret key
   LOG: log/web_of_science.log
   LOG_LEVEL: warn
 

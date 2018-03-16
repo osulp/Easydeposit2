@@ -34,4 +34,26 @@ namespace :wos do
     records = WebOfScience.queries.retrieve_by_id(wos_ids).next_batch
     records.each(&:print) # XML documents
   end
+
+  desc 'Update harvest from WoS for Oregon State University, and print publications'
+  task wos_osupublications: :environment do
+    institution = Settings.HARVESTER.INSTITUTION.name
+    puts "\nQuerying WebOfScience for #{institution}"
+    wos_queries = WebOfScience::Queries.new(WebOfScience::Client.new(Settings.WOS.AUTH_CODE))
+    records = wos_queries.search_by_institution([institution]).next_batch
+    uids = records.uids.sort
+    puts "#{uids.count} WebOfScience IDs"
+    puts uids.join("\n")
+  end
+
+  desc 'Check can fetch and parse Web of Science publications'
+  task wos_isworking: :environment do
+    uids = %w[WOS:000426152800001 WOS:000425970500012]
+    queries = WebOfScience::Queries.new
+    retriever = queries.retrieve_by_id(uids)
+    records = retriever.next_batch
+    raise 'WebOfScience found no records' unless records.is_a?(WebOfScience::Records) && records.count > 0
+    raise 'WebOfScience failed to parse records' unless records.first.is_a?(WebOfScience::Record)
+    true
+  end
 end

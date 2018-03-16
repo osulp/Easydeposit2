@@ -12,12 +12,14 @@ module WebOfScience
       attr_reader :database
   
       # @param database [String] a WOS database identifier (default 'WOK')
+      # ??should be WOS?
       def initialize(database = 'WOK')
         @database = database
       end
   
       # @param uid [String] a WOS UID
       # @return [WebOfScience::Retriever]
+      # WoKSearch operation
       def cited_references(uid)
         raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
         options = [ { key: 'Hot', value: 'On' } ]
@@ -28,6 +30,7 @@ module WebOfScience
   
       # @param uid [String] a WOS UID
       # @return [WebOfScience::Retriever]
+      # WoKSearch operation
       def citing_articles(uid)
         raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
         message = base_uid_params.merge(uid: uid)
@@ -36,6 +39,7 @@ module WebOfScience
   
       # @param uid [String] a WOS UID
       # @return [WebOfScience::Retriever]
+      # WoKSearch operation
       def related_records(uid)
         raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
         # The 'WOS' database is the only option for this query
@@ -78,6 +82,16 @@ module WebOfScience
         message = params_for_search(user_query)
         WebOfScience::Retriever.new(:search, message)
       end
+
+      # @param institutions [Array<String>] a set of institutions
+      # @return [WebOfScience::Retriever]
+      # TODO: 
+      def search_by_institution(institutions = [])
+        raise(ArgumentError, 'must enter an institution name') if institutions.empty?
+        institution_query = "AD=(#{institutions.join(' OR ')})"
+        message = params_for_search(institution_query)
+        WebOfScience::Retriever.new(:search, message)
+      end
   
       # @param message [Hash] search params (see WebOfScience::Queries#params_for_search)
       # @return [WebOfScience::Retriever]
@@ -116,6 +130,7 @@ module WebOfScience
       #
       # @param fields [Array<Hash>] as above
       # @return [Hash] search query parameters for specific fields
+      # viewField is WoKSearch retrieval parameter: http://ipscience-help.thomsonreuters.com/wosWebServicesExpanded/WebServiceOperationsGroup/WSPremiumOperations/wokSearchGroup/retrieve/retrieveParameters.html
       def params_for_fields(fields)
         params = params_for_search
         params[:retrieveParameters] = {
@@ -169,6 +184,7 @@ module WebOfScience
           }
         end
   
+        # ??targetNamespace is WoKSearch retrieve parameter option?
         # @return [Array<Hash>] retrieve parameter options
         def retrieve_options
           [

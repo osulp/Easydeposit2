@@ -1,5 +1,8 @@
 class Author < ActiveRecord::Base
-  
+    has_paper_trail on: [:destroy]
+    
+    has_many :publications, through: :contributions
+
     # Provide consistent API for Author and AuthorIdentity
     alias_attribute :first_name, :preferred_first_name
     alias_attribute :middle_name, :preferred_middle_name
@@ -12,21 +15,4 @@ class Author < ActiveRecord::Base
     def institution
       Settings.HARVESTER.INSTITUTION.name
     end
-  
-    # TODO: CAP could provide dates for Stanford affiliation
-    # Provide consistent API for Author and AuthorIdentity
-    # @return [nil]
-    def start_date
-      nil
-    end
-  
-    # TODO: CAP could provide dates for Stanford affiliation
-    # Provide consistent API for Author and AuthorIdentity
-    # @return [nil]
-    def end_date
-      nil
-    end
-  
-    has_many :publications
-
   end
