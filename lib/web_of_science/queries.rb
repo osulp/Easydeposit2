@@ -12,7 +12,6 @@ module WebOfScience
       attr_reader :database
   
       # @param database [String] a WOS database identifier (default 'WOK')
-      # ??should be WOS?
       def initialize(database = 'WOK')
         @database = database
       end
@@ -24,7 +23,7 @@ module WebOfScience
         raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
         options = [ { key: 'Hot', value: 'On' } ]
         message = base_uid_params.merge(uid: uid,
-                                        retrieveParameters: retrieve_parameters(options: options))
+                                        retrieveParameters: retrieve_parameters_1(options: options))
         WebOfScience::Retriever.new(:cited_references, message)
       end
   
@@ -85,11 +84,10 @@ module WebOfScience
 
       # @param institutions [Array<String>] a set of institutions
       # @return [WebOfScience::Retriever]
-      # TODO: 
       def search_by_institution(institutions = [])
         raise(ArgumentError, 'must enter an institution name') if institutions.empty?
-        institution_query = "AD=(#{institutions.join(' OR ')})"
-        message = params_for_search(institution_query)
+        user_query = "AD=(#{institutions.join(' OR ')})"
+        message = params_for_search_1(user_query)
         WebOfScience::Retriever.new(:search, message)
       end
   
@@ -116,6 +114,20 @@ module WebOfScience
             queryLanguage: QUERY_LANGUAGE
           },
           retrieveParameters: retrieve_parameters
+        }
+      end
+
+      # @param user_query [String] (defaults to '')
+      # @return [Hash] search query parameters for full records
+      def params_for_search_1(user_query = '')
+        {
+            queryParameters: {
+                databaseId: database,
+                userQuery: user_query,
+                queryLanguage: QUERY_LANGUAGE,
+                symbolicTimeSpan: '4week'
+            },
+            retrieveParameters: retrieve_parameters
         }
       end
   
@@ -176,15 +188,24 @@ module WebOfScience
         # @param first_record [Integer] the record number offset (defaults to 1)
         # @param count [Integer] the number of records to retrieve (defaults to 100)
         # @return [Hash] retrieve parameters
-        def retrieve_parameters(count: MAX_RECORDS, first_record: 1, options: retrieve_options)
+        def retrieve_parameters_1(count: MAX_RECORDS, first_record: 1, options: retrieve_options)
           {
             firstRecord: first_record,
             count: count,
             option: options
           }
         end
-  
-        # ??targetNamespace is WoKSearch retrieve parameter option?
+
+      # @param first_record [Integer] the record number offset (defaults to 1)
+      # @param count [Integer] the number of records to retrieve (defaults to 100)
+      # @return [Hash] retrieve parameters
+      def retrieve_parameters(count: MAX_RECORDS, first_record: 1)
+        {
+            firstRecord: first_record,
+            count: count
+        }
+      end
+
         # @return [Array<Hash>] retrieve parameter options
         def retrieve_options
           [
