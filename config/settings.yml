@@ -6,7 +6,7 @@ WOS:
   enabled: true
   ACCEPTED_DBS:
     - WOS
-  AUTH_CODE: a secret key
+  AUTH_CODE: b3N0dV9IRzpXc2wxIUFNUg==
   LOG: log/web_of_science.log
   LOG_LEVEL: warn
 

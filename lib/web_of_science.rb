@@ -29,6 +29,8 @@ module WebOfScience
   
     # Fetch a single publication and parse and ensure we have a correct response.
     # We check in steps that the response is XML and it includes the correct content.
+    # uids = %w[WOS:000426152800001 WOS:000425970500012]
+    # => ["WOS:000426152800001", "WOS:000425970500012"]
     def self.working?
       uids = %w[WOS:000426152800001 WOS:000425970500012]
       retriever = queries.retrieve_by_id(uids)

@@ -37,10 +37,10 @@ namespace :wos do
 
   desc 'Update harvest from WoS for Oregon State University, and print publications'
   task wos_osupublications: :environment do
-    institution = Settings.HARVESTER.INSTITUTION.name
+    institution = ["Oregon State University", "Oregon State Univ"]
     puts "\nQuerying WebOfScience for #{institution}"
     wos_queries = WebOfScience::Queries.new(WebOfScience::Client.new(Settings.WOS.AUTH_CODE))
-    records = wos_queries.search_by_institution([institution]).next_batch
+    records = wos_queries.search_by_institution(institution).next_batch
     uids = records.uids.sort
     puts "#{uids.count} WebOfScience IDs"
     puts uids.join("\n")
