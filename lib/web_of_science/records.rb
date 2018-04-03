@@ -57,7 +57,7 @@ module WebOfScience
 
     # @return [Nokogiri::XML::NodeSet] the rec_nodes UID nodes
     def uid_nodes
-      rec_nodes.search('UID')
+      rec_nodes.search('uid')
     end
 
     # Find duplicate WoS UID values
@@ -78,7 +78,8 @@ module WebOfScience
         # Nokogiri::XML::NodeSet enumerable methods do not return new objects
         # Nokogiri::XML::Document.dup is a deep copy
         docB = record_setB.doc.dup # do not chain Nokogiri methods
-        duplicates = docB.search('REC').select { |rec| uid_intersection.include? record_uid(rec) }
+        duplicates = docB.search('records').select { |rec| uid_intersection.include? record_uid(rec) }
+        #duplicates = docB.search('REC').select { |rec| uid_intersection.include? record_uid(rec) }
       end
       Nokogiri::XML::NodeSet.new(Nokogiri::XML::Document.new, duplicates)
     end
@@ -91,7 +92,8 @@ module WebOfScience
       # Nokogiri::XML::NodeSet enumerable methods do not return new objects
       # Nokogiri::XML::Document.dup is a deep copy
       docB = record_setB.doc.dup # do not chain Nokogiri methods
-      new_rec = docB.search('REC')
+      new_rec = docB.search('records')
+      #new_rec = docB.search('REC')
       # reject duplicate records
       uid_dups = duplicate_uids(record_setB)
       new_rec = new_rec.reject { |rec| uid_dups.include? record_uid(rec) } unless uid_dups.empty?
@@ -124,7 +126,7 @@ module WebOfScience
     # Extract all the 'REC' nodes
     # @return [Nokogiri::XML::NodeSet]
     def rec_nodes
-      doc.search('REC')
+      doc.search('records')
     end
 
     private
@@ -133,7 +135,7 @@ module WebOfScience
       # @param rec [Nokogiri::XML::Element] a Wos 'REC' element
       # @return [String] a Wos 'UID' value
       def record_uid(rec)
-        rec.search('UID').text
+        rec.search('uid').text
       end
 
   end
