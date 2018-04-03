@@ -26,23 +26,23 @@ module WebOfScience
 
     # @return [Array<Hash<String => String>>]
     def authors
-      names.select { |name| name['role'] == 'author' }
+      doc.search('authors/value').map(&:text)
     end
 
     # @return [Array<Hash<String => String>>]
     def editors
-      names.select { |name| name['role'] == 'book_editor' }
+      doc.search('authors/value').map(&:text)
     end
 
     # @return [Array<String>]
     def doctypes
-      doc.search('static_data/summary/doctypes/doctype').map(&:text)
+      doc.search('doctype/value').map(&:text)
     end
 
     # @return [Hash<String => String>]
-    def identifiers
-      @identifiers ||= WebOfScience::Identifiers.new(self)
-    end
+    #def identifiers
+    #  @identifiers ||= WebOfScience::Identifiers.new(self)
+    #end
 
     # @return [Array<Hash<String => String>>]
     def names
@@ -86,9 +86,16 @@ module WebOfScience
     # @return [Hash<String => String>]
     def titles
       @titles ||= begin
-        titles = doc.search('static_data/summary/titles/title')
-        titles.map { |title| [title['type'], title.text] }.to_h
+        titles = doc.search('title/value')
+        titles.map(&:text)
       end
+    end
+
+    def dois
+      nodes = doc.search('other').select do |nodes|
+        nodes.children.any?{ |n| n.text == 'Identifier.Doi'}
+      end
+      nodes.map{|children| children.search('value').text}
     end
 
     # Map WOS record data into the SUL PubHash data
@@ -101,12 +108,10 @@ module WebOfScience
     # @return [Hash<String => Object>]
     def to_h
       {
-        'abstracts' => abstracts,
+        'authors' => authors,
         'doctypes' => doctypes,
-        'names' => names,
-        'pub_info' => pub_info,
-        'publishers' => publishers,
-        'titles' => titles,
+        'dois' => dois,
+        'titles' => titles
       }
     end
 

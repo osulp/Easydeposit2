@@ -132,7 +132,7 @@ module WebOfScience
         # @param response_type [Symbol] a WoS SOAP response type
         # @return [WebOfScience::Records]
         def response_records(response, response_type)
-          WebOfScience::Records.new(records: response_return(response, response_type)[:records])
+          WebOfScience::Records.new(records: response.xml)
         end
     end
   end
