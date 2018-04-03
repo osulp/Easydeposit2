@@ -15,5 +15,6 @@
 /log/*
 !/log/.keep
 /tmp
-config/settings.yml
+/config/settings.yml
 /.idea/*
+/.byebug_history
