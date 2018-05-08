@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <ns2:retrieveByIdResponse xmlns:ns2="http://woksearchlite.v3.wokmws.thomsonreuters.com">
+      <return>
+        <queryId>3</queryId>
+        <recordsFound>1</recordsFound>
+        <recordsSearched>54083767</recordsSearched>
+        <records>
+          <uid>WOS:000427453100025</uid>
+          <title>
+            <label>Title</label>
+            <value>An environmental benign approach to high performance anode for Li-ion battery: N-rich porous carbon from Cr(VI)-polluted water treatment</value>
+          </title>
+          <doctype>
+            <label>Doctype</label>
+            <value>Article</value>
+          </doctype>
+          <source>
+            <label>Pages</label>
+            <value>100-103</value>
+          </source>
+          <source>
+            <label>Published.BiblioDate</label>
+            <value>MAY 15</value>
+          </source>
+          <source>
+            <label>Published.BiblioYear</label>
+            <value>2018</value>
+          </source>
+          <source>
+            <label>SourceTitle</label>
+            <value>MATERIALS LETTERS</value>
+          </source>
+          <source>
+            <label>Volume</label>
+            <value>219</value>
+          </source>
+          <authors>
+            <label>Authors</label>
+            <value>Zhang, Chao</value>
+            <value>Huang, Bicheng</value>
+            <value>Miao, Xiang</value>
+            <value>Feng, Zhenxing</value>
+            <value>Huang, Yaqin</value>
+          </authors>          <keywords>
+          <label>Keywords</label>
+          <value>N-rich porous carbon</value>
+          <value>Cr(VI) adsorption</value>
+          <value>Anode</value>
+          <value>Li-ion battery</value>
+        </keywords>
+          <other>
+            <label>Identifier.Doi</label>
+            <value>10.1016/j.matlet.2018.02.026</value>
+          </other>
+          <other>
+            <label>Identifier.Eissn</label>
+            <value>1873-4979</value>
+          </other>
+          <other>
+            <label>Identifier.Ids</label>
+            <value>FZ2ZF</value>
+          </other>
+          <other>
+            <label>Identifier.Issn</label>
+            <value>0167-577X</value>
+          </other>
+          <other>
+            <label>ResearcherID.Disclaimer</label>
+            <value>ResearcherID data provided by Clarivate Analytics</value>
+          </other>
+        </records>
+      </return>
+    </ns2:retrieveByIdResponse>
+  </soap:Body>
+</soap:Envelope>
