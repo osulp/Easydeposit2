@@ -43,13 +43,14 @@
             <value>Miao, Xiang</value>
             <value>Feng, Zhenxing</value>
             <value>Huang, Yaqin</value>
-          </authors>          <keywords>
-          <label>Keywords</label>
-          <value>N-rich porous carbon</value>
-          <value>Cr(VI) adsorption</value>
-          <value>Anode</value>
-          <value>Li-ion battery</value>
-        </keywords>
+          </authors>
+          <keywords>
+            <label>Keywords</label>
+            <value>N-rich porous carbon</value>
+            <value>Cr(VI) adsorption</value>
+            <value>Anode</value>
+            <value>Li-ion battery</value>
+          </keywords>
           <other>
             <label>Identifier.Doi</label>
             <value>10.1016/j.matlet.2018.02.026</value>
