@@ -20,23 +20,52 @@ module WebOfScience
     end
 
     # @return [Array<String>]
-    def abstracts
-      WebOfScience::MapAbstract.new(self).abstracts
-    end
+    #def abstracts
+    #  WebOfScience::MapAbstract.new(self).abstracts
+    #end
 
-    # @return [Array<Hash<String => String>>]
+    # @return [Array<String>]
     def authors
       doc.search('authors/value').map(&:text)
     end
 
     # @return [Array<Hash<String => String>>]
-    def editors
-      doc.search('authors/value').map(&:text)
-    end
+    #def editors
+    #  doc.search('authors/value').map(&:text)
+    #end
 
     # @return [Array<String>]
     def doctypes
       doc.search('doctype/value').map(&:text)
+    end
+
+    # @return [Array<String>]
+    def sources
+      doc.search('source').map { |children| children.search('value').text }
+    end
+
+    # @return [Array<String>]
+    def titles
+      @titles ||= begin
+        titles = doc.search('title/value')
+        titles.map(&:text)
+      end
+    end
+
+    def dois
+      nodes = doc.search('other').select do |nodes|
+        nodes.children.any? { |n| n.text == 'Identifier.Doi' }
+      end
+      nodes.map { |children| children.search('value').text }
+    end
+
+    # @return [Array<String>]
+    def keywords
+      doc.search('keywords/value').map(&:text)
+    end
+
+    def others
+      doc.search('other').map { |children| children.search('value').text }
     end
 
     # @return [Hash<String => String>]
@@ -45,14 +74,14 @@ module WebOfScience
     #end
 
     # @return [Array<Hash<String => String>>]
-    def names
-      @names ||= begin
-        name_elements = doc.search('static_data/summary/names/name').map do |n|
-          WebOfScience::XmlParser.attributes_with_children_hash(n)
-        end
-        name_elements.sort_by { |name| name['seq_no'].to_i }
-      end
-    end
+    #def names
+    #  @names ||= begin
+    #    name_elements = doc.search('static_data/summary/names/name').map do |n|
+    #      WebOfScience::XmlParser.attributes_with_children_hash(n)
+    #    end
+    #    name_elements.sort_by { |name| name['seq_no'].to_i }
+    #  end
+    #end
 
     # Pretty print the record in XML
     # @return [nil]
@@ -67,36 +96,21 @@ module WebOfScience
     end
 
     # @return [Hash<String => [String, Hash<String => String>]>]
-    def pub_info
-      @pub_info ||= begin
-        info = doc.at('static_data/summary/pub_info')
-        fields = WebOfScience::XmlParser.attributes_map(info)
-        fields += info.children.map do |child|
-          [child.name, WebOfScience::XmlParser.attributes_map(child).to_h]
-        end
-        fields.to_h
-      end
-    end
+    #def pub_info
+    #  @pub_info ||= begin
+    #    info = doc.at('static_data/summary/pub_info')
+    #    fields = WebOfScience::XmlParser.attributes_map(info)
+    #    fields += info.children.map do |child|
+    #      [child.name, WebOfScience::XmlParser.attributes_map(child).to_h]
+    #    end
+    #    fields.to_h
+    #  end
+    #end
 
     # @return [WebOfScience::MapPublisher]
-    def publishers
-      WebOfScience::MapPublisher.new(self).publishers
-    end
-
-    # @return [Hash<String => String>]
-    def titles
-      @titles ||= begin
-        titles = doc.search('title/value')
-        titles.map(&:text)
-      end
-    end
-
-    def dois
-      nodes = doc.search('other').select do |nodes|
-        nodes.children.any?{ |n| n.text == 'Identifier.Doi'}
-      end
-      nodes.map{|children| children.search('value').text}
-    end
+    #def publishers
+    #  WebOfScience::MapPublisher.new(self).publishers
+    #end
 
     # Map WOS record data into the SUL PubHash data
     # @return [Hash]
@@ -111,7 +125,10 @@ module WebOfScience
         'authors' => authors,
         'doctypes' => doctypes,
         'dois' => dois,
-        'titles' => titles
+        'titles' => titles,
+        'sources' => sources,
+        'others' => others,
+        'keywords' => keywords
       }
     end
 
