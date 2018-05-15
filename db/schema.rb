@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,95 +10,66 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180315152354) do
+ActiveRecord::Schema.define(version: 2018_05_15_214438) do
 
-  create_table "authors", force: :cascade do |t|
-    t.integer  "author_id",   limit: 4
-    t.string   "first_name",  limit: 255, null: false
-    t.string   "middle_name", limit: 255
-    t.string   "last_name",   limit: 255, null: false
-    t.string   "email",       limit: 255, null: false
-    t.string   "institution", limit: 255
-    t.date     "start_date"
-    t.date     "end_date"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+  create_table "authors", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.string "email"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "middle_name"
+    t.string "preferred_first_name"
+    t.string "preferred_last_name"
+    t.string "preferred_middle_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "authors", ["email"], name: "index_authors_on_email"
-
-  create_table "contributions", force: :cascade do |t|
-    t.integer  "author_id",      limit: 4
-    t.integer  "publication_id", limit: 4
-    t.string   "status",         limit: 255
-    t.boolean  "featured"
-    t.string   "visibility",     limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "contributions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "author_id"
+    t.integer "publication_id"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_id"], name: "index_contributions_on_author_id"
+    t.index ["publication_id", "author_id"], name: "index_contributions_on_publication_id_and_author_id"
+    t.index ["publication_id"], name: "index_contributions_on_publication_id"
   end
 
-  add_index "contributions", ["author_id"], name: "index_contributions_on_author_id"
-  add_index "contributions", ["publication_id"], name: "index_contributions_on_publication_id"
-
-  create_table "publication_identifiers", force: :cascade do |t|
-    t.integer  "publication_id",   limit: 4
-    t.string   "identifier_type",  limit: 255
-    t.string   "identifier_value", limit: 255
-    t.string   "identifier_uri",   limit: 255
-    t.string   "certainty",        limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "publication_identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.integer "publication_id"
+    t.string "identifier_type"
+    t.string "identifier_value"
+    t.string "identifier_uri"
+    t.string "certainty"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["identifier_type", "publication_id"], name: "pub_identifier_index_by_pub_and_type"
+    t.index ["identifier_type"], name: "index_publication_identifiers_on_identifier_type"
+    t.index ["publication_id", "identifier_type"], name: "pub_identifier_index_by_type_and_pub"
+    t.index ["publication_id"], name: "index_publication_identifiers_on_publication_id"
   end
 
-  add_index "publication_identifiers", ["identifier_type", "identifier_value"], name: "pub_identifier_index_by_type_and_value"
-  add_index "publication_identifiers", ["identifier_type", "publication_id"], name: "pub_identifier_index_by_pub_and_type"
-  add_index "publication_identifiers", ["identifier_type"], name: "index_publication_identifiers_on_identifier_type"
-  add_index "publication_identifiers", ["publication_id", "identifier_type"], name: "pub_identifier_index_by_type_and_pub"
-  add_index "publication_identifiers", ["publication_id"], name: "index_publication_identifiers_on_publication_id"
-
-  create_table "publications", force: :cascade do |t|
-    t.boolean  "active"
-    t.boolean  "deleted"
-    t.text     "title",            limit: 65535
-    t.integer  "year",             limit: 4
-    t.integer  "lock_version",     limit: 4
-    t.text     "pub_hash",         limit: 16777215
-    t.integer  "pmid",             limit: 4
-    t.integer  "sciencewire_id",   limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "pages",            limit: 255
-    t.string   "issn",             limit: 255
-    t.string   "publication_type", limit: 255
-    t.string   "wos_uid",          limit: 255
+  create_table "publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.boolean "active"
+    t.boolean "deleted"
+    t.string "title"
+    t.integer "year"
+    t.integer "lock_version"
+    t.text "xml"
+    t.text "pub_hash"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  add_index "publications", ["issn"], name: "index_publications_on_issn"
-  add_index "publications", ["pages"], name: "index_publications_on_pages"
-  add_index "publications", ["pmid"], name: "index_publications_on_pmid"
-  add_index "publications", ["sciencewire_id"], name: "index_publications_on_sciencewire_id"
-  add_index "publications", ["title"], name: "index_publications_on_title"
-  add_index "publications", ["updated_at"], name: "index_publications_on_updated_at"
-  add_index "publications", ["wos_uid"], name: "index_publications_on_wos_uid", unique: true
-  add_index "publications", ["year"], name: "index_publications_on_year"
-
-  create_table "web_of_science_source_records", force: :cascade do |t|
-    t.boolean  "active"
-    t.string   "database",           limit: 255
-    t.text     "source_data",        limit: 16777215
-    t.string   "source_fingerprint", limit: 255
-    t.string   "uid",                limit: 255
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
-    t.string   "doi",                limit: 255
-    t.integer  "pmid",               limit: 4
-    t.integer  "publication_id",     limit: 4
+  create_table "web_of_science_source_records", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.boolean "active"
+    t.string "database"
+    t.text "source_data"
+    t.string "source_fingerprint"
+    t.string "uid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uid"], name: "web_of_science_uid_index"
   end
-
-  add_index "web_of_science_source_records", ["doi"], name: "web_of_science_doi_index"
-  add_index "web_of_science_source_records", ["pmid"], name: "web_of_science_pmid_index"
-  add_index "web_of_science_source_records", ["publication_id"], name: "index_web_of_science_source_records_on_publication_id", unique: true
-  add_index "web_of_science_source_records", ["source_fingerprint"], name: "index_web_of_science_source_records_on_source_fingerprint", unique: true
-  add_index "web_of_science_source_records", ["uid"], name: "index_web_of_science_source_records_on_uid", unique: true
 
 end

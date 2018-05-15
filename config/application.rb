@@ -20,28 +20,25 @@ module Sulbib
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
 
-    # Do not swallow errors in after_commit/after_rollback callbacks.
-    config.active_record.raise_in_transactional_callbacks = true
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    # config.autoload_paths += %W(#{config.root}/extras)    
-    # lib/**/ load lib subdirectories 
+    # config.autoload_paths += %W(#{config.root}/extras)
+    # lib/**/ load lib subdirectories
     config.autoload_paths += %W(#{config.root}/lib)
     config.autoload_paths += Dir["#{config.root}/lib/**/"]
 
     # Auto-load API and its subdirectories
     # config.paths.add 'app/api', glob: '**/*.rb'
-    # config.autoload_paths += Dir["#{Rails.root}/app/api/*"]    
-    
+    # config.autoload_paths += Dir["#{Rails.root}/app/api/*"]
+
     # Allows for the application to use classes in
     # lib
     config.enable_dependency_loading = true
     config.autoload_paths << Rails.root.join('lib')
-    
+
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
@@ -49,11 +46,19 @@ module Sulbib
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = 'utf-8'
-    
+
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
 
     # Enable the asset pipeline
-    config.assets.enabled = true 
+    config.assets.enabled = true
+
+    # load and inject local_env.yml key/values into ENV
+    config.before_configuration do
+      env_file = File.join(Rails.root, 'config', 'local_env.yml')
+      YAML.load(ERB.new(File.read(env_file)).result).each do |key, value|
+        ENV[key.to_s] = value
+      end if File.exists?(env_file)
+    end
   end
 end

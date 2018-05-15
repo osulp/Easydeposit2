@@ -5,21 +5,36 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: sqlite3
+  adapter: mysql2
   pool: 5
   timeout: 5000
+  database: <%= ENV.fetch('ED2_DB', 'ed2_development') %>
+  encoding: utf8
+  reconnect: true
+  username: <%= ENV.fetch('ED2_DB_USERNAME', 'root') %>
+  password: <%= ENV.fetch('ED2_DB_PASSWORD', '12341234') %>
+  host: <%= ENV.fetch('ED2_DB_HOST', '127.0.0.1') %>
+  port: <%= ENV.fetch('ED2_DB_PORT', 3306) %>
 
 development:
   <<: *default
-  database: db/development.sqlite3
+  # If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so force 127.0.0.1
+  host: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? '127.0.0.1' : 'db' %>
+  # If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so use a unique database name
+  database: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? 'ed2_development' : 'development' %>
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: db/test.sqlite3
+  # README: If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so force 127.0.0.1 which is critical for circleci2
+  host: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? '127.0.0.1' : 'db_test' %>
+  # If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so use a unique database name
+  database: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? 'ed2_test' : 'test' %>
 
-production:
+production: &production
   <<: *default
-  database: db/production.sqlite3
+
+staging:
+  <<: *production

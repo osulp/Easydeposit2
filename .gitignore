@@ -18,3 +18,6 @@
 /config/settings.yml
 /.idea/*
 /.byebug_history
+.vscode/*
+config/local_env.yml
+docker-compose.override.yml

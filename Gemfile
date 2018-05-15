@@ -1,8 +1,12 @@
 source 'https://rubygems.org'
 
 gem 'grape', '~> 0.19'
-gem 'rails', '~> 4.2.10'
+gem 'rails'
 gem 'responders', '~> 2.4'
+
+# Use Puma as the app server
+gem 'puma', '~> 3.0'
+gem 'puma_worker_killer'
 
 # Use sass-powered bootstrap
 gem 'bootstrap-sass', '~> 3.3.7'
@@ -55,10 +59,6 @@ gem 'StreetAddress', '~> 1.0', '>= 1.0.6'
 gem 'turnout'
 gem 'whenever', require: false
 gem 'yaml_db'
-
-# -------------------
-gem 'honeybadger', '~> 3.3'
-gem 'retina_tag'
 
 group :development, :test do
   gem 'dlss_cops' # includes rubocop
