@@ -1,0 +1,96 @@
+version: '2.3'
+
+volumes:
+  app:
+  db:
+
+networks:
+  external:
+  internal:
+
+services:
+  # Run an instance of MySQL with a database named 'development' for running specs. See config/database.yml
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=12341234
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=12341234
+      - MYSQL_DATABASE=development
+    volumes:
+      - db:/var/lib/mysql
+      - ./config/mysql/mysqld.cnf:/etc/mysql/conf.d/custom.cnf
+    networks:
+      internal:
+
+  ##
+  # Run an instance of MySQL with a database named 'test' for running specs. See config/database.yml. Has no volume
+  # and doesn't intend on persisting data across sessions.
+  db_test:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=12341234
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=12341234
+      - MYSQL_DATABASE=test
+    volumes:
+      - ./config/mysql/mysqld.cnf:/etc/mysql/conf.d/custom.cnf
+    networks:
+      internal:
+
+  ##
+  # Basic image for the rails application server, see Dockerfile
+  app:
+    build: .
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+    volumes:
+      - .:/data
+      - app:/data/tmp/uploads
+    networks:
+      internal:
+
+  ##
+  # Run the application in the currently set RAILS_ENV, set to development by default in the .env file.
+  web:
+    extends: app
+    # Ideally we will replace this set of commands with an entrypoint script that checks to see if these
+    # have been run already have been run and if so it just starts the server without the first three commands
+    # taking time to run.
+    command: >
+      bash -c "rm -f tmp/pids/server.pid
+      && bundle exec rails server -p 3000 -b '0.0.0.0' -e ${RAILS_ENV}"
+    depends_on:
+      db:
+        condition: service_started
+      db_test:
+        condition: service_started
+      db_migrate:
+        condition: service_started
+    expose:
+      - 3000
+    links:
+      - db
+      - db_test
+
+  ##
+  # Could be used to bootstrap some data or the application state before running
+  #initialize_app:
+  #  extends: app
+  #  restart: on-failure
+  #  command: echo 'not used'
+
+  ##
+  # Ensure that the database migrations are run on the appropriate database related to the RAILS_ENV running
+  db_migrate:
+    extends: app
+    restart: on-failure
+    command: bundle exec rails db:migrate RAILS_ENV=${RAILS_ENV}
+    depends_on:
+      - db
+      - db_test
+    links:
+      - db
+      - db_test

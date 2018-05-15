@@ -1,0 +1,28 @@
+# Background job queue
+# Docker
+#ACTIVE_JOB_QUEUE_ADAPTER: sidekiq
+
+# Rails defaults
+# Docker
+RAILS_CACHE_STORE_URL: memcache
+RAILS_LOG_TO_STDOUT: 'true'
+
+# Database
+ED2_DB_PASSWORD: '12341234'
+ED2_DB_PORT: '3306'
+ED2_DB_USERNAME: root
+# ED2_DB_HOST: 127.0.0.1
+# Docker
+ED2_DB_HOST: db
+# Production/Staging only; not needed for development/test as these are set in database.yml
+ED2_DB: development
+
+# Secret key for Devise and Rails security
+ED2_SECRET_KEY_BASE: bobross1234bobross1234bobross1234bobross1234bobross1234
+
+# CAS authentication
+ED2_CAS_BASE_URL: 'https://FQDN/cas'
+ED2_CAS_VALIDATE_URL: 'https://FQDN/cas/samlValidate'
+
+# Capistrano deployment log path
+ED2_DEPLOYED_REVISION_LOG: /path/to/app/revisions.log
