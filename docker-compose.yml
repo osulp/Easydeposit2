@@ -15,7 +15,6 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=12341234
-      - MYSQL_USER=root
       - MYSQL_PASSWORD=12341234
       - MYSQL_DATABASE=development
     volumes:
@@ -32,7 +31,6 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=12341234
-      - MYSQL_USER=root
       - MYSQL_PASSWORD=12341234
       - MYSQL_DATABASE=test
     volumes:
