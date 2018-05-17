@@ -3,6 +3,21 @@ require 'csv'
 class PublicationsController < ApplicationController
   before_action :check_authorization
 
+  # post '/publications/harvest' => 'publications#harvest'
+  def harvest
+    institution = ["Oregon State University", "Oregon State Univ"]
+    if InstitutionHarvestJob.perform_later(institution)
+      render json: {
+          response: "Harvest for institution was successfully created."
+      }, status: :accepted
+    else
+      render json: {
+          error: "Harvest for institution failed."
+      }, status: :error
+    end
+  end
+
+
   def index
     msg = "Getting publications"
     msg += " for profile #{params[:capProfileId]}" if params[:capProfileId]
