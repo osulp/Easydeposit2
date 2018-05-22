@@ -3,13 +3,13 @@ class InstitutionHarvestJob < ActiveJob::Base
 
   # Performs an asynchronous harvest and save publications
   # @return [void]
-  def perform
+  def perform(institution)
     #sciencewire(author, harvest_alternate_names)
     web_of_science(institution)
   rescue => e
     msg = "InstitutionHarvestJob.perform"
     NotificationManager.log_exception(logger, msg, e)
-    Honeybadger.notify(e, context: { message: msg })
+    #Honeybadger.notify(e, context: { message: msg })
     raise
   end
 
@@ -41,7 +41,8 @@ class InstitutionHarvestJob < ActiveJob::Base
     return unless Settings.WOS.enabled
     # TODO: enable alternate names
     #WebOfScience.harvester.process_author(author)
-    WebOfScience.harvester.process_institution(institution)
     #log_pubs(author)
+    WebOfScience.harvester.process_institution(institution)
+    logger.info('Harvest by institution complete')
   end
 end

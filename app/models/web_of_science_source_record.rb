@@ -1,5 +1,6 @@
 class WebOfScienceSourceRecord < ActiveRecord::Base
-  validates :active, :database, :source_data, :source_fingerprint, :uid, presence: true
+  validates :active, :source_data, :source_fingerprint, :uid, presence: true
+  #validates :active, :database, :source_data, :source_fingerprint, :uid, presence: true
 
   # Because of harvest code, the order of events is:
   #   1. WebOfScienceSourceRecord created
@@ -37,7 +38,7 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
       self.source_data = @record.to_xml
     end
     self.source_fingerprint ||= Digest::SHA2.hexdigest(source_data)
-    self.database ||= record.database
+    #self.database ||= record.database
     self.uid ||= record.uid
     self.doi ||= record.doi if record.doi.present?
     self.pmid ||= record.pmid if record.pmid.present?

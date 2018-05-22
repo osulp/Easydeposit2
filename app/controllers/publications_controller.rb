@@ -1,9 +1,8 @@
 require 'csv'
 
 class PublicationsController < ApplicationController
-  before_action :check_authorization
+  # before_action :check_authorization
 
-  # post '/publications/harvest' => 'publications#harvest'
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
     if InstitutionHarvestJob.perform_later(institution)

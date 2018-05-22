@@ -9,7 +9,9 @@ module WebOfScience
     def initialize(records)
       raise(ArgumentError, 'records must be an WebOfScience::Records') unless records.is_a? WebOfScience::Records
       raise 'Nothing to do when Settings.WOS.ACCEPTED_DBS is empty' if Settings.WOS.ACCEPTED_DBS.empty?
-      @records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? rec.database }
+      @records = records
+      #@records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? 'WOK' }
+      #@records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? rec.database }
     end
 
     # @return [Array<String>] WosUIDs that create a new SA@OSU Publication
