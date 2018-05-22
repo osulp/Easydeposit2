@@ -134,6 +134,9 @@ GEM
       csl (~> 1.0)
     daemons (1.2.6)
     database_cleaner (1.7.0)
+    debase (0.2.2)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.3)
     deep_merge (1.2.1)
     delayed_job (4.1.5)
       activesupport (>= 3.0, < 5.3)
@@ -382,6 +385,8 @@ GEM
       unicode-display_width (~> 1.0, >= 1.0.1)
     rubocop-rspec (1.23.0)
       rubocop (>= 0.52.1)
+    ruby-debug-ide (0.6.1)
+      rake (>= 0.8.1)
     ruby-prof (0.17.0)
     ruby-progressbar (1.9.0)
     safe_yaml (1.0.4)
@@ -501,6 +506,7 @@ DEPENDENCIES
   csl-styles (~> 1.0)
   daemons
   database_cleaner
+  debase
   delayed_job
   delayed_job_active_record
   dlss-capistrano
@@ -534,6 +540,7 @@ DEPENDENCIES
   responders (~> 2.4)
   rspec
   rspec-rails (~> 3.7)
+  ruby-debug-ide
   ruby-prof
   sass-rails (~> 5.0)
   savon (~> 2.12)

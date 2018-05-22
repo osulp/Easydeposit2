@@ -60,6 +60,9 @@ gem 'turnout'
 gem 'whenever', require: false
 gem 'yaml_db'
 
+gem 'ruby-debug-ide'
+gem 'debase'
+
 group :development, :test do
   gem 'dlss_cops' # includes rubocop
   gem 'rails_db'

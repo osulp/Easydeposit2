@@ -72,6 +72,8 @@ services:
     links:
       - db
       - db_test
+    stdin_open: true
+    tty: true
 
   ##
   # Could be used to bootstrap some data or the application state before running
