@@ -14,6 +14,10 @@ module WebOfScience
 
     private
 
+    # TODO
+    # revise the extract method to map WebOfScience record into SA@OSU article
+    # pub_hash is used by SUL_PUB like pub_hash[:title]
+    # --------------------------------------------------------------------
     # Extract content from record, try not to hang onto the entire record
     # @param rec [WebOfScience::Record]
     def extract(rec)
@@ -27,6 +31,7 @@ module WebOfScience
         # pub.update Csl::Citation.new(pub).citations
     end
 
+    # pub_info not available in WebOfSearch Lite
     # publication document types and categories
     def pub_hash_doctypes(rec)
       types = [rec.doctypes, rec.pub_info['pubtype']].flatten.compact

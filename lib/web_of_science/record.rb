@@ -6,7 +6,7 @@ module WebOfScience
   class Record
     extend Forwardable
 
-    #delegate %i[database doi eissn issn pmid uid wos_item_id] => :identifiers
+    delegate %i[database doi eissn issn pmid uid wos_item_id] => :identifiers
     delegate logger: :WebOfScience
 
     # @!attribute [r] doc
@@ -52,6 +52,7 @@ module WebOfScience
       end
     end
 
+    # @return [Array<String>]
     def dois
       nodes = doc.search('other').select do |nodes|
         nodes.children.any? { |n| n.text == 'Identifier.Doi' }
@@ -64,6 +65,7 @@ module WebOfScience
       doc.search('keywords/value').map(&:text)
     end
 
+    # @return [Array<String>]
     def others
       doc.search('other').map { |children| children.search('value').text }
     end
@@ -112,6 +114,10 @@ module WebOfScience
     #  WebOfScience::MapPublisher.new(self).publishers
     #end
 
+    # TODO:
+    # revise MapPubHash or create a new class to map
+    # WebOfScience record to SA@OSU
+    # ---------------------------------
     # Map WOS record data into the SUL PubHash data
     # @return [Hash]
     def pub_hash

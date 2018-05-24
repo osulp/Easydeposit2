@@ -27,7 +27,7 @@ module WebOfScience
         # @param rec [WebOfScience::Record]
         def extract(rec)
           @uid = rec.uid
-          #@database = rec.database
+          @database = rec.database
         end
   
     end

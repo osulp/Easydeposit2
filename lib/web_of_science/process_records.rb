@@ -1,8 +1,7 @@
 module WebOfScience
 
-  # This class complements the WebOfScience::Harvester and receive the most revision:
-  # Process records retrieved by any means; this is a progressive filtering of the harvested records to identify
-  # those records that should create a new ScholarsArchive article (save pub_hash in Publication?).
+  # This class complements the WebOfScience::Harvester and
+  # Process records retrieved by any means
   class ProcessRecords
 
     # @param records [WebOfScience::Records]
@@ -10,7 +9,6 @@ module WebOfScience
       raise(ArgumentError, 'records must be an WebOfScience::Records') unless records.is_a? WebOfScience::Records
       raise 'Nothing to do when Settings.WOS.ACCEPTED_DBS is empty' if Settings.WOS.ACCEPTED_DBS.empty?
       @records = records
-      #@records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? 'WOK' }
       #@records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? rec.database }
     end
 
@@ -30,14 +28,18 @@ module WebOfScience
       delegate :links_client, to: :WebOfScience
 
       # from the incoming (db-filtered) records
+      # map(&:uids) is like calling record.uid and returns uids
       def uids
         @uids ||= records.map(&:uid)
       end
 
-      # @return [Array<String>] WosUIDs that successfully create a new SA@OSU Publication
+      # TODO
+      # revise to create a SA@OSU article, instead of SUL publication
+      # ----------------------------------------------------------------
+      # @return [Array<String>] WosUIDs that successfully create a new Publication
       def create_publications
         return [] if records.empty?
-        # WebOfScienceSourceRecord
+        # save records to WebOfScienceSourceRecord
         wssrs = save_wos_records
         wssrs_hash = wssrs.map(&:uid).zip(wssrs).to_h
         new_uids = []
@@ -49,14 +51,15 @@ module WebOfScience
             # update tables in ED2 to link wssr and SA@OSU publication
             wssr.link_publication(pub) if wssr.publication.blank?
           else
+            # else deposit into SA@OSU
             create_publication(rec, wssr) && new_uids << rec.uid
           end
         end
         new_uids.uniq
        end
 
-      # Save and select new WebOfScienceSourceRecords
-      # Note: add nothing to PublicationIdentifiers here, or filter_by_contributions might reject them
+      # Save new WebOfScienceSourceRecords.  This method guarantees to all subsequent processing
+      # that each WOS uid in @records now has a WebOfScienceSourceRecord.
       # @param [Array<WebOfScience::Record>] recs
       # @return [Array<WebOfScienceSourceRecord>] created records
       def save_wos_records
@@ -74,7 +77,6 @@ module WebOfScience
         already_fetched_recs + WebOfScienceSourceRecord.create!(batch)
       end
 
-      # Also links WebOfScienceSourceRecord
       # @param [WebOfScience::Record] record
       # @param [WebOfScienceSourceRecord] WebOfScienceSourceRecord
       # @return [Boolean] WebOfScience::Record created a new Publication?
@@ -83,8 +85,7 @@ module WebOfScience
           active: true,
           pub_hash: record.pub_hash,
           wos_uid: record.uid,
-          pubhash_needs_update: true,
-          contributions: [contrib]
+          pubhash_needs_update: true
         ) do |pub|
           pub.web_of_science_source_record = wssr if wssr.publication.blank?
         end
@@ -102,7 +103,7 @@ module WebOfScience
       def process_links(recs)
         links = retrieve_links(recs)
         return [] if links.blank?
-        records.each { |rec| rec.identifiers.update(links[rec.uid]) if rec.database == 'WOS' }
+        recs.each { |rec| rec.identifiers.update(links[rec.uid]) if rec.database == 'WOS' }
       rescue StandardError => err
         NotificationManager.error(err, "process_links failed", self)
       end
