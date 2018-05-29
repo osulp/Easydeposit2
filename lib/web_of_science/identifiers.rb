@@ -141,16 +141,13 @@ module WebOfScience
     ALLOWED_TYPES = %w[doi eissn issn pmid].freeze
 
     def extract_ids(doc)
-      #ids = doc.xpath('/REC/dynamic_data/cluster_related/identifiers/identifier')
-      #ids = ids.map { |id| [id['type'], id['value']] }.to_h
-      #ids = filter_dois(ids)
-      nodes = doc.search('other').select do |nodes|
-        nodes.children.any? { |n| n.text == 'Identifier.Doi' }
+      id_nodes = doc.xpath('/records/other').select do |node|
+        node.children.any? { |n| n.text.include? "Identifier" }
       end
-      nodes.map { |children| ids['doi'] = children.search('value').text }
-      @ids = ids
+      ids = id_nodes.map { |child| [child.text, child.search('value').text] }.to_h
+      ids = filter_dois(ids)
+      @ids = filter_ids(ids)
     end
-
 
     def extract_uid(doc)
       #@uid = doc.xpath('/REC/UID').text.freeze
@@ -158,12 +155,9 @@ module WebOfScience
       ids.update('WosUID' => @uid)
     end
 
-    # Extract an xref_doi as the doi, if the doi is not available and xref_doi is available
-    # @param ids [Hash]
     def filter_dois(ids)
-      xref_doi = ids['xref_doi']
-      ids['doi'] ||= xref_doi if xref_doi.present?
-      ids
+      identifier_doi = ids['Identifier.Doi']
+      ids['doi'] = identifier_doi if identifier_doi.present?
     end
 
     # @param ids [Hash]
