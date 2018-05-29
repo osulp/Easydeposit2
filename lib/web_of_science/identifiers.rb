@@ -138,13 +138,13 @@ module WebOfScience
 
     attr_reader :ids
 
-    ALLOWED_TYPES = %w[doi eissn issn pmid].freeze
+    ALLOWED_TYPES = %w[Identifier.Doi Identifier.Eissn Identifier.Issn Identifier.Pmid].freeze
 
     def extract_ids(doc)
       id_nodes = doc.xpath('/records/other').select do |node|
         node.children.any? { |n| n.text.include? "Identifier" }
       end
-      ids = id_nodes.map { |child| [child.text, child.search('value').text] }.to_h
+      ids = id_nodes.map { |child| { child.search('label').text => child.search('value').text} }
       ids = filter_dois(ids)
       @ids = filter_ids(ids)
     end
@@ -156,13 +156,14 @@ module WebOfScience
     end
 
     def filter_dois(ids)
-      identifier_doi = ids['Identifier.Doi']
-      ids['doi'] = identifier_doi if identifier_doi.present?
+      return ids if ids.any?{ |d| d.has_key?("Identifier.Doi") }
+      ids += [ {"Identifier.Doi" => ''} ]
+      ids
     end
 
     # @param ids [Hash]
     def filter_ids(ids)
-      ids.select { |type, _v| ALLOWED_TYPES.include? type }
+      ids.select { |v| ALLOWED_TYPES.include? v.keys.first }
     end
 
     def parse_medline(doc)
