@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_15_214438) do
+ActiveRecord::Schema.define(version: 2018_05_30_000025) do
 
   create_table "authors", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "email"
@@ -69,6 +69,10 @@ ActiveRecord::Schema.define(version: 2018_05_15_214438) do
     t.string "uid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "doi"
+    t.string "pmid"
+    t.index ["doi"], name: "web_of_science_doi_index"
+    t.index ["pmid"], name: "web_of_science_pmid_index"
     t.index ["uid"], name: "web_of_science_uid_index"
   end
 

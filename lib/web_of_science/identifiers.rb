@@ -35,7 +35,10 @@ module WebOfScience
 
     # @return [String, nil]
     def doi
-      ids['doi']
+      doi = ids.select do |d|
+        d.has_key?('Identifier.Doi')
+      end
+      return doi
     end
 
     # @return [String, nil]
@@ -45,7 +48,7 @@ module WebOfScience
 
     # @return [String, nil]
     def eissn
-      ids['eissn']
+      ids['Identifier-Eissn']
     end
 
     # @return [String, nil]
@@ -55,7 +58,7 @@ module WebOfScience
 
     # @return [String, nil]
     def issn
-      ids['issn']
+      ids['Indentifier-Issn']
     end
 
     # @return [String, nil]
@@ -77,7 +80,10 @@ module WebOfScience
 
     # @return [String, nil]
     def pmid
-      ids['pmid']
+      pmid = ids.select do |d|
+        d.has_key?('Identifier.Pmid')
+      end
+      return pmid
     end
 
     # @return [String, nil]
@@ -126,7 +132,10 @@ module WebOfScience
 
     # @return [String, nil]
     def wos_item_id
-      ids['WosItemID']
+      id = ids.select do |d|
+        d.has_key?('WosItemId')
+      end
+      return id
     end
 
     # @return [String, nil]
@@ -138,12 +147,14 @@ module WebOfScience
 
     attr_reader :ids
 
+    # these are the identifier label of WebOfSearch Lite
     ALLOWED_TYPES = %w[Identifier.Doi Identifier.Eissn Identifier.Issn Identifier.Pmid].freeze
 
     def extract_ids(doc)
       id_nodes = doc.xpath('/records/other').select do |node|
         node.children.any? { |n| n.text.include? "Identifier" }
       end
+      # create an array of hash by mapping id_nodes array
       ids = id_nodes.map { |child| { child.search('label').text => child.search('value').text} }
       ids = filter_dois(ids)
       @ids = filter_ids(ids)
@@ -151,13 +162,16 @@ module WebOfScience
 
     def extract_uid(doc)
       #@uid = doc.xpath('/REC/UID').text.freeze
+      #ids.update('WosUID' => @uid)
+      # Change to fit new array of hash because ids.update will cause undefined method update error
       @uid = doc.search('uid').text
-      ids.update('WosUID' => @uid)
+      @ids += [ {'WosUID' => @uid} ]
     end
 
+    # return array of hash and assure it has Identifier.Doi key
     def filter_dois(ids)
-      return ids if ids.any?{ |d| d.has_key?("Identifier.Doi") }
-      ids += [ {"Identifier.Doi" => ''} ]
+      return ids if ids.any?{ |d| d.has_key?('Identifier.Doi') }
+      ids += [ {'Identifier.Doi' => ''} ]
       ids
     end
 
@@ -184,7 +198,8 @@ module WebOfScience
 
     def parse_wos
       return unless database == 'WOS'
-      ids.update('WosItemID' => uid.split(':').last)
+      #ids.update('WosItemID' => uid.split(':').last)
+      @ids += [ {'WosItemID' => uid.split(':').last} ]
     end
   end
 end
