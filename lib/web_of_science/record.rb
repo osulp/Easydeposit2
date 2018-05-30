@@ -6,11 +6,12 @@ module WebOfScience
   class Record
     extend Forwardable
 
+    # a identifier method in Record class is required for delegation
     delegate %i[database doi eissn issn pmid uid wos_item_id] => :identifiers
     delegate logger: :WebOfScience
 
     # @!attribute [r] doc
-    #   @return [Nokogiri::XML::Document] WOS record document
+    # @return [Nokogiri::XML::Document] WOS record document
     attr_reader :doc
 
     # @param record [String] record in XML
@@ -19,20 +20,15 @@ module WebOfScience
       @doc = WebOfScience::XmlParser.parse(record, encoded_record)
     end
 
-    # @return [Array<String>]
-    #def abstracts
-    #  WebOfScience::MapAbstract.new(self).abstracts
-    #end
+    # @return [Hash<String => String>]
+    def identifiers
+      @identifiers ||= WebOfScience::Identifiers.new(self)
+    end
 
     # @return [Array<String>]
     def authors
       doc.search('authors/value').map(&:text)
     end
-
-    # @return [Array<Hash<String => String>>]
-    #def editors
-    #  doc.search('authors/value').map(&:text)
-    #end
 
     # @return [Array<String>]
     def doctypes
@@ -52,6 +48,7 @@ module WebOfScience
       end
     end
 
+    # @return [Array<String>]
     def dois
       nodes = doc.search('other').select do |nodes|
         nodes.children.any? { |n| n.text == 'Identifier.Doi' }
@@ -64,24 +61,10 @@ module WebOfScience
       doc.search('keywords/value').map(&:text)
     end
 
+    # @return [Array<String>]
     def others
       doc.search('other').map { |children| children.search('value').text }
     end
-
-    # @return [Hash<String => String>]
-    #def identifiers
-    #  @identifiers ||= WebOfScience::Identifiers.new(self)
-    #end
-
-    # @return [Array<Hash<String => String>>]
-    #def names
-    #  @names ||= begin
-    #    name_elements = doc.search('static_data/summary/names/name').map do |n|
-    #      WebOfScience::XmlParser.attributes_with_children_hash(n)
-    #    end
-    #    name_elements.sort_by { |name| name['seq_no'].to_i }
-    #  end
-    #end
 
     # Pretty print the record in XML
     # @return [nil]
@@ -95,23 +78,10 @@ module WebOfScience
       nil
     end
 
-    # @return [Hash<String => [String, Hash<String => String>]>]
-    #def pub_info
-    #  @pub_info ||= begin
-    #    info = doc.at('static_data/summary/pub_info')
-    #    fields = WebOfScience::XmlParser.attributes_map(info)
-    #    fields += info.children.map do |child|
-    #      [child.name, WebOfScience::XmlParser.attributes_map(child).to_h]
-    #    end
-    #    fields.to_h
-    #  end
-    #end
-
-    # @return [WebOfScience::MapPublisher]
-    #def publishers
-    #  WebOfScience::MapPublisher.new(self).publishers
-    #end
-
+    # TODO:
+    # revise MapPubHash or create a new class to map
+    # WebOfScience record to SA@OSU
+    # ---------------------------------
     # Map WOS record data into the SUL PubHash data
     # @return [Hash]
     def pub_hash
@@ -143,5 +113,48 @@ module WebOfScience
     def to_xml
       doc.to_xml(save_with: WebOfScience::XmlParser::XML_OPTIONS).strip
     end
+
+    # Elements not available in WebOfScience Lite
+    # @return [Array<String>]
+    #def abstracts
+    #  WebOfScience::MapAbstract.new(self).abstracts
+    #end
+
+    # @return [Array<Hash<String => String>>]
+    #def editors
+    #  doc.search('authors/value').map(&:text)
+    #end
+
+    # @return [Hash<String => String>]
+    #def identifiers
+    #  @identifiers ||= WebOfScience::Identifiers.new(self)
+    #end
+
+    # @return [Array<Hash<String => String>>]
+    #def names
+    #  @names ||= begin
+    #    name_elements = doc.search('static_data/summary/names/name').map do |n|
+    #      WebOfScience::XmlParser.attributes_with_children_hash(n)
+    #    end
+    #    name_elements.sort_by { |name| name['seq_no'].to_i }
+    #  end
+    #end
+
+    # @return [Hash<String => [String, Hash<String => String>]>]
+    #def pub_info
+    #  @pub_info ||= begin
+    #    info = doc.at('static_data/summary/pub_info')
+    #    fields = WebOfScience::XmlParser.attributes_map(info)
+    #    fields += info.children.map do |child|
+    #      [child.name, WebOfScience::XmlParser.attributes_map(child).to_h]
+    #    end
+    #    fields.to_h
+    #  end
+    #end
+
+    # @return [WebOfScience::MapPublisher]
+    #def publishers
+    #  WebOfScience::MapPublisher.new(self).publishers
+    #end
   end
 end
