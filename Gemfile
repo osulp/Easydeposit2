@@ -8,8 +8,7 @@ gem 'responders', '~> 2.4'
 gem 'puma', '~> 3.0'
 gem 'puma_worker_killer'
 
-# Use sass-powered bootstrap
-gem 'bootstrap-sass', '~> 3.3.7'
+gem 'bootstrap', '~> 4.1.1'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets

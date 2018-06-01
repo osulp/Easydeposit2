@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_01_151339) do
+ActiveRecord::Schema.define(version: 2018_06_01_230509) do
 
   create_table "authors", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "email"
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2018_06_01_151339) do
     t.datetime "updated_at", null: false
     t.string "username"
     t.string "display_name"
+    t.boolean "admin", default: false
     t.index ["email"], name: "index_cas_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_cas_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_cas_users_on_username", unique: true
@@ -95,6 +96,8 @@ ActiveRecord::Schema.define(version: 2018_06_01_151339) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "display_name"
+    t.boolean "admin", default: false
+    t.string "username"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
