@@ -60,14 +60,20 @@ gem 'turnout'
 gem 'whenever', require: false
 gem 'yaml_db'
 
-gem 'ruby-debug-ide'
-gem 'debase'
+
+gem 'devise'
+# CAS Authentication gems
+gem 'rubycas-client', git: 'https://github.com/osulp/rubycas-client'
+gem 'rubycas-client-rails', git: 'https://github.com/osulp/rubycas-client-rails'
+gem 'devise_cas_authenticatable'
 
 group :development, :test do
+  gem 'debase'
   gem 'dlss_cops' # includes rubocop
   gem 'rails_db'
   gem 'rspec'
   gem 'rspec-rails', '~> 3.7'
+  gem 'ruby-debug-ide'
 end
 
 group :development do

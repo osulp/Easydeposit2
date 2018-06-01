@@ -60,5 +60,7 @@ module Sulbib
         ENV[key.to_s] = value
       end if File.exists?(env_file)
     end
+
+    config.rubycas.cas_base_url = ENV["ED2_CAS_BASE_URL"] || 'https://cas.myorganization.com'
   end
 end

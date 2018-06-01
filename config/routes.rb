@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
+  root to: 'home#index'
+  devise_for :users
+  devise_for :cas_users
+
   get '/publications' => 'publications#harvest'
   get '/publications/index' => 'publications#index'
   get '/publications/sourcelookup' => 'publications#sourcelookup'
-
-  # make publication index root
-  root 'home#index'
 
   ##
   # Endpoint for Pub harvester
