@@ -7,6 +7,36 @@
     <%= csrf_meta_tags %>
   </head>
   <body>
+    <nav class="navbar navbar-default navbar-expand-md">
+      <div class="logo toggle-down navbar-brand"><%= link_to image_tag("oregonState.svg"), root_path %></div>
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <button class="navbar-toggler navbar-light"
+              type="button"
+              data-toggle="collapse"
+              data-target="#bs-example-navbar-collapse-1"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+              aria-controls="bs-example-navbar-collapse-1">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav ml-auto">
+          <li class='nav-item link'><%= link_to 'Publications', publications_path, class: 'nav-link' %></li>
+          <li class='nav-item' ><%= link_to 'Admin', '', class: 'nav-link faded' %></li>
+          <% if user_signed_in? && current_user.admin? %>
+            <li class='nav-item' ><%= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link faded' %></li>
+            <li class='nav-item'>
+              <span class='nav-link logged-in faded'>Logged in as <%= current_user.username %></span>
+            </li>
+          <% end %>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+    <div class="group-header">
+      <h1>Easy Deposit @ Oregon State University Libraries and Press</h1>
+    </div>
     <div class="container">
       <p class="notice"><%= notice %></p>
       <p class="alert"><%= alert %></p>
