@@ -1,0 +1,12 @@
+!!!
+%html
+  %head
+    %title= full_title(yield(:title))
+    = stylesheet_link_tag "application", media: "all"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    = render partial: 'layouts/navbar'
+    .container
+      = render partial: 'layouts/flash_messages'
+      = yield
