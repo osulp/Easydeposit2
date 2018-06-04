@@ -21,3 +21,8 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    models:
+      cas_user:
+        one: User (CAS)
+        other: Users (CAS)
