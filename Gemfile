@@ -64,9 +64,12 @@ gem 'haml-rails'
 
 gem 'devise'
 gem 'devise_cas_authenticatable'
+
 # CAS Authentication gems
 gem 'rubycas-client', git: 'https://github.com/osulp/rubycas-client'
 gem 'rubycas-client-rails', git: 'https://github.com/osulp/rubycas-client-rails'
+
+gem 'rails_admin', '~> 1.3'
 
 group :development, :test do
   gem 'debase'
