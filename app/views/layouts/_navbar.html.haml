@@ -11,7 +11,7 @@
           Logged in as
           = current_user.username
       %li.nav-item.link= link_to 'Publications', publications_path, class: 'nav-link'
-      %li.nav-item= link_to 'Admin', '', class: 'nav-link faded'
+      %li.nav-item= link_to 'Admin', rails_admin_path, class: 'nav-link faded'
       - if user_signed_in? && current_user.admin?
         %li.nav-item= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link faded'
   #sub_nav
