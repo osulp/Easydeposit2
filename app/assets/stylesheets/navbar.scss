@@ -1,0 +1,58 @@
+.navbar {
+  background: $orange;
+  padding: 0 0 26px 0;
+  .logo {
+    transition: all 0.75s 0.25s;
+    padding: 3px;
+    margin-left: 10px;
+    cursor: pointer;
+    img {
+      height: 50px;
+    }
+    &.toggle-down {
+      transform: rotate(0deg);
+    }
+    &.toggle-up {
+      transform: rotate(180deg);
+    }
+  }
+  .welcome {
+    padding-top: 23px;
+    padding-right: 50px;
+    cursor: default;
+  }
+  .sign-in {
+    margin-right: 10px;
+  }
+  .nav-link {
+    border-left: 0.5px solid darken($orange, 10%);
+    margin-top: 0px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    color: $white;
+    &:hover {
+      background: rgba(0, 0, 0, 0.85);
+      color: $white;
+      cursor: pointer;
+    }
+  }
+  p {
+    color: $white;
+  }
+  .navbar-toggler {
+    margin-right: 25px;
+  }
+
+  #sub_nav {
+    width: 100%;
+    float: left;
+    position: absolute;
+    bottom: 0;
+    background-color: $black;
+    h1 {
+      margin: 5px 0 5px 10px;
+      font-size: 0.95rem;
+      color: $white;
+    }
+  }
+}
