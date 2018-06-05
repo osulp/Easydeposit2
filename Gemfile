@@ -76,7 +76,9 @@ group :development, :test do
   gem 'dlss_cops' # includes rubocop
   gem 'rails_db'
   gem 'rspec'
+  gem 'rspec-mocks'
   gem 'rspec-rails', '~> 3.7'
+  gem 'rspec_junit_formatter'
   gem 'ruby-debug-ide'
 end
 
