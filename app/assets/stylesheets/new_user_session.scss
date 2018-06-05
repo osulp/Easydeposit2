@@ -1,0 +1,9 @@
+.login-osu-account {
+  background-color: $orange;
+  border-color: darken($orange, 5%);
+  font-size: 1.6rem;
+  &:hover {
+    background-color: darken($orange, 5%);
+    border-color: darken($orange, 10%);
+  }
+}

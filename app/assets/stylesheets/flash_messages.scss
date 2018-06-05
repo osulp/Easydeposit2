@@ -1,0 +1,11 @@
+.alert {
+  width: 60%;
+}
+.alert-alert {
+  color: $error-red-dark;
+  background-color: $error-red-light;
+}
+.alert-notice {
+  color: $success-green-dark;
+  background-color: $success-green-light;
+}

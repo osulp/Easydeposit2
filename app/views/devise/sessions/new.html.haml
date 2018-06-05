@@ -1,0 +1,22 @@
+= link_to 'Login with OSU Account', new_cas_user_session_path, class: 'login-osu-account btn btn-primary'
+%hr
+%h3 or, Log with Easy Deposit 2 Account
+
+= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+  .form-row
+    .form-group.col-md-3
+      = f.label :email
+      = f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control'
+    .form-group.col-md-3
+      = f.label :password
+      = f.password_field :password, autocomplete: "current-password", class: 'form-control'
+
+  - if devise_mapping.rememberable?
+    .form-group
+      .form-check
+        = f.check_box :remember_me, { class: 'form-check-input' }
+        = f.label :remember_me, { class: 'form-check-label '}
+
+  = f.submit "Log in", { class: 'btn btn-primary' }
+
+= render "devise/shared/links"
