@@ -9,5 +9,14 @@ class ApplicationController < ActionController::Base
   # the application to behave in a sane way regardless of which authentication method
   # is used to log the user in.
   devise_group :user, contains: [:user, :cas_user]
-  before_action :authenticate_user!
+  before_action :authenticate_or_redirect_user!
+
+  private
+  def authenticate_or_redirect_user!
+    if user_signed_in? || %w(sessions cas_sessions registrations passwords).include?(controller_name)
+      authenticate_user!
+    else
+      redirect_to new_user_session_path
+    end
+  end
 end
