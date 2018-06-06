@@ -76,7 +76,9 @@ group :development, :test do
   gem 'dlss_cops' # includes rubocop
   gem 'rails_db'
   gem 'rspec'
+  gem 'rspec-mocks'
   gem 'rspec-rails', '~> 3.7'
+  gem 'rspec_junit_formatter'
   gem 'ruby-debug-ide'
 end
 
@@ -94,6 +96,7 @@ group :test do
   gem 'database_cleaner'
   gem 'equivalent-xml'
   gem 'factory_bot_rails'
+  gem 'poltergeist'
   gem 'simplecov', '~> 0.13', require: false
   gem 'single_cov'
   gem 'vcr'
