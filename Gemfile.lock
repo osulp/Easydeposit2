@@ -126,6 +126,7 @@ GEM
     citeproc-ruby (1.1.10)
       citeproc (~> 1.0, >= 1.0.9)
       csl (~> 1.5)
+    cliver (0.3.2)
     codemirror-rails (5.16.0)
       railties (>= 3.0, < 6.0)
     coderay (1.1.2)
@@ -338,6 +339,10 @@ GEM
     parallel (1.12.1)
     parser (2.5.1.0)
       ast (~> 2.4.0)
+    poltergeist (1.18.1)
+      capybara (>= 2.1, < 4)
+      cliver (~> 0.3.1)
+      websocket-driver (>= 0.2.0)
     polyamorous (1.3.3)
       activerecord (>= 3.0)
     popper_js (1.12.9)
@@ -613,6 +618,7 @@ DEPENDENCIES
   okcomputer
   paper_trail
   parallel
+  poltergeist
   pry-doc
   pry-rails
   pubmed_search

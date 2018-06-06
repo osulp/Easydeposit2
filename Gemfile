@@ -96,6 +96,7 @@ group :test do
   gem 'database_cleaner'
   gem 'equivalent-xml'
   gem 'factory_bot_rails'
+  gem 'poltergeist'
   gem 'simplecov', '~> 0.13', require: false
   gem 'single_cov'
   gem 'vcr'
