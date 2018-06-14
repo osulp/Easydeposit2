@@ -33,7 +33,7 @@ module WebOfScience
     end
 
     # TODO
-    # revise to create a SA@OSU article, instead of SUL publication
+    # Add the workflow to deposit the publication into SA@OSU (after publication is created)
     # ----------------------------------------------------------------
     # @return [Array<String>] WosUIDs that successfully create a new Publication
     def create_publications
@@ -45,12 +45,11 @@ module WebOfScience
       records.each do |rec|
         pub = matching_publication(rec)
         wssr = wssrs_hash[rec.uid]
-        # if record already been deposited in SA@OSU
         if pub
-          # update tables in ED2 to link wssr and SA@OSU publication
+          # if a publication already exists for the same uid, update tables in ED2 to link wssr and publication
           wssr.link_publication(pub) if wssr.publication.blank?
         else
-          # else deposit into SA@OSU
+          # else create publication
           create_publication(rec, wssr) && new_uids << rec.uid
         end
       end
@@ -120,24 +119,14 @@ module WebOfScience
 
     # Does record have a contribution for this author? (based on matching PublicationIdentifiers)
     # Note: must use unique identifiers, don't use ISSN or similar series level identifiers
-    # We search for all PubIDs at once instead of serial queries.  No need to hit the same table multiple times.
+    # OSU uses only WosUID for searches
     # @param [WebOfScience::Record] record
-    # @return [::Publication, nil] a matched or newly minted Contribution
+    # @return [::Publication, nil] a matched Publication for WoS record
     def matching_publication(record)
       Publication.joins(:publication_identifiers).where(
         "publication_identifiers.identifier_value IS NOT NULL AND (
-         (publication_identifiers.identifier_type = 'WosUID' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'WosItemID' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'doi' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'pmid' AND publication_identifiers.identifier_value = ?))",
-        record.uid, record.wos_item_id, record.doi, record.pmid
-      ).order(
-        "CASE
-          WHEN publication_identifiers.identifier_type = 'WosUID' THEN 0
-          WHEN publication_identifiers.identifier_type = 'WosItemID' THEN 1
-          WHEN publication_identifiers.identifier_type = 'doi' THEN 2
-          WHEN publication_identifiers.identifier_type = 'pmid' THEN 3
-         END"
+         (publication_identifiers.identifier_type = 'WosUID' AND publication_identifiers.identifier_value = ?))",
+        record.uid
       ).first
     end
   end

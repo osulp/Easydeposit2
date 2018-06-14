@@ -19,9 +19,6 @@ class Publication < ActiveRecord::Base
   before_save do
     sync_publication_hash_and_db if pubhash_needs_update?
     self.title = pub_hash[:title] if pub_hash[:title].present?
-    self.issn = pub_hash[:issn] if pub_hash[:issn].present?
-    self.pages = pub_hash[:pages] if pub_hash[:pages].present?
-    self.publication_type = pub_hash[:type] if pub_hash[:type].present?
     self.year = pub_hash[:year] if pub_hash[:year].present?
     self.wos_uid ||= web_of_science_source_record.uid if web_of_science_source_record.present?
   end
@@ -99,7 +96,8 @@ class Publication < ActiveRecord::Base
     rebuild_authorship
     sync_identifiers_in_pub_hash
     set_sul_pub_id_in_hash if persisted?
-    update_formatted_citations
+    # MVP does not include feature of citation creation
+    #update_formatted_citations
     @pubhash_needs_update = false
     self
   end
