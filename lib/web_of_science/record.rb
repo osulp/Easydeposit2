@@ -79,8 +79,7 @@ module WebOfScience
     end
 
     # TODO:
-    # revise MapPubHash or create a new class to map
-    # WebOfScience record to SA@OSU
+    #
     # ---------------------------------
     # Map WOS record data into the SUL PubHash data
     # @return [Hash]
@@ -114,7 +113,9 @@ module WebOfScience
       doc.to_xml(save_with: WebOfScience::XmlParser::XML_OPTIONS).strip
     end
 
+    # ------------------------------------------------------------------------
     # Elements not available in WebOfScience Lite
+
     # @return [Array<String>]
     #def abstracts
     #  WebOfScience::MapAbstract.new(self).abstracts

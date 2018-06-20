@@ -34,10 +34,9 @@ module WebOfScience
     # pub_info not available in WebOfSearch Lite
     # publication document types and categories
     def pub_hash_doctypes(rec)
-      types = [rec.doctypes, rec.pub_info['pubtype']].flatten.compact
+      types = [rec.doctypes].flatten.compact
       doc = {
-        documenttypes_sw: types,
-        documentcategory_sw: rec.pub_info['pubtype']
+        documenttypes_sw: types
       }
       doc[:type] = if types.any? { |t| t =~ /\b(Meeting|Conference|Congresses|Overall|Proceeding)/i }
                      Settings.sul_doc_types.inproceedings
