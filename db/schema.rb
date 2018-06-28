@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_14_015629) do
+ActiveRecord::Schema.define(version: 2018_06_27_161720) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 2018_06_14_015629) do
     t.string "sourceurl"
     t.string "authoremails"
     t.integer "publication_id"
+    t.string "contactnames"
     t.index ["doi"], name: "web_of_science_doi_index"
     t.index ["pmid"], name: "web_of_science_pmid_index"
     t.index ["uid"], name: "web_of_science_uid_index"

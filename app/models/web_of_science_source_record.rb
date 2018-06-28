@@ -12,6 +12,9 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
 
   attr_writer :record
 
+  serialize :authoremails, Array
+  serialize :contactnames, Array
+
   # @return [WebOfScience::Record]
   def record
     @record ||= WebOfScience::Record.new(record: source_data)
