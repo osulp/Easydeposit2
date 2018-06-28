@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'mechanize'
+require 'uri'
+
 module WebOfScience
   # This class complements the WebOfScience::Harvester and
   # Process records retrieved by any means
@@ -11,7 +14,8 @@ module WebOfScience
       @records = records.select { |rec| Settings.WOS.ACCEPTED_DBS.include? rec.database }
     end
 
-    # @return [Array<String>] WosUIDs that create a new SA@OSU Publication
+    # TODO: Add call of methods to send recruiting emails for deposit (after publication is created)
+    # @return [Array<String>] WosUIDs that create a new Publication
     def execute
       return [] if records.empty?
       create_publications
@@ -32,9 +36,6 @@ module WebOfScience
       @uids ||= records.map(&:uid)
     end
 
-    # TODO
-    # Add the workflow to deposit the publication into SA@OSU (after publication is created)
-    # ----------------------------------------------------------------
     # @return [Array<String>] WosUIDs that successfully create a new Publication
     def create_publications
       return [] if records.empty?
@@ -70,6 +71,7 @@ module WebOfScience
         attribs = { source_data: rec.to_xml }
         attribs[:doi] = rec.doi if rec.doi.present?
         attribs[:pmid] = rec.pmid if rec.pmid.present?
+        attribs[:authoremails], attribs[:contactnames] = get_author_emails(rec)
         attribs
       end
       already_fetched_recs + WebOfScienceSourceRecord.create!(batch)
@@ -128,6 +130,31 @@ module WebOfScience
          (publication_identifiers.identifier_type = 'WosUID' AND publication_identifiers.identifier_value = ?))",
         record.uid
       ).first
+    end
+
+    # Parse reprint author emails and reprint author names from Web of Science Full Record:
+    # https://images.webofknowledge.com/images/help/WOS/hp_full_record.html
+    # @param: [WebOfScience::Record] record
+    # @returns [Array<String>, Array<String>] reprint author emails, reprint author names
+    def get_author_emails(rec)
+      wos_uid = rec.uid if rec.uid.present?
+      links_client = Clarivate::LinksClient.new
+      links = links_client.links(wos_uid, fields: ['sourceURL'])
+      agent = Mechanize.new
+      page = agent.get(links[wos_uid]['sourceURL'])
+      author_emails = []
+      # <span class="FR_label">E-mail Addresses:</span><a href="mailto:zhenxing.feng@oregonstate.edu">zhenxing.feng@oregonstate.edu</a>; <a href="mailto:huangyq@mail.buct.edu.cn">huangyq@mail.buct.edu.cn</a>
+      page.link_with(href: %r{^mailto:}).map do |link|
+        author_emails.push(link.text.gsub(/^mailto:/, ''))
+      end
+      contact_names = []
+      # <span class="FR_label">Reprint Address: </span>Huang, YQ (reprint author)
+      pages.search(".FR_label").at("span:contains('Reprint Address')").map do |s|
+        contact_names.push(s.text.gsub(/\ \(reprint author\)\ $/), '')
+      end
+      return author_emails, contact_names
+    rescue StandardError => err
+      NotificationManager.error(err, "#{self.class} - get author emails failed for uid #{rec.uid}", self)
     end
   end
 end
