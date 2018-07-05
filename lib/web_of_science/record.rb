@@ -84,7 +84,7 @@ module WebOfScience
     # Map WOS record data into the SUL PubHash data
     # @return [Hash]
     def pub_hash
-      @pub_hash ||= WebOfScience::MapPubHash.new(self).pub_hash
+      @pub_hash ||= self.to_h
     end
 
     # Extract the REC fields
