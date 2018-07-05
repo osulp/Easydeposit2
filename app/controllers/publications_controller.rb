@@ -17,7 +17,6 @@ class PublicationsController < ApplicationController
   end
 
   def index
-    @publications = Publication.all
-    @wos_records = WebOfScienceSourceRecord.all
+    @wos_records = WebOfScienceSourceRecord.includes(:publication).all
   end
 end
