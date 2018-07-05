@@ -1,6 +1,8 @@
 class Publication < ActiveRecord::Base
   has_paper_trail on: [:destroy]
 
+  scope :by_wos_uid, ->(uid) { joins(:web_of_science_source_record).where('web_of_science_source_records.uid = ?', uid ) }
+
   has_one :web_of_science_source_record, autosave: true
 
   serialize :pub_hash, Hash

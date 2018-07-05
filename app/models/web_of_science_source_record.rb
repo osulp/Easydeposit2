@@ -22,7 +22,6 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
     transaction do
       self.publication = pub
       save!
-      pub.update(wos_uid: uid)
     end
   end
 
