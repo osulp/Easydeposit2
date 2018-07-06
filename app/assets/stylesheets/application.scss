@@ -5,6 +5,7 @@
 @import "new_user_session";
 @import "publications";
 
-body > .container {
+body > .container-fluid {
   padding-top: 25px;
+  padding-bottom: 25px;
 }

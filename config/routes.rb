@@ -4,10 +4,11 @@ Rails.application.routes.draw do
   devise_for :users
   devise_for :cas_users
 
-  get '/publications' => 'publications#index'
+  resources :publications do
+    delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
+  end
 
   ##
   # Endpoint for Pub harvester
   get '/publications/harvest', to: 'publications#harvest', defaults: { format: :json }
-
 end

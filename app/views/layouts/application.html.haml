@@ -7,7 +7,7 @@
     = csrf_meta_tags
   %body
     = render partial: 'layouts/navbar'
-    .container
+    .container-fluid
       = render partial: 'layouts/flash_messages'
       = yield
       = console if Rails.env == 'development'

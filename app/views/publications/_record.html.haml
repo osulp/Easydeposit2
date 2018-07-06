@@ -1,0 +1,26 @@
+- if @publication
+  %h1=r[:uid]
+- else
+  %h1=link_to r[:uid], publication_path(r[:uid])
+.fingerprint
+  %span (fingerprint)
+  %span=r[:source_fingerprint]
+.published
+  %span Published:
+  %span=r[:pub_at] || 'Not yet published to repository.'
+- unless r.publication
+  %i No publication record created.
+- else
+  %table.table
+    %thead.thead-dark.table-striped.table-bordered
+      %tr
+        %th.text-align-right{scope: 'col'} Attribute
+        %th{scope: 'col'} Value(s)
+    %tbody
+      - r.publication[:pub_hash].each_pair do |k,v|
+        %tr
+          %th.text-align-right{scope: 'row'}=k
+          %td
+            %ul
+              - v.to_a.each do |value|
+                %li=value

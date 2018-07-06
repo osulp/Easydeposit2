@@ -4,6 +4,7 @@ class Publication < ActiveRecord::Base
   scope :by_wos_uid, ->(uid) { joins(:web_of_science_source_record).where('web_of_science_source_records.uid = ?', uid ) }
 
   has_one :web_of_science_source_record, autosave: true
+  has_many_attached :publication_files
 
   serialize :pub_hash, Hash
 
@@ -36,5 +37,19 @@ class Publication < ActiveRecord::Base
   # @note obscures ActiveRecord field/attribute getter for year
   def year
     pub_hash[:year]
+  end
+
+  # Vanity ID for use in the simple_form_for, referring to the publication by its related WOS Uid
+  def to_param
+    web_of_science_source_record[:uid]
+  end
+
+  def has_unique_publication_files(params)
+    params_files = params.map {|p| p.original_filename}
+    attached_files = publication_files.map {|p| p.filename.to_s }
+    duplicates = params_files.select { |f| attached_files.count(f) > 0}.uniq
+    logger.error "Duplicate uploads found: #{duplicates}, returning error."
+    errors.add(:base, "Cannot have duplicate files uploaded, file already attached: #{duplicates.join(', ')}") unless duplicates.blank?
+    duplicates.blank?
   end
 end

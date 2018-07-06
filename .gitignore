@@ -23,3 +23,7 @@ config/local_env.yml
 docker-compose.override.yml
 /lib/web_of_science/coverage/*
 /coverage/*
+
+# ActiveStorage file uploading path
+/storage/*
+!/storage/.keep
