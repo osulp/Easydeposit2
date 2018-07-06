@@ -62,5 +62,7 @@ module EasyDeposit2
     end
 
     config.rubycas.cas_base_url = ENV["ED2_CAS_BASE_URL"] || 'https://cas.myorganization.com'
+
+    config.active_job.queue_adapter = ENV['ACTIVE_JOB_QUEUE_ADAPTER'].present? ? ENV['ACTIVE_JOB_QUEUE_ADAPTER'].to_sym : :inline
   end
 end
