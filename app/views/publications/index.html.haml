@@ -1,23 +1,5 @@
-%ul.wos-records
-  - @wos_records.each do |r|
-    %li
-      %h1=r[:uid]
-      .fingerprint
-        %span Fingerprint:
-        %span=r[:source_fingerprint]
-      - unless r.publication
-        %i No publication record created.
-      - else
-        %table.table
-          %thead.thead-dark.table-striped.table-bordered
-            %tr
-              %th.text-align-right{scope: 'col'} Attribute
-              %th{scope: 'col'} Value(s)
-          %tbody
-            - r.publication[:pub_hash].each_pair do |k,v|
-              %tr
-                %th.text-align-right{scope: 'row'}=k
-                %td
-                  %ul
-                    - v.to_a.each do |value|
-                      %li=value
+.publications
+  %ul.wos-records
+    - @wos_records.each do |r|
+      %li
+        = render 'record', r: r
