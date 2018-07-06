@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_06_152425) do
+ActiveRecord::Schema.define(version: 2018_07_06_230611) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -54,6 +54,16 @@ ActiveRecord::Schema.define(version: 2018_07_06_152425) do
     t.index ["username"], name: "index_cas_users_on_username", unique: true
   end
 
+  create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "publication_id"
+    t.string "name"
+    t.string "status"
+    t.text "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["publication_id"], name: "index_jobs_on_publication_id"
+  end
+
   create_table "publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.boolean "active"
     t.boolean "deleted"
@@ -85,6 +95,16 @@ ActiveRecord::Schema.define(version: 2018_07_06_152425) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 4294967295
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   create_table "web_of_science_source_records", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.boolean "active"
     t.string "database"
@@ -99,5 +119,6 @@ ActiveRecord::Schema.define(version: 2018_07_06_152425) do
     t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"
   end
 
+  add_foreign_key "jobs", "publications"
   add_foreign_key "web_of_science_source_records", "publications"
 end
