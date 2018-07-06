@@ -1,0 +1,12 @@
+development:
+  host: <%= ENV['ED2_REDIS_HOST'] || 'localhost' %>
+  port: <%= ENV['ED2_REDIS_PORT'] || 6379 %>
+test:
+  host: <%= ENV['ED2_REDIS_HOST'] || 'localhost' %>
+  port: <%= ENV['ED2_REDIS_PORT'] || 6379 %>
+staging:
+  host: <%= ENV['ED2_REDIS_HOST'] || 'localhost' %>
+  port: <%= ENV['ED2_REDIS_PORT'] || 6379 %>
+production:
+  host: <%= ENV['ED2_REDIS_HOST'] || 'localhost' %>
+  port: <%= ENV['ED2_REDIS_PORT'] || 6379 %>

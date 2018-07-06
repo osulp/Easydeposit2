@@ -3,6 +3,7 @@ version: '2.3'
 volumes:
   app:
   db:
+  redis:
 
 networks:
   external:
@@ -67,11 +68,14 @@ services:
         condition: service_started
       db_migrate:
         condition: service_started
+      redis:
+        condition: service_started
     expose:
       - 3000
     links:
       - db
       - db_test
+      - redis
     stdin_open: true
     tty: true
 
@@ -94,3 +98,31 @@ services:
     links:
       - db
       - db_test
+
+  ##
+  # Runs sidekiq to process background jobs
+  workers:
+    extends: app
+    command: bundle exec sidekiq
+    depends_on:
+      db:
+        condition: service_started
+      db_test:
+        condition: service_started
+      db_migrate:
+        condition: service_started
+      redis:
+        condition: service_started
+    links:
+      - db
+      - db_test
+      - redis
+
+  ##
+  # Redis for the background job queues
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis:/data
+    networks:
+      internal:
