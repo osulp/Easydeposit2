@@ -85,6 +85,7 @@ module WebOfScience
         pub_hash: record.pub_hash,
       ) do |pub|
         pub.web_of_science_source_record = wssr if wssr.publication.blank?
+        pub.jobs = [Job.create(Job::HARVESTED_NEW)]
       end
     end
 

@@ -3,8 +3,9 @@ class Publication < ActiveRecord::Base
 
   scope :by_wos_uid, ->(uid) { joins(:web_of_science_source_record).where('web_of_science_source_records.uid = ?', uid ) }
 
-  has_one :web_of_science_source_record, autosave: true
+  has_one :web_of_science_source_record, autosave: true, dependent: :destroy
   has_many_attached :publication_files
+  has_many :jobs, inverse_of: :publication, dependent: :destroy
 
   serialize :pub_hash, Hash
 

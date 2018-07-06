@@ -3,13 +3,12 @@ Rails.application.routes.draw do
   devise_for :users
   devise_for :cas_users
 
-  resources :publications do
-    delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
-  end
-
   ##
   # Endpoint for Pub harvester
   get '/publications/harvest', to: 'publications#harvest', defaults: { format: :json }
+  resources :publications do
+    delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
+  end
 
   # Only allow CAS users who are admin to access RailsAdmin and Sidekiq
   authenticate :cas_user, -> u { u.admin? } do

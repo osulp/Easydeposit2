@@ -4,11 +4,17 @@ class InstitutionHarvestJob < ActiveJob::Base
   # Performs an asynchronous harvest and save publications
   # @return [void]
   def perform(institution)
+    job = Job.create(Job::HARVEST.merge({ status: 'started' }))
     web_of_science(institution)
+    job[:status] = 'completed'
   rescue => e
     msg = "InstitutionHarvestJob.perform"
     NotificationManager.log_exception(logger, msg, e)
+    job[:status] = 'error'
+    job[:message] = "#{msg} : #{e.message}"
     raise
+  ensure
+    job.save
   end
 
   private
