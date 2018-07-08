@@ -1,4 +1,5 @@
 class CasUser < ActiveRecord::Base
+  has_many :jobs, inverse_of: :cas_user
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :cas_authenticatable
