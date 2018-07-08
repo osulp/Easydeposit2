@@ -41,12 +41,39 @@
         td,
         th {
           padding: 0.25rem;
+          &.align-items-center {
+            align-items: center;
+            vertical-align: inherit;
+          }
         }
         td ul {
           margin: 0;
           padding-left: 5px;
           list-style-type: none;
         }
+      }
+    }
+  }
+  .no-files-attached {
+    font-size: 1.5rem;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+  }
+  .jobs {
+    font-size: 0.7rem;
+    .job-row {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      .job-name {
+        font-size: 1rem;
+      }
+      .badge {
+        font-size: 0.8rem;
+      }
+      .badge:last-child {
+        margin-right: 15px;
       }
     }
   }

@@ -5,16 +5,13 @@ class InstitutionHarvestJob < ActiveJob::Base
   # @return [void]
   def perform(institution)
     job = Job.create(Job::HARVEST.merge({ status: 'started' }))
-    web_of_science(institution)
-    job[:status] = 'completed'
+    uids = web_of_science(institution)
+    job.completed({message: "#{uids.count} records harvested."})
   rescue => e
     msg = "InstitutionHarvestJob.perform"
     NotificationManager.log_exception(logger, msg, e)
-    job[:status] = 'error'
-    job[:message] = "#{msg} : #{e.message}"
+    job.error({message: "#{msg} : #{e.message}"})
     raise
-  ensure
-    job.save
   end
 
   private
@@ -23,7 +20,8 @@ class InstitutionHarvestJob < ActiveJob::Base
   # @return [void]
   def web_of_science(institution)
     return unless Settings.WOS.enabled
-    WebOfScience.harvester.process_institution(institution)
+    uids = WebOfScience.harvester.process_institution(institution)
     logger.info('Harvest by institution complete')
+    uids
   end
 end

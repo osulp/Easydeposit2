@@ -30,6 +30,10 @@ class PublicationsController < ApplicationController
   def update
     respond_to do |format|
       if @publication.has_unique_publication_files(publication_params[:publication_files]) && @publication.update(publication_params)
+        files = publication_params[:publication_files].map{ |p| p.original_filename }
+        job = Job.create(Job::FILE_ADDED.merge({ message: files.join(', ') }))
+        current_user.jobs << job
+        @publication.jobs << job
         format.html { redirect_to edit_publication_path(@publication), notice: 'Publication was successfully updated.' }
         format.json { head :no_content }
       else
@@ -43,6 +47,9 @@ class PublicationsController < ApplicationController
     respond_to do |format|
       file = @publication.publication_files.find(params[:file_id])
       if file.purge
+        job = Job.create(Job::FILE_DELETED.merge({ message: file.blob.filename }))
+        current_user.jobs << job
+        @publication.jobs << job
         format.html { redirect_to edit_publication_path(@publication), notice: "#{file.blob.filename} was deleted." }
         format.json { head :no_content }
       else

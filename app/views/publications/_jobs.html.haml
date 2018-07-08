@@ -1,0 +1,18 @@
+.jobs
+  %hr
+  %h2 Processed Events
+  .wrap-collapsible
+    %input#collapsible.toggle{type: 'checkbox'}
+    %label.lbl-toggle{for: 'collapsible'} Show All
+    .collapsible-content
+      .collapsible-inner
+        - @publication.jobs.order(updated_at: :desc).each do |j|
+          .job-row.container
+            .row.justify-content-end
+              .col.job-name= j[:name]
+              .align-self-end
+                - if j.user || j.cas_user
+                  .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
+                .badge{class: "badge-#{j.status_class}"}=j[:status].humanize
+            .row
+              .col= "#{j[:updated_at]} : #{j[:message]}"
