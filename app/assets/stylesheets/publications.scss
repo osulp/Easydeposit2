@@ -66,14 +66,41 @@
       padding-top: 10px;
       padding-bottom: 10px;
       margin-bottom: 10px;
+      &.restartable {
+        border-radius: 8px;
+        background-color: rgba(220, 53, 69, 0.67) !important;
+        .restart {
+          border: solid 1px #fff;
+          border-radius: 50%;
+          padding: 5px;
+          cursor: pointer;
+          a {
+            color: #fff;
+            &:hover {
+              text-decoration: none;
+              color: #dc3545 !important;
+            }
+          }
+        }
+        .restart:hover {
+          color: #dc3545 !important;
+          background-color: #fff !important;
+          border: solid 1px #dc3545 !important;
+        }
+      }
       .job-name {
         font-size: 1rem;
       }
       .badge {
         font-size: 0.8rem;
+        vertical-align: top;
+        margin-top: 4px;
       }
-      .badge:last-child {
-        margin-right: 15px;
+      .material-icons {
+        vertical-align: super;
+      }
+      .material-icons:last-child {
+        margin: 0 15px 0;
       }
     }
   }

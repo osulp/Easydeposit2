@@ -13,19 +13,20 @@ class Job < ActiveRecord::Base
   }
 
   # Statuses
-  COMPLETED = 'completed'.freeze
-  ERROR = 'error'.freeze
-  STARTED = 'started'.freeze
-  WARN = 'warn'.freeze
+  DEFAULT =     { name: '',           class: 'primary', icon: 'help_outline' }
+  COMPLETED =   { name: 'completed',  class: 'success', icon: 'star' }
+  ERROR =       { name: 'error',      class: 'danger',  icon: 'error' }
+  STARTED =     { name: 'started',    class: 'info',    icon: 'watch_later' }
+  WARN =        { name: 'warn',       class: 'warning', icon: 'warning' }
 
   # Types of Jobs
-  HARVESTED_NEW = { name: 'Harvested New Publication',              status: COMPLETED }
-  HARVEST =       { name: 'Harvest Record(s) from Web Of Science',  status: WARN }
-  FILE_ADDED =    { name: 'File(s) added',                          status: COMPLETED }
-  FILE_DELETED =  { name: 'File(s) deleted',                        status: COMPLETED }
+  HARVESTED_NEW = { name: 'Harvested New Publication',              status: COMPLETED[:name] }
+  HARVEST =       { name: 'Harvest Record(s) from Web Of Science',  status: WARN[:name] }
+  FILE_ADDED =    { name: 'File(s) added',                          status: COMPLETED[:name] }
+  FILE_DELETED =  { name: 'File(s) deleted',                        status: COMPLETED[:name] }
 
   PUBLISH_WORK =  { name: 'Publish Work',
-                    status: STARTED,
+                    status: STARTED[:name],
                     restartable: true,
                     restartable_state: JSON.dump({
                       method: RESTARTABLE_METHODS[:publish_work]
@@ -33,32 +34,34 @@ class Job < ActiveRecord::Base
 
   def completed(options=nil)
     save_record(options.merge({
-      status: COMPLETED
+      status: COMPLETED[:name]
     }))
   end
 
   def error(options=nil)
     save_record(options.merge({
-      status: ERROR
+      status: ERROR[:name]
     }))
   end
 
   def warn(options=nil)
     save_record(options.merge({
-      status: WARN
+      status: WARN[:name]
     }))
   end
 
-  def status_class
+  def get_status
     return case status
-    when COMPLETED
-      "success"
-    when ERROR
-      "danger"
-    when WARN
-      "warning"
+    when COMPLETED[:name]
+      COMPLETED
+    when ERROR[:name]
+      ERROR
+    when WARN[:name]
+      WARN
+    when STARTED[:name]
+      STARTED
     else
-      "primary"
+      DEFAULT
     end
   end
 
@@ -82,9 +85,12 @@ class Job < ActiveRecord::Base
 
   private
   def save_record(options)
-    status = options[:status]
-    message = options[:message] || ''
-    save
+    self.update_columns({
+      status: options[:status],
+      message: options[:message].presence || '',
+      restartable: options[:restartable].nil? ? self.restartable : options[:restartable],
+      restartable_state: options[:restartable_state].presence || self.restartable_state
+    })
   end
 
   def set_restartable_state_job_id

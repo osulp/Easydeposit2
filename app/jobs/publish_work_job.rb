@@ -5,20 +5,21 @@ class PublishWorkJob < ActiveJob::Base
     job = get_job(state)
     job.update({
       message: "Executed at #{DateTime.now}",
-      status: Job::STARTED
+      status: Job::STARTED[:name]
     })
 
     # get the persisted state to decide what to execute
     state = job[:restartable_state]
 
-    if !true
+    if rand(2) == 1
       job.completed({
         message: "Completed at #{DateTime.now}",
         restartable: false
       })
     else
       job.warn({
-        message: "Completed at #{DateTime.now}"
+        message: "Completed at #{DateTime.now}",
+        restartable: true
       })
     end
   rescue => e

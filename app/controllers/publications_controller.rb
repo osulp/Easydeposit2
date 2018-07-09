@@ -1,7 +1,7 @@
 require 'csv'
 
 class PublicationsController < ApplicationController
-  before_action :get_record, only: [:show, :edit, :update, :delete_file]
+  before_action :get_record, except: [:index, :harvest]
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -56,6 +56,16 @@ class PublicationsController < ApplicationController
         format.html { render action: 'edit' }
         format.json { render json: @publication.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def restart_job
+    job = Job.find(params[:job_id])
+    current_user.jobs << job
+    job.retry
+    respond_to do |format|
+      format.html { redirect_to edit_publication_path(@publication), notice: "Restarted Job, please check back for status update." }
+      format.json { head :no_content }
     end
   end
 
