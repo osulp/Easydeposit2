@@ -36,6 +36,9 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
       self.source_data = @record.to_xml
     end
     self.source_fingerprint ||= Digest::SHA2.hexdigest(source_data)
+    # Intended to be used as part of the Email invitation to an author to claim the publication
+    # related to this WSSR
+    self.hashed_uid ||= Digest::SHA2.hexdigest(record.uid)
     self.database ||= record.database
     self.uid ||= record.uid
     self.doi ||= record.doi if record.doi.present?
