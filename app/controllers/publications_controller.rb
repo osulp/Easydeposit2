@@ -64,7 +64,7 @@ class PublicationsController < ApplicationController
     current_user.jobs << job
     job.retry
     respond_to do |format|
-      format.html { redirect_to edit_publication_path(@publication), notice: "Restarted Job, please check back for status update." }
+      format.html { redirect_back(fallback_location: root_path, notice: "Restarted Job, please check back for status update.") }
       format.json { head :no_content }
     end
   end
