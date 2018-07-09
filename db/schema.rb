@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_07_235840) do
+ActiveRecord::Schema.define(version: 2018_07_08_232636) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -63,6 +63,8 @@ ActiveRecord::Schema.define(version: 2018_07_07_235840) do
     t.datetime "updated_at"
     t.bigint "user_id"
     t.bigint "cas_user_id"
+    t.string "restartable_state"
+    t.boolean "restartable", default: false
     t.index ["cas_user_id"], name: "index_jobs_on_cas_user_id"
     t.index ["publication_id"], name: "index_jobs_on_publication_id"
     t.index ["user_id"], name: "index_jobs_on_user_id"

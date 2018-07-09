@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get '/publications/harvest', to: 'publications#harvest', defaults: { format: :json }
   resources :publications do
     delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
+    get 'job/:job_id', to: 'publications#restart_job', as: 'restart_job'
   end
 
   # Only allow CAS users who are admin to access RailsAdmin and Sidekiq
