@@ -39,11 +39,3 @@ append :linked_dirs, 'log', 'tmp', 'config/puma', 'public/assets', 'storage'
 set :keep_releases, 5
 
 set :passenger_restart_with_touch, true
-
-# tell monit to restart all defined processes (i.e. puma, sidekiq)
-task :restart_monit do
-  on roles(:app) do
-    execute "sudo /usr/bin/monit restart all"
-  end
-end
-after "deploy:published", "restart_monit"
