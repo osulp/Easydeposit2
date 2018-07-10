@@ -18,7 +18,7 @@
     - @jobs.order(updated_at: :desc).each do |j|
       %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
         %td= j[:name]
-        %td= j[:updated]
+        %td= j[:updated_at]
         %td
           - if j.user || j.cas_user
             .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
