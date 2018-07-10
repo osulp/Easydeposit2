@@ -14,7 +14,7 @@
                 = "#{j[:updated_at]} : #{j[:message]}"
               .job-icons
                 - if j.restartable
-                  .material-icons.bg-danger.text-white.restart= link_to "cached", publication_restart_job_path(@publication, j)
+                  .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(@publication, j)
                 - else
                   - if j.user || j.cas_user
                     .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
