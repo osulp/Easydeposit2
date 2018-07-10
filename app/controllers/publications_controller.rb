@@ -1,7 +1,8 @@
 require 'csv'
 
 class PublicationsController < ApplicationController
-  before_action :get_record, except: [:index, :harvest]
+  before_action :get_record, except: [:index, :harvest, :claim]
+  before_action :get_record_by_hashed_uid, only: :claim
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -69,7 +70,20 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def claim
+    current_user.publications << @publication
+    respond_to do |format|
+      format.html { redirect_to edit_publication_path(@publication), notice: "You've claimed this publication, please update and publish it." }
+      format.json { head :no_content }
+    end
+  end
+
   private
+
+  def get_record_by_hashed_uid
+    @wos_record = WebOfScienceSourceRecord.includes(:publication).where(hashed_uid: params[:hashed_uid]).first
+    @publication = @wos_record.publication
+  end
 
   def get_record
     id = params[:id] || params[:publication_id]

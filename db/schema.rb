@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_07_08_232636) do
+ActiveRecord::Schema.define(version: 2018_07_09_223435) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -54,6 +54,11 @@ ActiveRecord::Schema.define(version: 2018_07_08_232636) do
     t.index ["username"], name: "index_cas_users_on_username", unique: true
   end
 
+  create_table "cas_users_publications", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "cas_user_id", null: false
+    t.bigint "publication_id", null: false
+  end
+
   create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "publication_id"
     t.string "name"
@@ -79,6 +84,11 @@ ActiveRecord::Schema.define(version: 2018_07_08_232636) do
     t.text "xml"
     t.text "pub_hash"
     t.datetime "pub_at"
+  end
+
+  create_table "publications_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "publication_id", null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -122,6 +132,7 @@ ActiveRecord::Schema.define(version: 2018_07_08_232636) do
     t.string "doi"
     t.string "pmid"
     t.bigint "publication_id"
+    t.string "hashed_uid"
     t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"
   end
 
