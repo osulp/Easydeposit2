@@ -16,6 +16,7 @@
 !/log/.keep
 /tmp
 /config/settings.yml
+/config/config.yml
 /.idea/*
 /.byebug_history
 .vscode/*
