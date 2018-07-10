@@ -17,7 +17,11 @@
   %tbody
     - @jobs.order(updated_at: :desc).each do |j|
       %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
-        %td= j[:name]
+        %td
+          = j[:name]
+          - if j[:name] == Job::HARVESTED_NEW[:name]
+            %br
+            = link_to j.publication.web_of_science_source_record[:uid], publication_path(j.publication)
         %td= j[:updated_at]
         %td
           - if j.user || j.cas_user
