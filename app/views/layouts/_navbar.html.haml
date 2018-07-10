@@ -11,9 +11,11 @@
           %p
             Logged in as
             = current_user.username
-        %li.nav-item.link= link_to 'Publications', publications_path, class: 'nav-link'
         - if current_user.admin?
+          %li.nav-item.link= link_to 'All Publications', publications_path, class: 'nav-link'
           %li.nav-item= link_to 'Admin', rails_admin_path, class: 'nav-link faded'
+        - else
+          %li.nav-item.link= link_to 'My Publications', root_path, class: 'nav-link'
         %li.nav-item= link_to 'Logout', destroy_user_session_path, method: :delete, class: 'nav-link faded'
   #sub_nav
     %h1 Easy Deposit @ Oregon State University Libraries and Press

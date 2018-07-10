@@ -1,0 +1,41 @@
+%script{ src: 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'}
+%script{ src: 'https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js'}
+%link{ href: 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css', rel: 'stylesheet' }
+%link{ href: 'https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css', rel: 'stylesheet' }
+
+:javascript
+  $(document).ready(function() {
+    $('#publications_table').DataTable({
+      stateSave: true
+    });
+  });
+
+%h1 Publications
+%table#publications_table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th ID
+      %th Published
+      %th Created
+      %th.message Last Event
+      %th Last Event Status
+  %tbody
+    - @publications.order(pub_at: :desc).each do |p|
+      - job = p.jobs.order(updated_at: :desc).first
+      %tr{ class: "#{job.restartable ? 'restartable text-white' : ''} #{p.published? ? 'published' : ''}" }
+        %td
+          = link_to p.web_of_science_source_record[:uid], publication_path(p.web_of_science_source_record[:uid])
+          - if p[:pub_url]
+            %br
+            %a{href: p[:pub_url], target: '_blank'}= p[:pub_url]
+        %td= p[:pub_at]
+        %td= p[:created_at]
+        %td.message
+          = job[:name]
+          %br
+          = job[:message]
+        %td.text-center
+          - if job.restartable
+            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(job.publication, job)
+          - else
+            .material-icons{class: "text-#{job.get_status[:class]}"}= job.get_status[:icon]

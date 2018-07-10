@@ -55,4 +55,8 @@ class Publication < ActiveRecord::Base
     errors.add(:base, "Cannot have duplicate files uploaded, file already attached: #{duplicates.join(', ')}") unless duplicates.blank?
     duplicates.blank?
   end
+
+  def published?
+    !pub_at.blank?
+  end
 end
