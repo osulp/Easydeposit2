@@ -5,6 +5,7 @@ class PublicationsController < ApplicationController
   before_action :get_record_by_hashed_uid, only: :claim
   before_action :user_is_admin?, only: [:index, :harvest]
   before_action :user_has_access?, except: [:index, :harvest, :claim]
+  before_action :record_is_published?, only: [:update, :delete_file, :restart_job, :claim]
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -20,7 +21,7 @@ class PublicationsController < ApplicationController
   end
 
   def index
-    @wos_records = WebOfScienceSourceRecord.includes(:publication).all
+    @publications = Publication.includes(:web_of_science_source_record, :jobs).all
   end
 
   def show
@@ -103,5 +104,11 @@ class PublicationsController < ApplicationController
 
   def user_has_access?
     redirect_to(root_path, alert: "You are not authorized to access this page.") unless current_user.admin? || current_user.publications.include?(@publication)
+  end
+
+  def record_is_published?
+    if @publication.published?
+      redirect_to edit_publication_path(@publication), alert: "This publication has already been published, it can only be modified in the repository."
+    end
   end
 end
