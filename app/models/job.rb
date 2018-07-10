@@ -14,7 +14,7 @@ class Job < ActiveRecord::Base
 
   # Statuses
   DEFAULT =     { name: '',           class: 'primary', icon: 'help_outline' }
-  COMPLETED =   { name: 'completed',  class: 'success', icon: 'star' }
+  COMPLETED =   { name: 'completed',  class: 'success', icon: 'done_outline' }
   ERROR =       { name: 'error',      class: 'danger',  icon: 'error' }
   STARTED =     { name: 'started',    class: 'info',    icon: 'watch_later' }
   WARN =        { name: 'warn',       class: 'warning', icon: 'warning' }
