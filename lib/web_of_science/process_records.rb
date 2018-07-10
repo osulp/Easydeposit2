@@ -80,13 +80,16 @@ module WebOfScience
     # @param [WebOfScienceSourceRecord] WebOfScienceSourceRecord
     # @return [Boolean] WebOfScience::Record created a new Publication?
     def create_publication(record, wssr)
-      Publication.create!( # autosaves contrib
+      publication = Publication.create!( # autosaves contrib
         active: true,
         pub_hash: record.pub_hash,
       ) do |pub|
         pub.web_of_science_source_record = wssr if wssr.publication.blank?
-        pub.jobs = [Job.create(Job::HARVESTED_NEW)]
       end
+      Job.create(Job::HARVESTED_NEW.merge({
+        message: record.uid,
+        publication: publication
+      }))
     end
 
     # WOS Links API methods
