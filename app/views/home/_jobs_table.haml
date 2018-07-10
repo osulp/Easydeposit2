@@ -1,0 +1,36 @@
+%script{ src: 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'}
+%script{ src: 'https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js'}
+%link{ href: 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css', rel: 'stylesheet' }
+%link{ href: 'https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css', rel: 'stylesheet' }
+
+:javascript
+  $(document).ready(function() {
+    $('#jobs_table').DataTable({
+      stateSave: true
+    });
+  });
+
+%table#jobs_table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th Name
+      %th Created At
+      %th Updated At
+      %th User
+      %th.message Message
+      %th Status
+  %tbody
+    - @jobs.order(updated_at: :desc).each do |j|
+      %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
+        %td= j[:name]
+        %td= j[:created_at]
+        %td= j[:updated_at]
+        %td
+          - if j.user || j.cas_user
+            .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
+        %td.message= j[:message]
+        %td.text-center
+          - if j.restartable
+            .material-icons.bg-danger.text-white.restart= link_to "cached", publication_restart_job_path(j.publication, j)
+          - else
+            .material-icons{class: "text-#{j.get_status[:class]}"}= j.get_status[:icon]

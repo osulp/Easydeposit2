@@ -1,0 +1,16 @@
+.publications
+  - if @publication.errors.any?
+    .row
+      #error_explanation.alert.alert-danger.col.col-12{role: 'alert'}
+        %h4= "#{pluralize(@publication.errors.count, "error")} prohibited this from being saved:"
+        %ul
+          - @publication.errors.full_messages.each do |message|
+            %li= message
+  .row
+    .col.col-12.col-lg-6
+      = render 'record', r: @wos_record
+    .col.col-12.col-lg-6
+      - unless @publication.pub_at
+        = render 'file_form'
+      = render 'file_table'
+      = render 'jobs', r: @publication

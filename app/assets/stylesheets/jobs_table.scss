@@ -1,0 +1,30 @@
+#jobs_table {
+  font-size: 0.9rem;
+  .message {
+    max-width: 200px !important;
+  }
+  td.message {
+    font-size: 0.75rem;
+  }
+  tr.restartable {
+    background-color: rgba(220, 53, 69, 0.67) !important;
+    .restart {
+      border: solid 1px #fff;
+      border-radius: 50%;
+      padding: 5px;
+      cursor: pointer;
+      a {
+        color: #fff;
+        &:hover {
+          text-decoration: none;
+          color: #dc3545 !important;
+        }
+      }
+    }
+    .restart:hover {
+      color: #dc3545 !important;
+      background-color: #fff !important;
+      border: solid 1px #dc3545 !important;
+    }
+  }
+}

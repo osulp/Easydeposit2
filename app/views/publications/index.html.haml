@@ -1,0 +1,5 @@
+.publications
+  %ul.wos-records
+    - @wos_records.each do |r|
+      %li
+        = render 'record', r: r

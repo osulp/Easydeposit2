@@ -33,7 +33,7 @@ module WebOfScience
     end
 
     # TODO
-    # revise to create a SA@OSU article, instead of SUL publication
+    # Add the workflow to deposit the publication into SA@OSU (after publication is created)
     # ----------------------------------------------------------------
     # @return [Array<String>] WosUIDs that successfully create a new Publication
     def create_publications
@@ -43,14 +43,13 @@ module WebOfScience
       wssrs_hash = wssrs.map(&:uid).zip(wssrs).to_h
       new_uids = []
       records.each do |rec|
-        pub = matching_publication(rec)
+        pub = Publication.by_wos_uid(rec.uid).first
         wssr = wssrs_hash[rec.uid]
-        # if record already been deposited in SA@OSU
         if pub
-          # update tables in ED2 to link wssr and SA@OSU publication
+          # if a publication already exists for the same uid, update tables in ED2 to link wssr and publication
           wssr.link_publication(pub) if wssr.publication.blank?
         else
-          # else deposit into SA@OSU
+          # else create publication
           create_publication(rec, wssr) && new_uids << rec.uid
         end
       end
@@ -66,7 +65,8 @@ module WebOfScience
       already_fetched_recs = WebOfScienceSourceRecord.where(uid: uids)
       already_fetched_uids = already_fetched_recs.pluck(:uid)
       unmatched_recs = records.reject { |rec| already_fetched_uids.include? rec.uid }
-      process_links(unmatched_recs)
+      # unnecessary?
+      #process_links(unmatched_recs)
       batch = unmatched_recs.map do |rec|
         attribs = { source_data: rec.to_xml }
         attribs[:doi] = rec.doi if rec.doi.present?
@@ -83,10 +83,9 @@ module WebOfScience
       Publication.create!( # autosaves contrib
         active: true,
         pub_hash: record.pub_hash,
-        wos_uid: record.uid,
-        pubhash_needs_update: true
       ) do |pub|
         pub.web_of_science_source_record = wssr if wssr.publication.blank?
+        pub.jobs = [Job.create(Job::HARVESTED_NEW)]
       end
     end
 
@@ -99,46 +98,23 @@ module WebOfScience
     #       identifiers will get added to PublicationIdentifier after a Publication is created.
     # @param [Array<WebOfScience::Record>] recs
     # @return [void]
-    def process_links(recs)
-      links = retrieve_links(recs)
-      return [] if links.blank?
-      recs.each { |rec| rec.identifiers.update(links[rec.uid]) if rec.database == 'WOS' }
-    rescue StandardError => err
-      NotificationManager.error(err, 'process_links failed', self)
-    end
+    #def process_links(recs)
+    #  links = retrieve_links(recs)
+    #  return [] if links.blank?
+    #  recs.each { |rec| rec.identifiers.update(links[rec.uid]) if rec.database == 'WOS' }
+    #rescue StandardError => err
+    #  NotificationManager.error(err, 'process_links failed', self)
+    #end
 
     # Retrieve a batch of publication identifiers for WOS records from the Links-API
     # @example {"WOS:000288663100014"=>{"pmid"=>"21253920", "doi"=>"10.1007/s12630-011-9462-1"}}
     # @return [Hash<String => Hash<String => String>>]
-    def retrieve_links(recs)
-      link_uids = recs.map { |rec| rec.uid if rec.database == 'WOS' }.compact
-      return {} if link_uids.blank?
-      links_client.links(link_uids)
-    rescue StandardError => err
-      NotificationManager.error(err, 'retrieve_links failed', self)
-    end
-
-    # Does record have a contribution for this author? (based on matching PublicationIdentifiers)
-    # Note: must use unique identifiers, don't use ISSN or similar series level identifiers
-    # We search for all PubIDs at once instead of serial queries.  No need to hit the same table multiple times.
-    # @param [WebOfScience::Record] record
-    # @return [::Publication, nil] a matched or newly minted Contribution
-    def matching_publication(record)
-      Publication.joins(:publication_identifiers).where(
-        "publication_identifiers.identifier_value IS NOT NULL AND (
-         (publication_identifiers.identifier_type = 'WosUID' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'WosItemID' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'doi' AND publication_identifiers.identifier_value = ?) OR
-         (publication_identifiers.identifier_type = 'pmid' AND publication_identifiers.identifier_value = ?))",
-        record.uid, record.wos_item_id, record.doi, record.pmid
-      ).order(
-        "CASE
-          WHEN publication_identifiers.identifier_type = 'WosUID' THEN 0
-          WHEN publication_identifiers.identifier_type = 'WosItemID' THEN 1
-          WHEN publication_identifiers.identifier_type = 'doi' THEN 2
-          WHEN publication_identifiers.identifier_type = 'pmid' THEN 3
-         END"
-      ).first
-    end
+    #def retrieve_links(recs)
+    #  link_uids = recs.map { |rec| rec.uid if rec.database == 'WOS' }.compact
+    #  return {} if link_uids.blank?
+    #  links_client.links(link_uids)
+    #rescue StandardError => err
+    #  NotificationManager.error(err, 'retrieve_links failed', self)
+    #end
   end
 end

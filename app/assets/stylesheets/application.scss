@@ -3,7 +3,11 @@
 @import "navbar";
 @import "flash_messages";
 @import "new_user_session";
+@import "publications";
+@import "collapsible";
+@import "jobs_table";
 
-body > .container {
+body > .container-fluid {
   padding-top: 25px;
+  padding-bottom: 25px;
 }

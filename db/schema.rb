@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_04_213115) do
+ActiveRecord::Schema.define(version: 2018_07_09_223435) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -31,18 +31,6 @@ ActiveRecord::Schema.define(version: 2018_06_04_213115) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
-  end
-
-  create_table "authors", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.string "email"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "middle_name"
-    t.string "preferred_first_name"
-    t.string "preferred_last_name"
-    t.string "preferred_middle_name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "cas_users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -66,29 +54,25 @@ ActiveRecord::Schema.define(version: 2018_06_04_213115) do
     t.index ["username"], name: "index_cas_users_on_username", unique: true
   end
 
-  create_table "contributions", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "author_id"
-    t.integer "publication_id"
-    t.string "status"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["author_id"], name: "index_contributions_on_author_id"
-    t.index ["publication_id", "author_id"], name: "index_contributions_on_publication_id_and_author_id"
-    t.index ["publication_id"], name: "index_contributions_on_publication_id"
+  create_table "cas_users_publications", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "cas_user_id", null: false
+    t.bigint "publication_id", null: false
   end
 
-  create_table "publication_identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.integer "publication_id"
-    t.string "identifier_type"
-    t.string "identifier_value"
-    t.string "identifier_uri"
-    t.string "certainty"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["identifier_type", "publication_id"], name: "pub_identifier_index_by_pub_and_type"
-    t.index ["identifier_type"], name: "index_publication_identifiers_on_identifier_type"
-    t.index ["publication_id", "identifier_type"], name: "pub_identifier_index_by_type_and_pub"
-    t.index ["publication_id"], name: "index_publication_identifiers_on_publication_id"
+  create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "publication_id"
+    t.string "name"
+    t.string "status"
+    t.text "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.bigint "user_id"
+    t.bigint "cas_user_id"
+    t.string "restartable_state"
+    t.boolean "restartable", default: false
+    t.index ["cas_user_id"], name: "index_jobs_on_cas_user_id"
+    t.index ["publication_id"], name: "index_jobs_on_publication_id"
+    t.index ["user_id"], name: "index_jobs_on_user_id"
   end
 
   create_table "publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -99,8 +83,12 @@ ActiveRecord::Schema.define(version: 2018_06_04_213115) do
     t.integer "lock_version"
     t.text "xml"
     t.text "pub_hash"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "pub_at"
+  end
+
+  create_table "publications_users", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "publication_id", null: false
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -123,19 +111,33 @@ ActiveRecord::Schema.define(version: 2018_06_04_213115) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "versions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.string "item_type", limit: 191, null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object", limit: 4294967295
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
   create_table "web_of_science_source_records", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.boolean "active"
     t.string "database"
     t.text "source_data"
     t.string "source_fingerprint"
+    t.string "source_url"
+    t.string "authors"
     t.string "uid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "doi"
     t.string "pmid"
-    t.index ["doi"], name: "web_of_science_doi_index"
-    t.index ["pmid"], name: "web_of_science_pmid_index"
-    t.index ["uid"], name: "web_of_science_uid_index"
+    t.bigint "publication_id"
+    t.string "hashed_uid"
+    t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"
   end
 
+  add_foreign_key "jobs", "cas_users"
+  add_foreign_key "jobs", "publications"
+  add_foreign_key "jobs", "users"
+  add_foreign_key "web_of_science_source_records", "publications"
 end

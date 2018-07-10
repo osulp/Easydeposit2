@@ -48,7 +48,10 @@ module WebOfScience
 
     # @return [String, nil]
     def eissn
-      ids['Identifier-Eissn']
+      eissn = ids.select do |d|
+        d.has_key?('Identifier.Eissn')
+      end
+      return eissn
     end
 
     # @return [String, nil]
@@ -58,7 +61,10 @@ module WebOfScience
 
     # @return [String, nil]
     def issn
-      ids['Indentifier-Issn']
+      issn = ids.select do |d|
+        d.has_key?('Identifier.Issn')
+      end
+      return issn
     end
 
     # @return [String, nil]
@@ -177,7 +183,7 @@ module WebOfScience
 
     # @param ids [Hash]
     def filter_ids(ids)
-      ids.select { |v| ALLOWED_TYPES.include? v.keys.first }
+      return ids if ids.any?{ |d| d.has_key?('Identifier.Doi') || d.has_key?('Identifier.Eissn') || d.has_key?('Identifier.Issn') || d.has_key?('Identifier.Pmid') }
     end
 
     def parse_medline(doc)
