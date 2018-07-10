@@ -1,8 +1,3 @@
-%script{ src: 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'}
-%script{ src: 'https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js'}
-%link{ href: 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.css', rel: 'stylesheet' }
-%link{ href: 'https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css', rel: 'stylesheet' }
-
 :javascript
   $(document).ready(function() {
     $('#jobs_table').DataTable({
@@ -10,12 +5,12 @@
     });
   });
 
+%h1 Jobs
 %table#jobs_table.table.table-striped.table-bordered
   %thead
     %tr
       %th Name
-      %th Created At
-      %th Updated At
+      %th Updated
       %th User
       %th.message Message
       %th Status
@@ -27,7 +22,6 @@
           - if j[:name] == Job::HARVESTED_NEW[:name]
             %br
             = link_to j.publication.web_of_science_source_record[:uid], publication_path(j.publication)
-        %td= j[:created_at]
         %td= j[:updated_at]
         %td
           - if j.user || j.cas_user
