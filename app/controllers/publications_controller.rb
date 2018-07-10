@@ -3,6 +3,8 @@ require 'csv'
 class PublicationsController < ApplicationController
   before_action :get_record, except: [:index, :harvest, :claim]
   before_action :get_record_by_hashed_uid, only: :claim
+  before_action :user_is_admin?, only: [:index, :harvest]
+  before_action :user_has_access?, except: [:index, :harvest, :claim]
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -93,5 +95,13 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(publication_files: [])
+  end
+
+  def user_is_admin?
+    redirect_to(root_path, alert: "You are not authorized to access this page.") unless current_user.admin?
+  end
+
+  def user_has_access?
+    redirect_to(root_path, alert: "You are not authorized to access this page.") unless current_user.admin? || current_user.publications.include?(@publication)
   end
 end
