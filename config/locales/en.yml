@@ -20,9 +20,5 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
-  activerecord:
-    models:
-      cas_user:
-        one: User (CAS)
-        other: Users (CAS)
+  tooltip:
+    restart: "Retry processing this job"
