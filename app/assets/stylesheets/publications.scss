@@ -26,6 +26,30 @@
     font-weight: bold;
   }
 
+  .btn.publish {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+    i {
+      font-size: 2rem;
+      vertical-align: text-top;
+      margin-right: 5px;
+    }
+    a {
+      color: #ffffff;
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .attach-files {
+    margin-bottom: 20px;
+    .custom-file-label:after {
+      content: "Upload";
+    }
+  }
+
   .fingerprint {
     span {
       font-size: 0.8rem;
@@ -79,6 +103,7 @@
           border-radius: 50%;
           padding: 5px;
           cursor: pointer;
+          transition: transform 0.8s ease-in-out;
           a {
             color: #fff;
             &:hover {
@@ -91,6 +116,7 @@
           color: #dc3545 !important;
           background-color: #fff !important;
           border: solid 1px #dc3545 !important;
+          transform: rotate(-360deg);
         }
       }
       .job-name {

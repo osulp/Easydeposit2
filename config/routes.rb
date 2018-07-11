@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   # Endpoint for Pub harvester
   get '/publications/harvest', to: 'publications#harvest', defaults: { format: :json }
   resources :publications do
+    get 'publish', to: 'publications#publish', as: 'publish'
     delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
     get 'job/:job_id', to: 'publications#restart_job', as: 'restart_job'
   end

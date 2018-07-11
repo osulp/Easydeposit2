@@ -22,3 +22,5 @@
 en:
   tooltip:
     restart: "Retry processing this job"
+  confirm:
+    publish: "<b>Publishing this work to the repository will prevent any further changes from being made here.</b><br/><br/>All future updates to this work can be made from within the repository. Are you ready to publish?"

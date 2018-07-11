@@ -1,0 +1,12 @@
+.row.justify-content-center
+  .btn.btn-success.col-3.publish{ 'data-toggle' => 'modal', 'data-target' => '#publish_modal_center' }
+    %i.material-icons backup
+    Publish
+  #publish_modal_center.modal.fade{tabindex: '-1', role: 'dialog', 'aria-labelledby' => 'publish_modal_center_title', 'aria-hidden' => 'true'}
+    .modal-dialog.modal-dialog-centered{role: 'document'}
+      .modal-content
+        .modal-body
+          = t('confirm.publish').html_safe
+        .modal-footer
+          %button.btn.btn-secondary{type: 'button', 'data-dismiss' => 'modal'} Cancel
+          = link_to "Publish", publication_publish_path(@wos_record.uid), method: :get, class: 'btn btn-success'

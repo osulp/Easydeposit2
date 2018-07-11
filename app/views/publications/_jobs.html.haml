@@ -2,8 +2,9 @@
   %hr
   %h2 Processed Events
   .wrap-collapsible
-    %input#collapsible.toggle{type: 'checkbox'}
-    %label.lbl-toggle{for: 'collapsible'} Show All
+    - if @publication.jobs.count > 3
+      %input#collapsible.toggle{type: 'checkbox'}
+      %label.lbl-toggle{for: 'collapsible'} Show All
     .collapsible-content
       .collapsible-inner
         - @publication.jobs.order(updated_at: :desc).each do |j|
@@ -13,9 +14,9 @@
                 .job-name= j[:name]
                 = "#{j[:updated_at]} : #{j[:message]}"
               .job-icons
+                - if j.user || j.cas_user
+                  .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
                 - if j.restartable
                   .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(@publication, j)
                 - else
-                  - if j.user || j.cas_user
-                    .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
                   .material-icons{class: "text-#{j.get_status[:class]}"}= j.get_status[:icon]

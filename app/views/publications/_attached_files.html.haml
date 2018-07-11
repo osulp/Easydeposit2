@@ -1,0 +1,4 @@
+%h2 Attach Files
+- if @publication.ready_to_publish?
+  = render 'file_form'
+= render 'file_table'

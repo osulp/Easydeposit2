@@ -5,8 +5,6 @@ class Job < ActiveRecord::Base
   belongs_to :user, inverse_of: :jobs, optional: true
   belongs_to :cas_user, inverse_of: :jobs, optional: true
 
-  after_create :set_restartable_state_job_id
-
   # Restartable Methods
   RESTARTABLE_METHODS = {
     publish_work: PublishWorkJob.to_s
@@ -66,20 +64,15 @@ class Job < ActiveRecord::Base
   end
 
   ##
-  # Static method to find a job from the provided state
-  def self.from_state(state)
-    Job.find(state['job_id'])
-  end
-
-  ##
   # Called by the end-user from a button surfaced on the UI; retry the
   # restartable job related to this record.
-  def retry
-    if restartable && !restartable_state.blank?
+  def retry(current_user)
+    raise "Missing reference to the current user." unless current_user
+    if restartable
       #check if the restartable method is in the array as a security method to control which classes can be called
       state = JSON.parse(restartable_state)
       klass = state['method'].constantize
-      klass.new.perform(state)
+      klass.new.perform(publication: publication, current_user: current_user, previous_job: self)
     end
   end
 
@@ -91,13 +84,5 @@ class Job < ActiveRecord::Base
       restartable: options[:restartable].nil? ? self.restartable : options[:restartable],
       restartable_state: options[:restartable_state].presence || self.restartable_state
     })
-  end
-
-  def set_restartable_state_job_id
-    if restartable && !restartable_state.blank?
-      state = JSON.parse(restartable_state)
-      state[:job_id] = id
-      self.update_columns(restartable_state: JSON.dump(state))
-    end
   end
 end

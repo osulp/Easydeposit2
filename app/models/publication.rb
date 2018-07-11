@@ -59,4 +59,8 @@ class Publication < ActiveRecord::Base
   def published?
     !pub_at.blank?
   end
+
+  def ready_to_publish?
+    publication_files.count > 0 && pub_at.blank?
+  end
 end
