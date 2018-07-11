@@ -58,6 +58,9 @@ gem 'capistrano-rails'
 gem 'capistrano-rbenv'
 gem 'capistrano3-puma'
 
+# Use Mechanize to scrape reprint addresses
+gem 'mechanize'
+
 group :development, :test do
   gem 'debase'
   # Great gem for inspecting the database in development/test at localhost:3000/rails/db

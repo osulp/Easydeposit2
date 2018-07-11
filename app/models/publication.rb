@@ -10,6 +10,7 @@ class Publication < ActiveRecord::Base
   has_and_belongs_to_many :cas_users
 
   serialize :pub_hash, Hash
+  serialize :reprintemails, Array
 
   def delete!
     self.deleted = true
