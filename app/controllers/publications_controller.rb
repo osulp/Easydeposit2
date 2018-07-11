@@ -5,7 +5,7 @@ class PublicationsController < ApplicationController
   before_action :get_record_by_hashed_uid, only: :claim
   before_action :user_is_admin?, only: [:index, :harvest]
   before_action :user_has_access?, except: [:index, :harvest, :claim]
-  before_action :record_is_published?, only: [:update, :delete_file, :restart_job, :claim]
+  before_action :record_is_published?, only: [:update, :delete_file, :restart_job, :claim, :publish]
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -66,7 +66,7 @@ class PublicationsController < ApplicationController
   def restart_job
     job = Job.find(params[:job_id])
     current_user.jobs << job
-    job.retry
+    job.retry(current_user)
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path, notice: "Restarted Job, please check back for status update.") }
       format.json { head :no_content }
@@ -77,6 +77,15 @@ class PublicationsController < ApplicationController
     current_user.publications << @publication
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication), notice: "You've claimed this publication, please update and publish it." }
+      format.json { head :no_content }
+    end
+  end
+
+  def publish
+    job = @publication.jobs.where(name: Job::PUBLISH_WORK[:name]).first
+    PublishWorkJob.perform_now(publication: @publication, current_user: current_user, previous_job: job)
+    respond_to do |format|
+      format.html { redirect_to edit_publication_path(@publication), warn: "Publishing work to repository..." }
       format.json { head :no_content }
     end
   end

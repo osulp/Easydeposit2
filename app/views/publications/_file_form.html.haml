@@ -1,0 +1,12 @@
+:javascript
+  $(function() {
+    $('.custom-file-input').on('change', function(e) {
+      $(this).parents('form').submit();
+    })
+  })
+
+= simple_form_for @publication, html: { class: 'attach-files col-12' } do |f|
+  .row
+    .col-11
+      = f.file_field :publication_files, multiple: true, class: 'custom-file-input'
+      %label{ class: 'custom-file-label', for: 'publication_publication_file' } Choose file(s)

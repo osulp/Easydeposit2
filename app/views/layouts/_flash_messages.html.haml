@@ -1,6 +1,6 @@
 - flash.each do |k,v|
-  .row
-    .alert.alert-dismissible.fade.show.col.col-12{ role: "alert", class: "alert-#{k}" }
+  .row.justify-content-center
+    .alert.alert-dismissible.fade.show.col.col-10{ role: "alert", class: "alert-#{k}" }
       %button.close{ type: "button", 'data-dismiss' => "alert", 'aria-label' => "Close" }
         %span{ 'aria-hidden' => "true" } &times;
       = v

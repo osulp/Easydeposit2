@@ -1,12 +1,16 @@
 class PublishWorkJob < ActiveJob::Base
   queue_as :default
 
-  def perform(state=nil)
-    job = get_job(state)
+  def perform(publication:, current_user: nil, previous_job: nil)
+    job = previous_job || Job.create(Job::PUBLISH_WORK)
+
     job.update({
-      message: "Executed at #{DateTime.now}",
+      publication: publication,
+      message: "Attempting to publish at #{DateTime.now}",
       status: Job::STARTED[:name]
     })
+
+    current_user.jobs << job if current_user
 
     # get the persisted state to decide what to execute
     state = job[:restartable_state]
@@ -16,6 +20,7 @@ class PublishWorkJob < ActiveJob::Base
         message: "Completed at #{DateTime.now}",
         restartable: false
       })
+      publication.update(pub_at: DateTime.now)
     else
       job.warn({
         message: "Completed at #{DateTime.now}",
@@ -27,14 +32,5 @@ class PublishWorkJob < ActiveJob::Base
     NotificationManager.log_exception(logger, msg, e)
     job.error({message: "#{msg} : #{e.message}"})
     raise
-  end
-
-  private
-  def get_job(state=nil)
-    if state
-      Job.from_state(state)
-    else
-      Job.create(Job::PUBLISH_WORK)
-    end
   end
 end
