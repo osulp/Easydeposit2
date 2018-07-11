@@ -12,7 +12,6 @@
             .row.justify-content-end
               .col
                 .job-name= j[:name]
-                = "#{j[:updated_at]} : #{j[:message]}"
               .job-icons
                 - if j.user || j.cas_user
                   .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
@@ -20,3 +19,6 @@
                   .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(@publication, j)
                 - else
                   .material-icons{class: "text-#{j.get_status[:class]}"}= j.get_status[:icon]
+            .row
+              .col
+                = "#{j[:updated_at]} : #{j[:message]}"
