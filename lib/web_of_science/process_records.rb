@@ -32,9 +32,6 @@ module WebOfScience
       @uids ||= records.map(&:uid)
     end
 
-    # TODO
-    # Add the workflow to deposit the publication into SA@OSU (after publication is created)
-    # ----------------------------------------------------------------
     # @return [Array<String>] WosUIDs that successfully create a new Publication
     def create_publications
       return [] if records.empty?
@@ -90,6 +87,17 @@ module WebOfScience
         message: record.uid,
         publication: publication
       }))
+      send_recruitemail(wssr, publication)
+    end
+
+    # @param [WebOfScienceSourceRecord] WebOfScienceSourceRecord
+    # @param [Publication] Publication
+    # @return [Boolean] RECRUIT_EMAIL job completed?
+    def send_recruitemail(wssr, publication)
+      contact_emails = WebOfScience::SendRecruitemail.scrape_emails(wssr, publication)
+      job = Job.create(Job::EMAIL_SENT.merge({ status: 'started'}))
+      WebOfScience::SendRecruitemail.send_emails(contact_emails)
+      job.completed({message: 'Article recruit emails sent to reprint address'})
     end
 
     # WOS Links API methods

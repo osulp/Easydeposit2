@@ -22,6 +22,7 @@ class Job < ActiveRecord::Base
   HARVEST =       { name: 'Harvest Record(s) from Web Of Science',  status: WARN[:name] }
   FILE_ADDED =    { name: 'File(s) added',                          status: COMPLETED[:name] }
   FILE_DELETED =  { name: 'File(s) deleted',                        status: COMPLETED[:name] }
+  EMAIL_SENT =    { name: 'Article recruit email sent',             status: COMPLETED[:name] }
 
   PUBLISH_WORK =  { name: 'Publish Work',
                     status: STARTED[:name],
