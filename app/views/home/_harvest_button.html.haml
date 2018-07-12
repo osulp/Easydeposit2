@@ -1,0 +1,13 @@
+- if current_user.admin?
+  .row.justify-content-center
+    .btn.btn-success.harvest{ 'data-toggle' => 'modal', 'data-target' => '#harvest_modal_center' }
+      %i.material-icons cloud_download
+      Harvest New Records
+    #harvest_modal_center.modal.fade{tabindex: '-1', role: 'dialog', 'aria-labelledby' => 'harvest_modal_center_title', 'aria-hidden' => 'true'}
+      .modal-dialog.modal-dialog-centered{role: 'document'}
+        .modal-content
+          .modal-body
+            = t('confirm.harvest').html_safe
+          .modal-footer
+            %button.btn.btn-secondary{type: 'button', 'data-dismiss' => 'modal'} Cancel
+            = link_to "Harvest", publications_harvest_path, class: 'btn btn-success'

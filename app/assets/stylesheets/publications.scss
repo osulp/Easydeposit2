@@ -26,23 +26,6 @@
     font-weight: bold;
   }
 
-  .btn.publish {
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin-bottom: 30px;
-    i {
-      font-size: 2rem;
-      vertical-align: text-top;
-      margin-right: 5px;
-    }
-    a {
-      color: #ffffff;
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
-
   .attach-files {
     margin-bottom: 20px;
     .custom-file-label:after {
@@ -133,6 +116,24 @@
       .material-icons:last-child {
         margin: 0 15px 0;
       }
+    }
+  }
+}
+
+.btn.publish,
+.btn.harvest {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  i {
+    font-size: 2rem;
+    vertical-align: text-top;
+    margin-right: 5px;
+  }
+  a {
+    color: #ffffff;
+    &:hover {
+      text-decoration: none;
     }
   }
 }

@@ -9,15 +9,9 @@ class PublicationsController < ApplicationController
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
-    if InstitutionHarvestJob.perform_later(institution)
-      render json: {
-          response: "Harvest for institution was successfully created."
-      }, status: :accepted
-    else
-      render json: {
-          error: "Harvest for institution failed."
-      }, status: :error
-    end
+    InstitutionHarvestJob.perform_later(institution)
+    flash[:warn] = "The system is harvesting new publications"
+    redirect_to root_path
   end
 
   def index
