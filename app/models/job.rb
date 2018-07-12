@@ -7,7 +7,8 @@ class Job < ActiveRecord::Base
 
   # Restartable Methods
   RESTARTABLE_METHODS = {
-    publish_work: PublishWorkJob.to_s
+    publish_work: PublishWorkJob.to_s,
+    email_published_work: EmailPublishedWorkJob.to_s
   }
 
   # Statuses
@@ -16,35 +17,41 @@ class Job < ActiveRecord::Base
   ERROR =       { name: 'error',      class: 'danger',  icon: 'error' }
   STARTED =     { name: 'started',    class: 'info',    icon: 'watch_later' }
   WARN =        { name: 'warn',       class: 'warning', icon: 'warning' }
+  EMAIL =       { name: 'email',      class: 'success', icon: 'mail_outline' }
 
   # Types of Jobs
-  HARVESTED_NEW = { name: 'Harvested New Publication',              status: COMPLETED[:name] }
-  HARVEST =       { name: 'Harvest Record(s) from Web Of Science',  status: WARN[:name] }
-  FILE_ADDED =    { name: 'File(s) added',                          status: COMPLETED[:name] }
-  FILE_DELETED =  { name: 'File(s) deleted',                        status: COMPLETED[:name] }
-
-  PUBLISH_WORK =  { name: 'Publish Work',
-                    status: STARTED[:name],
-                    restartable: true,
-                    restartable_state: JSON.dump({
-                      method: RESTARTABLE_METHODS[:publish_work]
-                    }) }
+  HARVESTED_NEW =   { name: 'Harvested New Publication',              status: COMPLETED[:name] }
+  HARVEST =         { name: 'Harvest Record(s) from Web Of Science',  status: WARN[:name] }
+  FILE_ADDED =      { name: 'File(s) added',                          status: COMPLETED[:name] }
+  FILE_DELETED =    { name: 'File(s) deleted',                        status: COMPLETED[:name] }
+  EMAIL_PUBLISHED = { name: 'Publish Work Notification Email',
+                      status: STARTED[:name],
+                      restartable: true,
+                      restartable_state: JSON.dump({
+                        method: RESTARTABLE_METHODS[:email_published_work]
+                      }) }
+  PUBLISH_WORK =    { name: 'Publish Work',
+                      status: STARTED[:name],
+                      restartable: true,
+                      restartable_state: JSON.dump({
+                        method: RESTARTABLE_METHODS[:publish_work]
+                      }) }
 
   def completed(options=nil)
     save_record(options.merge({
-      status: COMPLETED[:name]
+      status: options[:status] || COMPLETED[:name]
     }))
   end
 
   def error(options=nil)
     save_record(options.merge({
-      status: ERROR[:name]
+      status: options[:status] || ERROR[:name]
     }))
   end
 
   def warn(options=nil)
     save_record(options.merge({
-      status: WARN[:name]
+      status: options[:status] || WARN[:name]
     }))
   end
 
@@ -58,6 +65,8 @@ class Job < ActiveRecord::Base
       WARN
     when STARTED[:name]
       STARTED
+    when EMAIL[:name]
+      EMAIL
     else
       DEFAULT
     end
@@ -72,7 +81,7 @@ class Job < ActiveRecord::Base
       #check if the restartable method is in the array as a security method to control which classes can be called
       state = JSON.parse(restartable_state)
       klass = state['method'].constantize
-      klass.new.perform(publication: publication, current_user: current_user, previous_job: self)
+      klass.perform_later(publication: publication, current_user: current_user, previous_job: self)
     end
   end
 

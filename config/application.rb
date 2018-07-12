@@ -64,5 +64,15 @@ module EasyDeposit2
     config.rubycas.cas_base_url = ENV["ED2_CAS_BASE_URL"] || 'https://cas.myorganization.com'
 
     config.active_job.queue_adapter = ENV['ACTIVE_JOB_QUEUE_ADAPTER'].present? ? ENV['ACTIVE_JOB_QUEUE_ADAPTER'].to_sym : :inline
+
+    config.action_mailer.delivery_method = :sendmail
+    config.action_mailer.raise_delivery_errors = true
+    config.action_mailer.perform_deliveries = true
+    config.action_mailer.default_options = {
+      from: ENV['ED2_EMAIL_FROM']
+    }
+    config.action_mailer.default_url_options = {
+      host: ENV['ED2_APPLICATION_HOST_NAME']
+    }
   end
 end

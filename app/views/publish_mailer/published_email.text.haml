@@ -1,0 +1,11 @@
+="Your work has been published by #{@user.email}"
+\-------------------------------------------------
+
+- @publication.web_of_science_source_record.record.titles.each do |t|
+  = t
+  \-------------------------------------------------
+
+Repository:
+= @publication.pub_url
+Easy Deposit:
+= publication_url(@publication)

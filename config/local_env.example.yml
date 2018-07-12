@@ -40,3 +40,7 @@ ED2_REDIS_PORT: '6379'
 ED2_REDIS_HOST: localhost
 # Docker
 #ED2_REDIS_HOST: redis
+
+# Email configurations
+ED2_EMAIL_FROM: 'user@server.com'
+ED2_APPLICATION_HOST_NAME: 'localhost:3000'

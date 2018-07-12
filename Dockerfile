@@ -1,6 +1,6 @@
 FROM ruby:2.5.1
 RUN apt-get update -qq && \
-  apt-get install -y build-essential libpq-dev
+  apt-get install -y build-essential libpq-dev mailutils sendmail
 # Necessary for bundler to properly install some gems
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
