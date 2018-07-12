@@ -1,5 +1,6 @@
-class InstitutionHarvestJob < ActiveJob::Base
-  queue_as :default
+class InstitutionHarvestJob < ApplicationJob
+  # Defaults to 0
+  #job_options retry: 0
 
   # Performs an asynchronous harvest and save publications
   # @return [void]

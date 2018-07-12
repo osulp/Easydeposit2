@@ -10,4 +10,7 @@ end
 
 Sidekiq.configure_client do |s|
   s.redis = redis_conn
+  s.client_middleware do |chain|
+    chain.add Sidekiq::JobOptionsMiddleware
+  end
 end
