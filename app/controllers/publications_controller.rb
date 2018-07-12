@@ -5,7 +5,7 @@ class PublicationsController < ApplicationController
   before_action :get_record_by_hashed_uid, only: :claim
   before_action :user_is_admin?, only: [:index, :harvest]
   before_action :user_has_access?, except: [:index, :harvest, :claim]
-  before_action :record_is_published?, only: [:update, :delete_file, :restart_job, :claim, :publish]
+  before_action :record_is_published?, only: [:update, :delete_file, :claim, :publish]
 
   def harvest
     institution = ["Oregon State University", "Oregon State Univ"]
@@ -67,16 +67,18 @@ class PublicationsController < ApplicationController
     job = Job.find(params[:job_id])
     current_user.jobs << job
     job.retry(current_user)
+    flash[:warn] = "Reprocessing event, please check back later for an update"
     respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path, notice: "Restarted Job, please check back for status update.") }
+      format.html { redirect_back(fallback_location: root_path) }
       format.json { head :no_content }
     end
   end
 
   def claim
     current_user.publications << @publication
+    flash[:warn] = "You've claimed this publication, please update and publish it."
     respond_to do |format|
-      format.html { redirect_to edit_publication_path(@publication), notice: "You've claimed this publication, please update and publish it." }
+      format.html { redirect_to edit_publication_path(@publication) }
       format.json { head :no_content }
     end
   end
@@ -84,8 +86,9 @@ class PublicationsController < ApplicationController
   def publish
     job = @publication.jobs.where(name: Job::PUBLISH_WORK[:name]).first
     PublishWorkJob.perform_now(publication: @publication, current_user: current_user, previous_job: job)
+    flash[:warn] = "Publishing work to repository."
     respond_to do |format|
-      format.html { redirect_to edit_publication_path(@publication), warn: "Publishing work to repository..." }
+      format.html { redirect_to edit_publication_path(@publication) }
       format.json { head :no_content }
     end
   end
