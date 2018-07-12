@@ -15,10 +15,10 @@
               .job-icons
                 - if j.user || j.cas_user
                   .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
-                - if j.restartable
+                - if j.restartable && j.publication
                   .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(@publication, j)
                 - else
-                  .material-icons{class: "text-#{j.get_status[:class]}"}= j.get_status[:icon]
+                  .material-icons{class: "text-#{j.get_status[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.get_status[:tooltip] }= j.get_status[:icon]
             .row
               .col
                 = "#{j[:updated_at]} : #{j[:message]}"

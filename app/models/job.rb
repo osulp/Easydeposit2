@@ -12,12 +12,12 @@ class Job < ActiveRecord::Base
   }
 
   # Statuses
-  DEFAULT =     { name: '',           class: 'primary', icon: 'help_outline' }
-  COMPLETED =   { name: 'completed',  class: 'success', icon: 'done_outline' }
-  ERROR =       { name: 'error',      class: 'danger',  icon: 'error' }
-  STARTED =     { name: 'started',    class: 'info',    icon: 'watch_later' }
-  WARN =        { name: 'warn',       class: 'warning', icon: 'warning' }
-  EMAIL =       { name: 'email',      class: 'success', icon: 'mail_outline' }
+  DEFAULT =     { name: '',           class: 'primary', icon: 'help_outline', tooltip: '' }
+  COMPLETED =   { name: 'completed',  class: 'success', icon: 'done_outline', tooltip: 'Completed' }
+  ERROR =       { name: 'error',      class: 'danger',  icon: 'error',        tooltip: 'Error' }
+  STARTED =     { name: 'started',    class: 'info',    icon: 'watch_later',  tooltip: 'Processing' }
+  WARN =        { name: 'warn',       class: 'warning', icon: 'warning',      tooltip: 'Warning' }
+  EMAIL =       { name: 'email',      class: 'success', icon: 'mail_outline', tooltip: 'Emailed' }
 
   # Types of Jobs
   HARVESTED_NEW =   { name: 'Harvested New Publication',              status: COMPLETED[:name] }
