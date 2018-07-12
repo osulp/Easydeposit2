@@ -103,7 +103,7 @@ services:
   # Runs sidekiq to process background jobs
   workers:
     extends: app
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq -L /dev/stdout
     depends_on:
       db:
         condition: service_started
