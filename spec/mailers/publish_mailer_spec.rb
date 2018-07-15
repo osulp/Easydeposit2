@@ -1,5 +1,12 @@
-require "rails_helper"
-
 RSpec.describe PublishMailer, type: :mailer do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '#published_email' do
+    let(:mail) { described_class.with(params).published_email}
+    let(:user) { create(:user) }
+    let(:publication) { create(:publication_with_wossr) }
+    let(:params) { { user: user, publication: publication, emails: [user.email] } }
+    it 'sends the email' do
+      expect(mail.subject).to eq("#{publication.web_of_science_source_record[:uid]} work published to repository.")
+      expect(mail.to).to eq [user.email]
+    end
+  end
 end
