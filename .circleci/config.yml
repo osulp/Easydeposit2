@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.5
         environment:
+          USE_CCI: true
           RAILS_ENV: test
           ED2_DB_PASSWORD: ''
           ED2_DB_PORT: '3306'

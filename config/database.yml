@@ -29,9 +29,9 @@ development:
 test:
   <<: *default
   # README: If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so force 127.0.0.1 which is critical for circleci2
-  host: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? '127.0.0.1' : 'db_test' %>
+  host: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) || ENV.fetch('USE_CCI', false) ? '127.0.0.1' : 'db_test' %>
   # If ENV is localhost or 127.0.0.1 then it is assumed to not be running docker, so use a unique database name
-  database: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) ? 'ed2_test' : 'test' %>
+  database: <%= %w(localhost 127.0.0.1).include?(ENV.fetch('ED2_DB_HOST', '127.0.0.1')) || ENV.fetch('USE_CCI', false) ? 'ed2_test' : 'test' %>
 
 production: &production
   <<: *default
