@@ -1,3 +1,6 @@
+[![Coverage Status](https://coveralls.io/repos/github/osulp/Easydeposit2/badge.svg?branch=master)](https://coveralls.io/github/osulp/Easydeposit2?branch=master)
+[![CircleCI](https://circleci.com/gh/osulp/Easydeposit2/tree/master.svg?style=svg)](https://circleci.com/gh/osulp/Easydeposit2/tree/master)
+
 # Development with Docker
 
 ## Requirements
@@ -10,9 +13,9 @@ The details provided assume that the official Docker daemon is running in the ba
 
 # Docker notes
 
-* `$ docker system prune` : A command that will reclaim disk space by deleting stopped containers, networks, dangling images and build cache.
-* `$ docker volume ls` : Show a list of named volumes which hold persistent data for containers.
-* `$ docker volume rm [VOLUME NAME]` : Remove a named volume, to force the system to rebuild and start that services persistent data from scratch.
+- `$ docker system prune` : A command that will reclaim disk space by deleting stopped containers, networks, dangling images and build cache.
+- `$ docker volume ls` : Show a list of named volumes which hold persistent data for containers.
+- `$ docker volume rm [VOLUME NAME]` : Remove a named volume, to force the system to rebuild and start that services persistent data from scratch.
 
 # Docker Compose basics
 
@@ -24,16 +27,16 @@ The details provided assume that the official Docker daemon is running in the ba
 
 ## Start all of the services
 
-* `$ docker-compose up` : Start the containers in the foreground
-* `$ docker-compose up -d` : Start the containers in the background
+- `$ docker-compose up` : Start the containers in the foreground
+- `$ docker-compose up -d` : Start the containers in the background
 
 ## Run any command on the web application container
 
 _$ docker-compose exec web [COMMAND]_
 
-* `$ docker-compose exec web bash` : Open a terminal session on the web container
-* `$ docker-compose exec web bundle exec rails c` : Open the rails console
-* `$ docker-compose exec web bundle exec rspec` : Run the tests
+- `$ docker-compose exec web bash` : Open a terminal session on the web container
+- `$ docker-compose exec web bundle exec rails c` : Open the rails console
+- `$ docker-compose exec web bundle exec rspec` : Run the tests
 
 ### Running commands that alter the local filesystem
 
@@ -61,8 +64,8 @@ Uncomment the line that runs the application using rdebug-ide:
 
 Attach the debugger to the container, the steps to do this are specific to the IDE;
 
-* RubyMine: Create a new debug configuration and point it at localhost, port 1234, with the dispatcher port 26162 (these are the standard defaults for Ruby), and use the remote work directory `/data`.
-* VSCode: Open the debug view, edit the `launch.json` by clicking the gear icon. Update the launch configuration titled "Listen for rdebug-ide" to match the following:
+- RubyMine: Create a new debug configuration and point it at localhost, port 1234, with the dispatcher port 26162 (these are the standard defaults for Ruby), and use the remote work directory `/data`.
+- VSCode: Open the debug view, edit the `launch.json` by clicking the gear icon. Update the launch configuration titled "Listen for rdebug-ide" to match the following:
 
 ```
 {
