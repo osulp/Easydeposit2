@@ -6,13 +6,14 @@ jobs:
         environment:
           USE_CCI: true
           RAILS_ENV: test
-          ED2_DB_PASSWORD: ''
+          ED2_DB_PASSWORD: '12341234'
           ED2_DB_PORT: '3306'
           ED2_DB_USERNAME: root
           ED2_DB_HOST: 127.0.0.1
       - image: circleci/mysql:5.7.22
         environment:
           MYSQL_DATABASE: ed2_test
+          MYSQL_ROOT_PASSWORD: '12341234'
     working_directory: ~/app
     steps:
       - run:
