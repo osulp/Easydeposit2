@@ -1,13 +1,21 @@
+# frozen_string_literal: true
+
+##
+# A publication, the central model of the application
 class Publication < ActiveRecord::Base
   has_paper_trail on: [:destroy]
 
-  scope :by_wos_uid, ->(uid) { joins(:web_of_science_source_record).where('web_of_science_source_records.uid = ?', uid ) }
+  scope :by_wos_uid, lambda { |uid|
+    joins(:web_of_science_source_record)
+      .where('web_of_science_source_records.uid = ?', uid)
+  }
 
   has_one :web_of_science_source_record, autosave: true, dependent: :destroy
   has_many_attached :publication_files
   has_many :jobs, inverse_of: :publication, dependent: :destroy
   has_and_belongs_to_many :users
   has_and_belongs_to_many :cas_users
+  has_many :author_publications, inverse_of: :publication
 
   serialize :pub_hash, Hash
 
@@ -42,17 +50,18 @@ class Publication < ActiveRecord::Base
     pub_hash[:year]
   end
 
-  # Vanity ID for use in the simple_form_for, referring to the publication by its related WOS Uid
+  # Vanity ID for use in the simple_form_for,
+  # referring to the publication by its related WOS Uid
   def to_param
     web_of_science_source_record[:uid]
   end
 
-  def has_unique_publication_files(params)
-    params_files = params.map {|p| p.original_filename}
-    attached_files = publication_files.map {|p| p.filename.to_s }
-    duplicates = params_files.select { |f| attached_files.count(f) > 0}.uniq
-    logger.error "Duplicate uploads found: #{duplicates}, returning error."
-    errors.add(:base, "Cannot have duplicate files uploaded, file already attached: #{duplicates.join(', ')}") unless duplicates.blank?
+  def unique_publication_files?(params)
+    attached_files = publication_files.map { |p| p.filename.to_s }
+    duplicates = params.map(&:original_filename)
+                       .select { |f| attached_files.count(f).positive? }
+                       .uniq
+    duplicate_files_validation(duplicates) unless duplicates.blank?
     duplicates.blank?
   end
 
@@ -61,6 +70,12 @@ class Publication < ActiveRecord::Base
   end
 
   def ready_to_publish?
-    publication_files.count > 0 && pub_at.blank?
+    publication_files.count.positive? && pub_at.blank?
+  end
+
+  def duplicate_files_validation(duplicates)
+    logger.error "Duplicate uploads found: #{duplicates}, returning error."
+    errors.add :base,
+               "Cannot upload duplicate files, found: #{duplicates.join(', ')}"
   end
 end

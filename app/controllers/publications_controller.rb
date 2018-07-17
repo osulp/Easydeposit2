@@ -1,16 +1,18 @@
-require 'csv'
+# frozen_string_literal: true
 
+##
+# Controller to handle actions related to a publication
 class PublicationsController < ApplicationController
-  before_action :get_record, except: [:index, :harvest, :claim]
-  before_action :get_record_by_hashed_uid, only: :claim
-  before_action :user_is_admin?, only: [:index, :harvest]
-  before_action :user_has_access?, except: [:index, :harvest, :claim]
-  before_action :record_is_published?, only: [:update, :delete_file, :claim, :publish]
+  before_action :record, except: %i[index harvest claim]
+  before_action :record_by_hashed_uid, only: :claim
+  before_action :user_is_admin?, only: %i[index harvest]
+  before_action :user_has_access?, except: %i[index harvest claim]
+  before_action :published?, only: %i[update delete_file claim publish]
 
   def harvest
     institution = ENV['ED2_WOS_SEARCH_TERMS'].split('|')
     InstitutionHarvestJob.perform_later(institution)
-    flash[:warn] = "The system is harvesting new publications"
+    flash[:warn] = 'The system is harvesting new publications'
     redirect_to root_path
   end
 
@@ -22,46 +24,53 @@ class PublicationsController < ApplicationController
     redirect_to edit_publication_path(@publication)
   end
 
-  def edit
-  end
+  def edit; end
 
   def update
     respond_to do |format|
-      if @publication.has_unique_publication_files(publication_params[:publication_files]) && @publication.update(publication_params)
-        files = publication_params[:publication_files].map{ |p| p.original_filename }
-        job = Job.create(Job::FILE_ADDED.merge({ message: files.join(', ') }))
-        current_user.jobs << job
-        @publication.jobs << job
-        format.html { redirect_to edit_publication_path(@publication), notice: 'Publication was successfully updated.' }
+      if @publication.unique_publication_files?(publication_params[:publication_files]) && @publication.update(publication_params)
+        create_job(Job::FILE_ADDED.merge(message: publication_params[:publication_files]
+                                                    .map(&:original_filename)
+                                                    .join(', ')))
+        format.html do
+          redirect_to edit_publication_path(@publication),
+                      notice: t('publications.update_message')
+        end
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @publication.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @publication.errors,
+                 status: :unprocessable_entity
+        end
       end
     end
   end
 
   def delete_file
     respond_to do |format|
-      file = @publication.publication_files.find(params[:file_id])
-      if file.purge
-        job = Job.create(Job::FILE_DELETED.merge({ message: file.blob.filename }))
-        current_user.jobs << job
-        @publication.jobs << job
-        format.html { redirect_to edit_publication_path(@publication), notice: "#{file.blob.filename} was deleted." }
+      if @file.purge
+        create_job(Job::FILE_DELETED.merge(message: @file.blob.filename))
+        format.html do
+          redirect_to edit_publication_path(@publication),
+                      notice: t('publications.delete_file_message',
+                                filename: @file.blob.filename)
+        end
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }
-        format.json { render json: @publication.errors, status: :unprocessable_entity }
+        format.json do
+          render json: @publication.errors,
+                 status: :unprocessable_entity
+        end
       end
     end
   end
 
   def restart_job
-    job = Job.find(params[:job_id])
-    current_user.jobs << job
-    job.retry(current_user)
-    flash[:warn] = "Reprocessing event, please check back later for an update"
+    current_user.jobs << @job
+    @job.retry(current_user)
+    flash[:warn] = t('publications.restart_job_message')
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.json { head :no_content }
@@ -70,7 +79,7 @@ class PublicationsController < ApplicationController
 
   def claim
     current_user.publications << @publication
-    flash[:warn] = "You've claimed this publication, please update and publish it."
+    flash[:warn] = t('publications.claim_message')
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
       format.json { head :no_content }
@@ -79,8 +88,10 @@ class PublicationsController < ApplicationController
 
   def publish
     job = @publication.jobs.where(name: Job::PUBLISH_WORK[:name]).first
-    PublishWorkJob.perform_now(publication: @publication, current_user: current_user, previous_job: job)
-    flash[:warn] = "Publishing work to repository."
+    PublishWorkJob.perform_now(publication: @publication,
+                               current_user: current_user,
+                               previous_job: job)
+    flash[:warn] = 'Publishing work to repository.'
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
       format.json { head :no_content }
@@ -89,15 +100,21 @@ class PublicationsController < ApplicationController
 
   private
 
-  def get_record_by_hashed_uid
-    @wos_record = WebOfScienceSourceRecord.includes(:publication).where(hashed_uid: params[:hashed_uid]).first
+  def record_by_hashed_uid
+    @wos_record = WebOfScienceSourceRecord.includes(:publication)
+                                          .where(hashed_uid: params[:hashed_uid])
+                                          .first
     @publication = @wos_record.publication
   end
 
-  def get_record
+  def record
     id = params[:id] || params[:publication_id]
-    @wos_record = WebOfScienceSourceRecord.includes(:publication).where(uid: id).first
+    @wos_record = WebOfScienceSourceRecord.includes(:publication)
+                                          .where(uid: id)
+                                          .first
     @publication = @wos_record.publication
+    @job = Job.find(params[:job_id]) if params[:job_id]
+    @file = @publication.publication_files.find(params[:file_id]) if params[:file_id]
   end
 
   def publication_params
@@ -105,16 +122,24 @@ class PublicationsController < ApplicationController
   end
 
   def user_is_admin?
-    redirect_to(root_path, alert: "You are not authorized to access this page.") unless current_user.admin?
+    return true if current_user.admin?
+    redirect_to(root_path, alert: t('publications.not_authorized_message'))
   end
 
   def user_has_access?
-    redirect_to(root_path, alert: "You are not authorized to access this page.") unless current_user.admin? || current_user.publications.include?(@publication)
+    return true if current_user.admin? || current_user.publications.include?(@publication)
+    redirect_to(root_path, alert: t('publications.not_authorized_message'))
   end
 
-  def record_is_published?
-    if @publication.published?
-      redirect_to edit_publication_path(@publication), alert: "This publication has already been published, it can only be modified in the repository."
-    end
+  def published?
+    return unless @publication.published?
+    redirect_to edit_publication_path(@publication),
+                alert: t('publications.published_message')
+  end
+
+  def create_job(job)
+    new_job = Job.create(job)
+    current_user.jobs << new_job
+    @publication.jobs << new_job
   end
 end
