@@ -66,6 +66,7 @@ group :development, :test do
   gem 'rspec-mocks'
   gem 'rspec-rails', '~> 3.7'
   gem 'rspec_junit_formatter'
+  gem 'rubocop'
   gem 'ruby-debug-ide'
 end
 
