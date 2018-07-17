@@ -50,6 +50,6 @@ RSpec.describe OsuApi::Client do
     result = client.directory_query('Ross, Bob')
     expect(result).to be_a Array
     expect(result.first).to be_a OsuApi::Person
-    expect(result.first.emailAddress).to eq one_person.emailAddress
+    expect(result.first.email_address).to eq one_person.email_address
   end
 end

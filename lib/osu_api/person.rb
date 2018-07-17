@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module OsuApi
-
   ##
   # Person object from the OSU Directory API
   class Person
