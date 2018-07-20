@@ -8,7 +8,8 @@ class Job < ActiveRecord::Base
   # Restartable Methods
   RESTARTABLE_METHODS = {
     publish_work: PublishWorkJob.to_s,
-    email_published_work: EmailPublishedWorkJob.to_s
+    email_published_work: EmailPublishedWorkJob.to_s,
+    fetch_authors_directory_api: FetchAuthorsDirectoryApiJob.to_s
   }
 
   # Statuses
@@ -36,6 +37,12 @@ class Job < ActiveRecord::Base
                       restartable_state: JSON.dump({
                         method: RESTARTABLE_METHODS[:publish_work]
                       }) }
+  FETCH_AUTHORS_DIRECTORY_API = { name: 'Fetch Authors from Directory API',
+                                  status: STARTED[:name],
+                                  restartable: true,
+                                  restartable_state: JSON.dump({
+                                    method: RESTARTABLE_METHODS[:fetch_authors_directory_api]
+                                  }) }
 
   def completed(options=nil)
     save_record(options.merge({

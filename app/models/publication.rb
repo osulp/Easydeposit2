@@ -78,4 +78,17 @@ class Publication < ActiveRecord::Base
     errors.add :base,
                "Cannot upload duplicate files, found: #{duplicates.join(', ')}"
   end
+
+  ##
+  # Find and update or create a new AuthorPublication for an array of people
+  # supplied. The unique key is the email address and publication.
+  #
+  # @param Array<Hash<AuthorPublication>> people - an array of people attributes
+  def add_author_emails(people)
+    people.each do |person|
+      record = AuthorPublication.find_or_initialize_by(email: person[:email], publication: self)
+      record.attributes = person
+      record.save
+    end
+  end
 end

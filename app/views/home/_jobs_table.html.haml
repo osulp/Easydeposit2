@@ -19,7 +19,7 @@
       %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
         %td
           = j[:name]
-          - if j[:name] == Job::HARVESTED_NEW[:name]
+          - if j.publication
             %br
             = link_to j.publication.web_of_science_source_record[:uid], publication_path(j.publication)
         %td= j[:updated_at]
