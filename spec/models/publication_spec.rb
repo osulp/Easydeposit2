@@ -31,6 +31,14 @@ RSpec.describe Publication, type: :model do
   it 'checks that there are no duplicate publication file names' do
     expect(publication.unique_publication_files?(attached_files_params)).to be_truthy
   end
+  it 'errors with there are duplicate publication files names' do
+    allow(publication).to receive(:publication_files) { [double('Bogus ActiveStorage File', filename: 'my_awesome.pdf')]}
+    expect(publication.unique_publication_files?(attached_files_params)).to be_falsey
+  end
+  it 'finds by WOS UID' do
+    p = FactoryBot.create(:publication)
+    expect(described_class.by_wos_uid('WOS:1234567890').first).to eq p
+  end
   context 'can delete itself' do
     before do
       create(:publication)
