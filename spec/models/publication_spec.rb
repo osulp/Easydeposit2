@@ -32,7 +32,7 @@ RSpec.describe Publication, type: :model do
     expect(publication.unique_publication_files?(attached_files_params)).to be_truthy
   end
   it 'errors with there are duplicate publication files names' do
-    allow(publication).to receive(:publication_files) { [double('Bogus ActiveStorage File', filename: 'my_awesome.pdf')]}
+    allow(publication).to receive(:publication_files) { [double('Bogus ActiveStorage File', filename: 'my_awesome.pdf')] }
     expect(publication.unique_publication_files?(attached_files_params)).to be_falsey
   end
   it 'finds by WOS UID' do

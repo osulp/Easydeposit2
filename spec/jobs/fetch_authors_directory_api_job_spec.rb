@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 RSpec.describe FetchAuthorsDirectoryApiJob do
-  let(:default_job_options) {
-    { retry: 0 }
-  }
+  let(:default_job_options) { { retry: 0 } }
   let(:job) { FetchAuthorsDirectoryApiJob.new }
   let(:user) { create(:user) }
   let(:publication) { create(:publication) }

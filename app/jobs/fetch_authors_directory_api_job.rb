@@ -12,7 +12,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
 
     job.update(
       publication: publication,
-      message: "Attempting to fetch authors from directory API at #{Time.now}"  ,
+      message: "Attempting to fetch authors from directory API at #{Time.now}",
       status: Job::STARTED[:name]
     )
 
