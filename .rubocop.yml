@@ -5,3 +5,5 @@ AllCops:
     - 'db/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
+Metrics/LineLength:
+  Enabled: false

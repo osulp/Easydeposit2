@@ -1,0 +1,72 @@
+<records>
+  <uid>WOS:1234567890</uid>
+  <title>
+    <label>Title</label>
+    <value>Something super scientific</value>
+  </title>
+  <doctype>
+    <label>Doctype</label>
+    <value>Article</value>
+  </doctype>
+  <source>
+    <label>Issue</label>
+    <value>1</value>
+  </source>
+  <source>
+    <label>Pages</label>
+    <value>259-272</value>
+  </source>
+  <source>
+    <label>Published.BiblioDate</label>
+    <value>JAN</value>
+  </source>
+  <source>
+    <label>Published.BiblioYear</label>
+    <value>2018</value>
+  </source>
+  <source>
+    <label>SourceTitle</label>
+    <value>GLOBAL CHANGE BIOLOGY</value>
+  </source>
+  <source>
+    <label>Volume</label>
+    <value>24</value>
+  </source>
+  <authors>
+    <label>Authors</label>
+    <value>Ath, Tby D.</value>
+    <value>Dy, Lizabeth A.</value>
+    <value>Bdeur, Ricard D.</value>
+    <value>Fser, Jenier L.</value>
+  </authors>
+  <keywords>
+    <label>Keywords</label>
+    <value>California Current</value>
+    <value>El Nino</value>
+    <value>fish larvae</value>
+    <value>ichthyoplankton</value>
+    <value>Pacific Ocean</value>
+    <value>phenology</value>
+    <value>warm blob</value>
+  </keywords>
+  <other>
+    <label>Identifier.Doi</label>
+    <value>10.12345/gcb.12345</value>
+  </other>
+  <other>
+    <label>Identifier.Eissn</label>
+    <value>1123-2234</value>
+  </other>
+  <other>
+    <label>Identifier.Ids</label>
+    <value>FY0MR</value>
+  </other>
+  <other>
+    <label>Identifier.Issn</label>
+    <value>1123-1123</value>
+  </other>
+  <other>
+    <label>ResearcherID.Disclaimer</label>
+    <value>ResearcherID data provided by Clarivate Analytics</value>
+  </other>
+</records>

@@ -19,6 +19,8 @@ class Publication < ActiveRecord::Base
 
   serialize :pub_hash, Hash
 
+  after_save :update_pub_hash
+
   def delete!
     self.deleted = true
     save
@@ -26,28 +28,6 @@ class Publication < ActiveRecord::Base
 
   def deleted?
     deleted
-  end
-
-  def issn
-    pub_hash[:issn]
-  end
-
-  def pages
-    pub_hash[:pages]
-  end
-
-  def publication_type
-    pub_hash[:type]
-  end
-
-  # @note obscures ActiveRecord field/attribute getter for title
-  def title
-    pub_hash[:title]
-  end
-
-  # @note obscures ActiveRecord field/attribute getter for year
-  def year
-    pub_hash[:year]
   end
 
   # Vanity ID for use in the simple_form_for,
@@ -71,6 +51,26 @@ class Publication < ActiveRecord::Base
 
   def ready_to_publish?
     publication_files.count.positive? && pub_at.blank?
+  end
+
+  ##
+  # Find and update or create a new AuthorPublication for an array of people
+  # supplied. The unique key is the email address and publication.
+  #
+  # @param Array<Hash<AuthorPublication>> people - an array of people attributes
+  def add_author_emails(people)
+    people.each do |person|
+      record = AuthorPublication.find_or_initialize_by(email: person[:email], publication: self)
+      record.attributes = person
+      record.save
+    end
+  end
+
+  private
+
+  def update_pub_hash
+    return unless web_of_science_source_record
+    update_column(:pub_hash, web_of_science_source_record.record.to_h)
   end
 
   def duplicate_files_validation(duplicates)
