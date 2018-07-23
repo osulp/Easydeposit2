@@ -12,7 +12,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
 
     job.update(
       publication: publication,
-      message: "Attempting to fetch authors from directory API at #{Time.now}",
+      message: "Attempting to fetch authors from directory API at #{Time.now}"  ,
       status: Job::STARTED[:name]
     )
 
@@ -26,7 +26,6 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     message = 'Found no authors for this publication in the Directory API'
     message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length
     job.completed(message: message, restartable: false)
-    publication.update(pub_at: Time.now)
   rescue StandardError => e
     msg = 'FetchAuthorsDirectoryApiJob.perform'
     NotificationManager.log_exception(logger, msg, e)
