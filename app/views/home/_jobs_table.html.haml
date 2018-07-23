@@ -31,4 +31,4 @@
           - if j.restartable && j.publication
             .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(j.publication, j)
           - else
-            .material-icons{class: "text-#{j.get_status[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.get_status[:tooltip] }= j.get_status[:icon]
+            .material-icons{class: "text-#{j.status_hash[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.status_hash[:tooltip] }= j.status_hash[:icon]

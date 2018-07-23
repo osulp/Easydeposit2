@@ -1,9 +1,15 @@
+# frozen_string_literal: true
+
 require 'json'
 
+##
+# AR model for tracking and restarting jobs related to publications
 class Job < ActiveRecord::Base
   belongs_to :publication, autosave: true, inverse_of: :jobs, optional: true
   belongs_to :user, inverse_of: :jobs, optional: true
   belongs_to :cas_user, inverse_of: :jobs, optional: true
+
+  # rubocop:disable Style/MutableConstant
 
   # Restartable Methods
   RESTARTABLE_METHODS = {
@@ -28,42 +34,31 @@ class Job < ActiveRecord::Base
   EMAIL_PUBLISHED = { name: 'Publish Work Notification Email',
                       status: STARTED[:name],
                       restartable: true,
-                      restartable_state: JSON.dump({
-                        method: RESTARTABLE_METHODS[:email_published_work]
-                      }) }
+                      restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:email_published_work]) }
   PUBLISH_WORK =    { name: 'Publish Work',
                       status: STARTED[:name],
                       restartable: true,
-                      restartable_state: JSON.dump({
-                        method: RESTARTABLE_METHODS[:publish_work]
-                      }) }
+                      restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:publish_work]) }
   FETCH_AUTHORS_DIRECTORY_API = { name: 'Fetch Authors from Directory API',
                                   status: STARTED[:name],
                                   restartable: true,
-                                  restartable_state: JSON.dump({
-                                    method: RESTARTABLE_METHODS[:fetch_authors_directory_api]
-                                  }) }
+                                  restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:fetch_authors_directory_api]) }
+  # rubocop:enable Style/MutableConstant
 
-  def completed(options=nil)
-    save_record(options.merge({
-      status: options[:status] || COMPLETED[:name]
-    }))
+  def completed(options = nil)
+    save_record(options.merge(status: options[:status] || COMPLETED[:name]))
   end
 
-  def error(options=nil)
-    save_record(options.merge({
-      status: options[:status] || ERROR[:name]
-    }))
+  def error(options = nil)
+    save_record(options.merge(status: options[:status] || ERROR[:name]))
   end
 
-  def warn(options=nil)
-    save_record(options.merge({
-      status: options[:status] || WARN[:name]
-    }))
+  def warn(options = nil)
+    save_record(options.merge(status: options[:status] || WARN[:name]))
   end
 
-  def get_status
-    return case status
+  def status_hash
+    case status
     when COMPLETED[:name]
       COMPLETED
     when ERROR[:name]
@@ -83,22 +78,23 @@ class Job < ActiveRecord::Base
   # Called by the end-user from a button surfaced on the UI; retry the
   # restartable job related to this record.
   def retry(current_user)
-    raise "Missing reference to the current user." unless current_user
-    if restartable
-      #check if the restartable method is in the array as a security method to control which classes can be called
-      state = JSON.parse(restartable_state)
-      klass = state['method'].constantize
-      klass.perform_later(publication: publication, current_user: current_user, previous_job: self)
-    end
+    raise 'Missing reference to the current user.' unless current_user
+    return unless restartable
+    # check if the restartable method is in the array as a security
+    # method to control which classes can be called
+    state = JSON.parse(restartable_state)
+    klass = state['method'].constantize
+    klass.perform_later(publication: publication, current_user: current_user, previous_job: self)
   end
 
   private
+
   def save_record(options)
-    self.update_columns({
+    update_columns(
       status: options[:status],
       message: options[:message].presence || '',
-      restartable: options[:restartable].nil? ? self.restartable : options[:restartable],
-      restartable_state: options[:restartable_state].presence || self.restartable_state
-    })
+      restartable: options[:restartable].nil? ? restartable : options[:restartable],
+      restartable_state: options[:restartable_state].presence || restartable_state
+    )
   end
 end
