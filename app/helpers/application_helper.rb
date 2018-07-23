@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+##
+# Helpers!
 module ApplicationHelper
   def full_title(page_title)
     base_title = 'EasyDeposit2: OSU Publication Database'
