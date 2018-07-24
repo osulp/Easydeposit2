@@ -7,7 +7,7 @@ class FetchAuthorsEmailsWosJob < ApplicationJob
 
     job.update(
         publication: publication,
-        message: "Attempting to fetch authors emails at #{DateTime.now}",
+        message: "Attempting to fetch authors emails from Web of Science at #{DateTime.now}",
         status: Job::STARTED[:name]
     )
 
@@ -15,6 +15,7 @@ class FetchAuthorsEmailsWosJob < ApplicationJob
 
     # get emails of authors from Web Of Science full records
     emails = fetch_authors_emails(publication)
+    create_or_update_publication_emails(emails, publication)
 
     message = 'Found no authors emails for this publication in the Web of Science full records'
     message = "Found #{emails.count} author emails in Web of Science full records." if emails.length
@@ -32,4 +33,10 @@ class FetchAuthorsEmailsWosJob < ApplicationJob
     logger.info('Fetch authors emails from Web of Science full record complete')
   end
 
+  def create_or_update_publication_emails(emails, publication)
+    emails.each do |e|
+      record = AuthorPublication.find_or_create_by(email: e, publication: publication)
+      record.save
+    end
+  end
 end
