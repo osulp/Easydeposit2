@@ -29,6 +29,7 @@ ED2_DEPLOYED_REVISION_LOG: /path/to/app/revisions.log
 
 # The Repository that ED2 will publish works to
 REPOSITORY_URL: 'http://hyrax.server'
+REPOSITORY_SEARCH_URL: '/catalog.json?q="{value}"&op=AND&{property}="{value}"'
 REPOSITORY_ADMIN_SET_URL: '/admin/admin_sets.json'
 REPOSITORY_WORKFLOW_URL: '/concern/workflow_actions/{work_id}'
 REPOSITORY_UPLOAD_URL: '/uploads'

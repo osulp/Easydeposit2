@@ -10,9 +10,9 @@ RSpec.describe PublishWorkJob do
   end
 
   it 'processes a successful job' do
-    allow(job).to receive(:publication_exists?).with(publication) { false }
-    allow(job).to receive(:publish!).with(publication) { true }
-    allow(job).to receive(:email_published_notification).with(user, publication) { true }
+    allow(job).to receive(:published_works) { [] }
+    allow(job).to receive(:publish!) { true }
+    allow(job).to receive(:email_published_notification) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.jobs.count).to eq 1
     expect(user.jobs.first.status).to eq 'completed'
@@ -22,17 +22,17 @@ RSpec.describe PublishWorkJob do
   end
 
   it 'processes a publication that had already been published job' do
-    allow(job).to receive(:publication_exists?).with(publication) { true }
+    allow(job).to receive(:published_works) { [{ blah: 'blah' }] }
     job.perform(publication: publication, current_user: user)
     expect(user.jobs.count).to eq 1
     expect(user.jobs.first.status).to eq 'warn'
     expect(user.jobs.first.name).to eq 'Publish Work'
-    expect(user.jobs.first.message).to start_with 'Publication already exists in the repository. Skipped publishing at'
+    expect(user.jobs.first.message).to start_with 'Publication already exists in the repository. Found 1 on server with WOS:1234567890. Skipped publishing at'
     expect(publication[:pub_at]).to be_falsey
   end
 
   it 'processes an error' do
-    allow(job).to receive(:published?) { raise 'Boom' }
+    allow(job).to receive(:published_new?) { raise 'Boom' }
     job.perform(publication: publication, current_user: user)
     expect(user.jobs.count).to eq 1
     expect(user.jobs.first.status).to eq 'error'
