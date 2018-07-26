@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 
 module WebOfScience
@@ -28,11 +30,10 @@ module WebOfScience
       emails = []
 
       success = false
-      until (success)
+      until success
         response = connection.get location
         if response.status == 302 || response.status == 301
           location = response.headers[:location]
-          puts "response location: #{location}"
           unless location.start_with?('http')
             connection.url_prefix = redirect_url_prefix
           end
@@ -42,10 +43,10 @@ module WebOfScience
         end
       end
       # example: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:adam.t.greer@gmail.com">adam.t.greer@gmail.com</a> </p>
-      content.scan(/mailto:(.*?)\"/) do |m |
+      content.scan(/mailto:(.*?)\"/) do |m|
         emails << m
       end
-      return emails
+      emails
     end
   end
 end
