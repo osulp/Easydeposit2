@@ -15,7 +15,8 @@ class Job < ActiveRecord::Base
   RESTARTABLE_METHODS = {
     publish_work: PublishWorkJob.to_s,
     email_published_work: EmailPublishedWorkJob.to_s,
-    fetch_authors_directory_api: FetchAuthorsDirectoryApiJob.to_s
+    fetch_authors_directory_api: FetchAuthorsDirectoryApiJob.to_s,
+    fetch_authors_emails_wos: FetchAuthorsEmailsWosJob.to_s
   }
 
   # Statuses
@@ -43,7 +44,10 @@ class Job < ActiveRecord::Base
                                   status: STARTED[:name],
                                   restartable: true,
                                   restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:fetch_authors_directory_api]) }
-  # rubocop:enable Style/MutableConstant
+  FETCH_AUTHORS_EMAILS_WOS = { name: 'Fetch Authors Emails from Web of Science',
+                               status: STARTED[:name],
+                               restartable: true,
+                               restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:fetch_authors_emails_wos]) }
 
   def completed(options = nil)
     save_record(options.merge(status: options[:status] || COMPLETED[:name]))

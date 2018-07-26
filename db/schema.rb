@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2018_07_17_200122) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "author_publications", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "author_publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "publication_id"
     t.string "email"
     t.string "name"
