@@ -37,7 +37,7 @@ RSpec.describe Publication, type: :model do
   end
   it 'finds by WOS UID' do
     p = FactoryBot.create(:publication)
-    expect(described_class.by_wos_uid('WOS:000303060800030').first).to eq p
+    expect(described_class.by_wos_uid('WOS:1234567890').first).to eq p
   end
   context 'can delete itself' do
     before do

@@ -44,6 +44,9 @@ jobs:
           name: Copy local_env.yml
           command: cp config/local_env.example.yml config/local_env.yml
       - run:
+          name: Copy settings.yml
+          command: cp config/settings.example.yml config/settings.yml
+      - run:
           name: Run Tests
           command: |
             bundle exec rspec --profile 10 \
