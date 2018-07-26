@@ -1,0 +1,30 @@
+## Web Of Science Auth Config
+## auth_code help page: http://ipscience-help.thomsonreuters.com/wosWebServicesExpanded/AuthenticationGroup/Authentication/Username_PW_Authentication.html 
+WOS:
+  enabled: true
+  ACCEPTED_DBS:
+    - WOS
+  AUTH_CODE:
+  LOG: log/web_of_science.log
+  LOG_LEVEL: warn
+  regular_harvest_timeframe: 4week # default WoS symbolicTimeSpan (last n weeks) for weekly harvests
+  source_url_prefix: http://gateway.webofknowledge.com
+  redirect_url_prefix: http://apps.webofknowledge.com
+
+DOI:
+  BASE_URI: https://dx.doi.org/
+
+HARVESTER:
+  USE_MIDDLE_NAME: false
+  USE_AUTHOR_IDENTITIES: false
+  INSTITUTION:
+    name: Oregon State University
+    address:
+      line1: ''
+      line2: ''
+      city: Corvallis
+      state: OR
+      country: USA
+
+## Ported from application.yml
+wos_source: wos
