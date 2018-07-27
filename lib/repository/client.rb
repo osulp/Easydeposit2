@@ -80,15 +80,6 @@ module Repository
       JSON.parse(response.body)
     end
 
-    ##
-    # Check the state of the provided work to see if it is active or not. An inactive work is likely to be on a
-    # workflow and could be advanced to the approved state.
-    # @param work [Hash] a fully populated work, typically provided by the server after publishing
-    # @return [Boolean] true if the work.state.id indicates it is active
-    def active_work?(work)
-      work['state']['id'].end_with?('ObjState#active')
-    end
-
     def admin_sets
       @admin_sets ||= fetch_all_admin_sets
     end
@@ -110,6 +101,7 @@ module Repository
 
     private
 
+    # :nocov:
     def connection
       @connection ||= Faraday.new(url: @url) do |faraday|
         faraday.use Faraday::Response::RaiseError
@@ -120,14 +112,8 @@ module Repository
       end
     end
 
-    # A default logger - a subclass can override the default
-    # @return [Logger]
-    def logger
-      @logger ||= Rails.logger
-    end
-
-    def post_file(data, url)
-      faraday = Faraday.new(url: @url) do |f|
+    def multipart_connection
+      Faraday.new(url: @url) do |f|
         f.use Faraday::Response::RaiseError
         f.request :multipart
         f.request :url_encoded
@@ -136,8 +122,17 @@ module Repository
         end
         f.adapter :net_http
       end
-      response = faraday.post url, data, headers
+    end
+    # :nocov:
 
+    # A default logger - a subclass can override the default
+    # @return [Logger]
+    def logger
+      @logger ||= Rails.logger
+    end
+
+    def post_file(data, url)
+      response = multipart_connection.post url, data, headers
       raise response.reason_phrase unless response.success?
       logger.debug("Repository::Client Response.body: #{response.body}")
       response
