@@ -32,8 +32,9 @@ RSpec.describe Repository::Client do
   context '#publish' do
     let(:response_body) { '{ "id": "abc123", "title": ["abctitle"] }' }
     let(:publish_object) { { 'id' => 'abc123', 'title' => ['abctitle'] } }
+    let(:publish_result) { { response: response, work: { 'id' => 'abc123', 'title' => ['abctitle'] } } }
     it 'publishes a work' do
-      expect(client.publish(publish_object, '/concern/article')).to eq publish_object
+      expect(client.publish(publish_object, '/concern/article')).to eq publish_result
     end
     context 'when fails' do
       let(:success) { false }

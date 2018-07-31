@@ -28,10 +28,10 @@ module Repository
     # Publish the work to the provided worktype related url.
     # @param work [Hash] the work and data to be published
     # @param publish_url [String] the appropriate url to create a new work of a particular worktype
-    # @return [Hash] the newly created work with all of its data
+    # @return [Hash<String, String>] the HTTP response and the newly created work with all of its data
     def publish(work, publish_url)
       response = post(work, publish_url)
-      JSON.parse(response.body)
+      { response: response, work: JSON.parse(response.body) }
     end
 
     ##

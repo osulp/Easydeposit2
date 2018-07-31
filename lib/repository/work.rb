@@ -21,16 +21,37 @@ module Repository
       @files = args[:files]
       @work_type = args[:work_type]
       @admin_set_id = admin_set_id(args[:admin_set_title])
+      @web_of_science_uid = args[:web_of_science_uid]
     end
 
     def publish
       raise "Cannot publish, missing file(s) for upload: #{missing_files.map { |f| f[:path] }}" unless missing_files.blank?
-      work = client_publish(work_payload, publish_url)
-      advanced = client_set_workflow(work, 'Approve', 'Published by ED2')
-      advanced
+      file_ids = uploaded_file_ids
+      response = client_publish(repository_data(file_ids), publish_url)
+      client_set_workflow(response[:work], 'Approve', 'Published by ED2') if workflow_required?
+      response
     end
 
     private
+
+    def workflow_required?
+      ActiveModel::Type::Boolean.new.cast(ENV.fetch('REPOSITORY_PUBLISH_REQUIRES_WORKFLOW_APPROVAL', 'true'))
+    end
+
+    def repository_data(file_ids)
+      {
+        @work_type.to_s => {
+          title: @data['titles'],
+          creator: @data['authors'],
+          admin_set_id: @admin_set_id,
+          resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
+          rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
+          web_of_science_uid: @web_of_science_uid
+        },
+        uploaded_files: file_ids,
+        agreement: 1
+      }
+    end
 
     def client_publish(work_payload, publish_url)
       @client.publish(work_payload, publish_url)
@@ -46,15 +67,6 @@ module Repository
       raise 'Missing files' unless args[:files]
       raise 'Missing work_type' unless args[:work_type]
       raise 'Missing admin_set_title' unless args[:admin_set_title]
-    end
-
-    def work_payload
-      @data['admin_set_id'] = @admin_set_id
-      {
-        @work_type.to_s => @data,
-        uploaded_files: uploaded_file_ids,
-        agreement: 1
-      }
     end
 
     def admin_set_id(title)

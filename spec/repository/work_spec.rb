@@ -30,7 +30,16 @@ RSpec.describe Repository::Work do
     allow(client).to receive(:upload_file) { uploaded_file }
     allow(client).to receive(:publish) { created_work }
     allow(client).to receive(:set_workflow) { advanced_workflow }
-    expect(work.publish).to eq advanced_workflow
+    expect(work.publish).to eq created_work
+  end
+
+  it 'can publish the work and advance the workflow' do
+    ENV['REPOSITORY_PUBLISH_REQUIRES_WORKFLOW_APPROVAL'] = 'true'
+    allow(client).to receive(:admin_sets) { admin_sets }
+    allow(client).to receive(:upload_file) { uploaded_file }
+    allow(client).to receive(:publish) { created_work }
+    allow(client).to receive(:set_workflow) { advanced_workflow }
+    expect(work.publish).to eq created_work
   end
 
   it 'will not publish the work without supplied files' do
