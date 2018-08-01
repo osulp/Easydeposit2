@@ -6,7 +6,7 @@ require 'fileutils'
 # Publish the work to the repository
 class PublishWorkJob < ApplicationJob
   # Defaults to 0
-  # event_options retry: 0
+  # job_options retry: 0
 
   def perform(publication:, current_user: nil, previous_event: nil)
     event = previous_event || Event.create(Event::PUBLISH_WORK)

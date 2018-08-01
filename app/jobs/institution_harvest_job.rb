@@ -1,6 +1,6 @@
 class InstitutionHarvestJob < ApplicationJob
   # Defaults to 0
-  #event_options retry: 0
+  # job_options retry: 0
 
   # Performs an asynchronous harvest and save publications
   # @return [void]
