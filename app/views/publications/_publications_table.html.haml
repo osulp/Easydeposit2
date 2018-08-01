@@ -21,8 +21,8 @@
       %th Last Event Status
   %tbody
     - @publications.order(pub_at: :desc).each do |p|
-      - job = p.jobs.order(updated_at: :desc).first
-      %tr{ class: "#{job.restartable ? 'restartable text-white' : ''} #{p.published? ? 'published' : ''}" }
+      - event = p.events.order(updated_at: :desc).first
+      %tr{ class: "#{event.restartable ? 'restartable text-white' : ''} #{p.published? ? 'published' : ''}" }
         %td
           = link_to p.web_of_science_source_record[:uid], publication_path(p.web_of_science_source_record[:uid])
           - if p[:pub_url]
@@ -31,11 +31,11 @@
         %td= p[:pub_at]
         %td= p[:created_at]
         %td.message
-          = job[:name]
+          = event[:name]
           %br
-          = job[:message]
+          = event[:message]
         %td.text-center
-          - if job.restartable && job.publication
-            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(job.publication, job)
+          - if event.restartable && event.publication
+            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_event_path(event.publication, event)
           - else
-            .material-icons{class: "text-#{job.status_hash[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.status_hash[:tooltip] }= job.status_hash[:icon]
+            .material-icons{class: "text-#{event.status_hash[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.status_hash[:tooltip] }= event.status_hash[:icon]

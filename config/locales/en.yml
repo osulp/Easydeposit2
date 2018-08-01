@@ -21,7 +21,7 @@
 
 en:
   tooltip:
-    restart: "Retry processing this job"
+    restart: "Retry processing this event"
   confirm:
     publish: "<b>Publishing this work to the repository will prevent any further changes from being made here.</b><br/><br/>All future updates to this work can be made from within the repository. Are you ready to publish?"
     harvest: "Harvesting new records from Web Of Science will process as a background job.<br/><br/> Please be patient while publications are harvested. Refresh this page to see new publications being processed.<br/><br/><b>Are you ready to harvest?</b>"
@@ -29,6 +29,6 @@ en:
     published_message: "This publication has already been published, it can only be modified in the repository."
     not_authorized_message: "You are not authorized to access this page."
     claim_message: "You've claimed this publication, please update and publish it."
-    restart_job_message: "Reprocessing event, please check back later for an update."
+    restart_event_message: "Reprocessing event, please check back later for an update."
     update_message: "Publication was successfully updated."
     delete_file_message: "%{filename} was deleted."

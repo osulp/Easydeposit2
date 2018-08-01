@@ -12,9 +12,9 @@ class HomeController < ApplicationController
 
   def get_records
     if current_user.admin?
-      @jobs = Job.includes(publication: [:cas_users, :users, :web_of_science_source_record]).all
+      @events = Event.includes(publication: [:cas_users, :users, :web_of_science_source_record]).all
     else
-      @publications = current_user.publications.includes(:jobs)
+      @publications = current_user.publications.includes(:events)
     end
   end
 end

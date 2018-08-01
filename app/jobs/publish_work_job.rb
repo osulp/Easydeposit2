@@ -6,25 +6,25 @@ require 'fileutils'
 # Publish the work to the repository
 class PublishWorkJob < ApplicationJob
   # Defaults to 0
-  # job_options retry: 0
+  # event_options retry: 0
 
-  def perform(publication:, current_user: nil, previous_job: nil)
-    job = previous_job || Job.create(Job::PUBLISH_WORK)
-    job.update(
+  def perform(publication:, current_user: nil, previous_event: nil)
+    event = previous_event || Event.create(Event::PUBLISH_WORK)
+    event.update(
       publication: publication,
       message: "Attempting to publish at #{Time.now}",
-      status: Job::STARTED[:name]
+      status: Event::STARTED[:name]
     )
 
-    current_user.jobs << job if current_user
-    if published_new?(repository_client, publication, job)
+    current_user.events << event if current_user
+    if published_new?(repository_client, publication, event)
       email_published_notification(current_user, publication)
       publication.update(pub_at: Time.now)
     end
   rescue StandardError => e
     msg = 'PublishWorkJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    job.error(message: "#{msg} : #{e.message}")
+    event.error(message: "#{msg} : #{e.message}")
   end
 
   private
@@ -32,27 +32,27 @@ class PublishWorkJob < ApplicationJob
   ##
   # Email the current_user and all users related to the publication
   # when the work is published.
-  # @param [User] - the user the job is running on behalf of
+  # @param [User] - the user the event is running on behalf of
   # @param [Publication] - the publication which was published
   def email_published_notification(current_user, publication)
-    email_job = publication.jobs.where(name: Job::EMAIL_PUBLISHED[:name]).first
-    # Instantiating a new job then calling perform
-    EmailPublishedWorkJob.perform_later(current_user: current_user, publication: publication, previous_job: email_job)
+    email_event = publication.events.where(name: Event::EMAIL_PUBLISHED[:name]).first
+    # Instantiating a new event then calling perform
+    EmailPublishedWorkJob.perform_later(current_user: current_user, publication: publication, previous_event: email_event)
   end
 
   ##
   # Check the repository to see if this publication has been published, or publish it if it hasn't been already
   # @param repository_client [Repository::Client] - the client to the repository API
   # @param publication [Publication] - the publication
-  # @param job [Job] - the current job (new or retried) that is being processed
+  # @param event [Event] - the current event (new or retried) that is being processed
   # @return [Boolean] - true if the Publication was newly published, false if it is already on the server
-  def published_new?(repository_client, publication, job)
+  def published_new?(repository_client, publication, event)
     if publication_exists?(repository_client, publication)
-      job.warn(message: "Publication already exists in the repository. Found #{published_works(repository_client, publication).count} on server with #{publication.web_of_science_source_record[:uid]}. Skipped publishing at #{Time.now}", restartable: false)
+      event.warn(message: "Publication already exists in the repository. Found #{published_works(repository_client, publication).count} on server with #{publication.web_of_science_source_record[:uid]}. Skipped publishing at #{Time.now}", restartable: false)
       false
     else
       publish!(repository_client, publication)
-      job.completed(message: "Published to the repository at #{Time.now}", restartable: false)
+      event.completed(message: "Published to the repository at #{Time.now}", restartable: false)
       true
     end
   end

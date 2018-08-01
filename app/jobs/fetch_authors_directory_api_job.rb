@@ -5,18 +5,18 @@
 # author names found in the WOS Record
 class FetchAuthorsDirectoryApiJob < ApplicationJob
   # Defaults to 0
-  # job_options retry: 0
+  # event_options retry: 0
 
-  def perform(publication:, current_user: nil, previous_job: nil)
-    job = previous_job || Job.create(Job::FETCH_AUTHORS_DIRECTORY_API)
+  def perform(publication:, current_user: nil, previous_event: nil)
+    event = previous_event || Event.create(Event::FETCH_AUTHORS_DIRECTORY_API)
 
-    job.update(
+    event.update(
       publication: publication,
       message: "Attempting to fetch authors from directory API at #{Time.now}",
-      status: Job::STARTED[:name]
+      status: Event::STARTED[:name]
     )
 
-    current_user.jobs << job if current_user
+    current_user.events << event if current_user
 
     # get author names array from WOSSR in publication
     authors = publication.web_of_science_source_record.record.authors
@@ -25,11 +25,11 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
 
     message = 'Found no authors for this publication in the Directory API'
     message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length
-    job.completed(message: message, restartable: false)
+    event.completed(message: message, restartable: false)
   rescue StandardError => e
     msg = 'FetchAuthorsDirectoryApiJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    job.error(message: "#{msg} : #{e.message}")
+    event.error(message: "#{msg} : #{e.message}")
   end
 
   private

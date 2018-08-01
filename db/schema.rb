@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2018_07_17_200122) do
     t.bigint "publication_id", null: false
   end
 
-  create_table "jobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.bigint "publication_id"
     t.string "name"
     t.string "status"
@@ -80,9 +80,9 @@ ActiveRecord::Schema.define(version: 2018_07_17_200122) do
     t.bigint "cas_user_id"
     t.string "restartable_state"
     t.boolean "restartable", default: false
-    t.index ["cas_user_id"], name: "index_jobs_on_cas_user_id"
-    t.index ["publication_id"], name: "index_jobs_on_publication_id"
-    t.index ["user_id"], name: "index_jobs_on_user_id"
+    t.index ["cas_user_id"], name: "index_events_on_cas_user_id"
+    t.index ["publication_id"], name: "index_events_on_publication_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
   end
 
   create_table "publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -149,8 +149,8 @@ ActiveRecord::Schema.define(version: 2018_07_17_200122) do
     t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"
   end
 
-  add_foreign_key "jobs", "cas_users"
-  add_foreign_key "jobs", "publications"
-  add_foreign_key "jobs", "users"
+  add_foreign_key "events", "cas_users"
+  add_foreign_key "events", "publications"
+  add_foreign_key "events", "users"
   add_foreign_key "web_of_science_source_records", "publications"
 end

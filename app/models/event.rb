@@ -3,11 +3,11 @@
 require 'json'
 
 ##
-# AR model for tracking and restarting jobs related to publications
-class Job < ActiveRecord::Base
-  belongs_to :publication, autosave: true, inverse_of: :jobs, optional: true
-  belongs_to :user, inverse_of: :jobs, optional: true
-  belongs_to :cas_user, inverse_of: :jobs, optional: true
+# AR model for tracking and restarting events related to publications
+class Event < ActiveRecord::Base
+  belongs_to :publication, autosave: true, inverse_of: :events, optional: true
+  belongs_to :user, inverse_of: :events, optional: true
+  belongs_to :cas_user, inverse_of: :events, optional: true
 
   # rubocop:disable Style/MutableConstant
 
@@ -27,7 +27,7 @@ class Job < ActiveRecord::Base
   WARN =        { name: 'warn',       class: 'warning', icon: 'warning',      tooltip: 'Warning' }
   EMAIL =       { name: 'email',      class: 'success', icon: 'mail_outline', tooltip: 'Emailed' }
 
-  # Types of Jobs
+  # Types of Events
   HARVESTED_NEW =   { name: 'Harvested New Publication',              status: COMPLETED[:name] }
   HARVEST =         { name: 'Harvest Record(s) from Web Of Science',  status: WARN[:name] }
   FILE_ADDED =      { name: 'File(s) added',                          status: COMPLETED[:name] }
@@ -80,7 +80,7 @@ class Job < ActiveRecord::Base
 
   ##
   # Called by the end-user from a button surfaced on the UI; retry the
-  # restartable job related to this record.
+  # restartable event related to this record.
   def retry(current_user)
     raise 'Missing reference to the current user.' unless current_user
     return unless restartable
@@ -88,7 +88,7 @@ class Job < ActiveRecord::Base
     # method to control which classes can be called
     state = JSON.parse(restartable_state)
     klass = state['method'].constantize
-    klass.perform_later(publication: publication, current_user: current_user, previous_job: self)
+    klass.perform_later(publication: publication, current_user: current_user, previous_event: self)
   end
 
   private

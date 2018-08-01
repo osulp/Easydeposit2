@@ -17,7 +17,7 @@ class PublicationsController < ApplicationController
   end
 
   def index
-    @publications = Publication.includes(:web_of_science_source_record, :jobs).all
+    @publications = Publication.includes(:web_of_science_source_record, :events).all
   end
 
   def show
@@ -29,9 +29,9 @@ class PublicationsController < ApplicationController
   def update
     respond_to do |format|
       if @publication.unique_publication_files?(publication_params[:publication_files]) && @publication.update(publication_params)
-        create_job(Job::FILE_ADDED.merge(message: publication_params[:publication_files]
-                                                    .map(&:original_filename)
-                                                    .join(', ')))
+        create_event(Event::FILE_ADDED.merge(message: publication_params[:publication_files]
+                                                      .map(&:original_filename)
+                                                      .join(', ')))
         format.html do
           redirect_to edit_publication_path(@publication),
                       notice: t('publications.update_message')
@@ -50,7 +50,7 @@ class PublicationsController < ApplicationController
   def delete_file
     respond_to do |format|
       if @file.purge
-        create_job(Job::FILE_DELETED.merge(message: @file.blob.filename))
+        create_event(Event::FILE_DELETED.merge(message: @file.blob.filename))
         format.html do
           redirect_to edit_publication_path(@publication),
                       notice: t('publications.delete_file_message',
@@ -67,10 +67,10 @@ class PublicationsController < ApplicationController
     end
   end
 
-  def restart_job
-    current_user.jobs << @job
-    @job.retry(current_user)
-    flash[:warn] = t('publications.restart_job_message')
+  def restart_event
+    current_user.events << @event
+    @event.retry(current_user)
+    flash[:warn] = t('publications.restart_event_message')
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path) }
       format.json { head :no_content }
@@ -87,10 +87,10 @@ class PublicationsController < ApplicationController
   end
 
   def publish
-    job = @publication.jobs.where(name: Job::PUBLISH_WORK[:name]).first
+    event = @publication.events.where(name: Event::PUBLISH_WORK[:name]).first
     PublishWorkJob.perform_now(publication: @publication,
                                current_user: current_user,
-                               previous_job: job)
+                               previous_event: event)
     flash[:warn] = 'Publishing work to repository.'
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
@@ -113,7 +113,7 @@ class PublicationsController < ApplicationController
                                           .where(uid: id)
                                           .first
     @publication = @wos_record.publication
-    @job = Job.find(params[:job_id]) if params[:job_id]
+    @event = Event.find(params[:event_id]) if params[:event_id]
     @file = @publication.publication_files.find(params[:file_id]) if params[:file_id]
   end
 
@@ -137,9 +137,9 @@ class PublicationsController < ApplicationController
                 alert: t('publications.published_message')
   end
 
-  def create_job(job)
-    new_job = Job.create(job)
-    current_user.jobs << new_job
-    @publication.jobs << new_job
+  def create_event(event)
+    new_event = Event.create(event)
+    current_user.events << new_event
+    @publication.events << new_event
   end
 end
