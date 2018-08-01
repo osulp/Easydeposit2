@@ -26,7 +26,7 @@ class EmailPublishedWorkJob < ApplicationJob
       status: Event::EMAIL[:name]
     })
   rescue => e
-    msg = "PublishWorkJob.perform"
+    msg = "EmailPublishedWorkJob.perform"
     NotificationManager.log_exception(logger, msg, e)
     event.error({restartable: true, message: "#{msg} : #{e.message}"})
   end
