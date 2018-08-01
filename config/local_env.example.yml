@@ -29,11 +29,17 @@ ED2_DEPLOYED_REVISION_LOG: /path/to/app/revisions.log
 
 # The Repository that ED2 will publish works to
 REPOSITORY_URL: 'http://hyrax.server'
+REPOSITORY_SEARCH_URL: '/catalog.json?q="{value}"&op=AND&{property}="{value}"'
 REPOSITORY_ADMIN_SET_URL: '/admin/admin_sets.json'
 REPOSITORY_WORKFLOW_URL: '/concern/workflow_actions/{work_id}'
 REPOSITORY_UPLOAD_URL: '/uploads'
 REPOSITORY_AUTHENTICATION_TOKEN: '12345'
 REPOSITORY_AUTHENTICATION_USERNAME: 'ed2user@hyrax.server'
+REPOSITORY_PUBLISH_WORK_TYPE: Article
+REPOSITORY_PUBLISH_ADMIN_SET_NAME: Self Deposit
+REPOSITORY_PUBLISH_REQUIRES_WORKFLOW_APPROVAL: 'false'
+REPOSITORY_PUBLISH_RIGHTS_STATEMENT: 'http://rightsstatements.org/vocab/InC/1.0/'
+REPOSITORY_PUBLISH_RESOURCE_TYPE: 'Article'
 
 # Redis for background jobs and notifications
 ED2_REDIS_PORT: '6379'

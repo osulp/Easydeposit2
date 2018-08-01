@@ -1,46 +1,94 @@
-module Repository
-  class Work
+# frozen_string_literal: true
 
+module Repository
+  ##
+  # Repository work model
+  class Work
     attr_reader :client
-    def initialize(client, work_type, data, file_path, file_content_type, admin_set_title)
-      @client = client
-      @data = data
-      @file_content_type = file_content_type
-      @file_path = file_path
-      @work_type = work_type
-      @admin_set_id = get_admin_set_id(admin_set_title)
+
+    ##
+    # Initialize a work model for file upload and publishing
+    # @param args [Hash] - a hash of work params as follows
+    #   client: [Repository::Client] - the repository API client
+    #   data: [Hash] - properties for the work to be published
+    #   files: [Array<Hash>] - array of files to be uploaded shaped as {path: [String], content_type: [String]}
+    #   work_type: [String] - the work type to be published, matches the model name in the repository (ie. article)
+    #   admin_set_title: [String] - the admin set the work will be published to, matches a name of an admin set in the repository
+    def initialize(args)
+      validate!(args)
+      @client = args[:client]
+      @data = args[:data]
+      @files = args[:files]
+      @work_type = args[:work_type]
+      @admin_set_id = admin_set_id(args[:admin_set_title])
+      @web_of_science_uid = args[:web_of_science_uid]
     end
 
     def publish
-      raise "Cannot find file #{@file_path}, can't publish." unless has_file?
-      raise "Missing content type #{@file_content_type}, can't publish." if @file_content_type.blank?
-      raise "No data fields to publish." if @data.blank?
-      work = @client.publish(work_payload, publish_url)
-      advanced = @client.set_workflow(work, 'Approve', 'Published by ED2')
-      advanced
+      raise "Cannot publish, missing file(s) for upload: #{missing_files.map { |f| f[:path] }}" unless missing_files.blank?
+      file_ids = uploaded_file_ids
+      response = client_publish(repository_data(file_ids), publish_url)
+      client_set_workflow(response[:work], 'Approve', 'Published by ED2') if workflow_required?
+      response
     end
 
     private
-    def work_payload
-      @data['admin_set_id'] = @admin_set_id
-      payload = {
-        "#{@work_type}" => @data,
-        uploaded_files: [file_id],
+
+    def workflow_required?
+      ActiveModel::Type::Boolean.new.cast(ENV.fetch('REPOSITORY_PUBLISH_REQUIRES_WORKFLOW_APPROVAL', 'true'))
+    end
+
+    def repository_data(file_ids)
+      {
+        @work_type.to_s => {
+          title: @data['titles'],
+          creator: @data['authors'],
+          admin_set_id: @admin_set_id,
+          resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
+          rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
+          web_of_science_uid: @web_of_science_uid
+        },
+        uploaded_files: file_ids,
         agreement: 1
       }
     end
 
-    def get_admin_set_id(title)
-      @client.admin_sets['admin_sets'].select {|a| a['title'].any? {|t| t.casecmp(title).zero? } }.first['id']
+    def client_publish(work_payload, publish_url)
+      @client.publish(work_payload, publish_url)
     end
 
-    def has_file?
-      File.file?(@file_path)
+    def client_set_workflow(work, action, comment)
+      @client.set_workflow(work, action, comment)
     end
 
-    def file_id
-      response = @client.upload_file(@file_path, @file_content_type)
-      response['files'][0]['id']
+    def validate!(args)
+      raise 'Missing client' unless args[:client]
+      raise 'Missing data' unless args[:data]
+      raise 'Missing files' unless args[:files]
+      raise 'Missing work_type' unless args[:work_type]
+      raise 'Missing admin_set_title' unless args[:admin_set_title]
+    end
+
+    def admin_set_id(title)
+      @client.admin_sets['admin_sets'].select { |a| a['title'].any? { |t| t.casecmp(title).zero? } }.first['id']
+    end
+
+    def missing_files
+      @missing_files ||= @files.reject { |f| File.file?(f[:path]) }
+    end
+
+    ##
+    # Upload each of the associated files, fetching the resulting
+    # id returned from the server. These will be associated with the
+    # work as it is published to the repository.
+    # @return [Array<Integer>] - the uploaded file id's created on the server
+    def uploaded_file_ids
+      file_ids = []
+      @files.each do |f|
+        response = @client.upload_file(f[:path], f[:content_type])
+        file_ids << response['files'][0]['id']
+      end
+      file_ids
     end
 
     def publish_url

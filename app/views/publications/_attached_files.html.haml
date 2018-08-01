@@ -1,4 +1,4 @@
 %h2 Attached Files
-- if @publication.ready_to_publish?
+- unless @publication[:pub_at]
   = render 'file_form'
 = render 'file_table'
