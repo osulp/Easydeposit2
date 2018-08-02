@@ -1,0 +1,9 @@
+= "Dear Author: Oregon State University Libraries invites you to deposit manuscript of recent publication for open access"
+\-------------------------------------------------
+
+- @publication.web_of_science_source_record.record.titles.each do |t|
+  = t
+  \-------------------------------------------------
+
+Attach manuscript with this link:
+= claim_url(@publication.web_of_science_source_record[:hashed_uid])
