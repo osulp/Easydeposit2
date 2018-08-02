@@ -50,9 +50,9 @@ class Event < ActiveRecord::Base
                                restartable: true,
                                restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:fetch_authors_emails_wos]) }
   EMAIL_ARTICLE_RECRUIT = { name: 'Send article recruit with email saved in AuthorPublication',
-                               status: STARTED[:name],
-                               restartable: true,
-                               restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:email_article_recruit]) }
+                            status: STARTED[:name],
+                            restartable: true,
+                            restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:email_article_recruit]) }
 
   def completed(options = nil)
     save_record(options.merge(status: options[:status] || COMPLETED[:name]))

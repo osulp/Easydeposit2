@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+##
+# Job for sending artilce recruit email
 class EmailArticleRecruitJob < ApplicationJob
   # Defaults to 0
   # job_options retry: 0
@@ -26,8 +30,8 @@ class EmailArticleRecruitJob < ApplicationJob
       status: Job::EMAIL[:name]
     )
   rescue => e
-    msg = "EmailArticleRecruitJob.perform"
+    msg = 'EmailArticleRecruitJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    job.error({restartable: true, message: "#{msg} : #{e.message}"})
+    job.error(restartable: true, message: "#{msg} : #{e.message}")
   end
 end
