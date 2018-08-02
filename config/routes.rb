@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   resources :publications do
     get 'publish', to: 'publications#publish', as: 'publish'
     delete 'file/:file_id', to: 'publications#delete_file', as: 'delete_file'
-    get 'job/:job_id', to: 'publications#restart_job', as: 'restart_job'
+    get 'event/:event_id', to: 'publications#restart_event', as: 'restart_event'
   end
 
   # Only allow CAS users who are admin to access RailsAdmin and Sidekiq

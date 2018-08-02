@@ -86,7 +86,7 @@ module WebOfScience
       ) do |pub|
         pub.web_of_science_source_record = wssr if wssr.publication.blank?
       end
-      Job.create(Job::HARVESTED_NEW.merge({
+      Event.create(Event::HARVESTED_NEW.merge({
         message: record.uid,
         publication: publication
       }))

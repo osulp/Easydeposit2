@@ -72,9 +72,9 @@
     border-radius: 10px;
     font-weight: bold;
   }
-  .jobs {
+  .events {
     font-size: 0.7rem;
-    .job-row {
+    .event-row {
       padding-top: 10px;
       padding-bottom: 10px;
       margin-bottom: 10px;
@@ -102,7 +102,7 @@
           transform: rotate(-360deg);
         }
       }
-      .job-name {
+      .event-name {
         font-size: 1rem;
       }
       .badge {

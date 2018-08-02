@@ -22,30 +22,30 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
     allow(job).to receive(:query_api) { api_return }
     allow(job).to receive(:process_found_authors).with(api_return) { true }
     job.perform(publication: publication, current_user: user)
-    expect(user.jobs.count).to eq 1
-    expect(user.jobs.first.status).to eq 'completed'
-    expect(user.jobs.first.name).to eq 'Fetch Authors from Directory API'
-    expect(user.jobs.first.message).to eq 'Found 1 person in Directory API.'
+    expect(user.events.count).to eq 1
+    expect(user.events.first.status).to eq 'completed'
+    expect(user.events.first.name).to eq 'Fetch Authors from Directory API'
+    expect(user.events.first.message).to eq 'Found 1 person in Directory API.'
     expect(publication[:pub_at]).to be_falsey
   end
   it 'processes an job with no authors found' do
     allow(job).to receive(:query_api) { [] }
     allow(job).to receive(:process_found_authors).with([]) { true }
     job.perform(publication: publication, current_user: user)
-    expect(user.jobs.count).to eq 1
-    expect(user.jobs.first.status).to eq 'completed'
-    expect(user.jobs.first.name).to eq 'Fetch Authors from Directory API'
-    expect(user.jobs.first.message).to eq 'Found 0 people in Directory API.'
+    expect(user.events.count).to eq 1
+    expect(user.events.first.status).to eq 'completed'
+    expect(user.events.first.name).to eq 'Fetch Authors from Directory API'
+    expect(user.events.first.message).to eq 'Found 0 people in Directory API.'
     expect(publication[:pub_at]).to be_falsey
   end
   it 'processes an error' do
     allow(job).to receive(:query_api) { [] }
     allow(job).to receive(:process_found_authors).with([]) { raise 'Boom' }
     job.perform(publication: publication, current_user: user)
-    expect(user.jobs.count).to eq 1
-    expect(user.jobs.first.status).to eq 'error'
-    expect(user.jobs.first.name).to eq 'Fetch Authors from Directory API'
-    expect(user.jobs.first.message).to eq 'FetchAuthorsDirectoryApiJob.perform : Boom'
+    expect(user.events.count).to eq 1
+    expect(user.events.first.status).to eq 'error'
+    expect(user.events.first.name).to eq 'Fetch Authors from Directory API'
+    expect(user.events.first.message).to eq 'FetchAuthorsDirectoryApiJob.perform : Boom'
     expect(publication[:pub_at]).to be_falsey
   end
 end

@@ -12,7 +12,7 @@ class Publication < ActiveRecord::Base
 
   has_one :web_of_science_source_record, autosave: true, dependent: :destroy
   has_many_attached :publication_files
-  has_many :jobs, inverse_of: :publication, dependent: :destroy
+  has_many :events, inverse_of: :publication, dependent: :destroy
   has_and_belongs_to_many :users
   has_and_belongs_to_many :cas_users
   has_many :author_publications, inverse_of: :publication

@@ -1,12 +1,12 @@
 :javascript
   $(document).ready(function() {
-    $('#jobs_table').DataTable({
+    $('#events_table').DataTable({
       stateSave: true
     });
   });
 
-%h1 Jobs
-%table#jobs_table.table.table-striped.table-bordered
+%h1 Events
+%table#events_table.table.table-striped.table-bordered
   %thead
     %tr
       %th Name
@@ -15,7 +15,7 @@
       %th.message Message
       %th Status
   %tbody
-    - @jobs.order(updated_at: :desc).each do |j|
+    - @events.order(updated_at: :desc).each do |j|
       %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
         %td
           = j[:name]
@@ -29,6 +29,6 @@
         %td.message= j[:message]
         %td.text-center
           - if j.restartable && j.publication
-            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_job_path(j.publication, j)
+            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_event_path(j.publication, j)
           - else
             .material-icons{class: "text-#{j.status_hash[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.status_hash[:tooltip] }= j.status_hash[:icon]

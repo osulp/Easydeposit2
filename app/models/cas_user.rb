@@ -1,5 +1,5 @@
 class CasUser < ActiveRecord::Base
-  has_many :jobs, inverse_of: :cas_user
+  has_many :events, inverse_of: :cas_user
   has_and_belongs_to_many :publications
 
   # Include default devise modules. Others available are:
