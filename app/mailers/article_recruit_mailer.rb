@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+##
+# Send article recruit emails so authors can attach files to publications in EasyDeposit
 class ArticleRecruitMailer < ApplicationMailer
   before_action { @emails = params[:emails] }
   default to: -> { @emails }

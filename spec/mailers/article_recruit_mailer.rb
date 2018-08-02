@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 RSpec.describe ArticleRecruitMailer, type: :mailer do
   describe '#published_email' do
-    let(:mail) { described_class.with(params).published_email}
+    let(:mail) { described_class.with(params).published_email }
     let(:user) { create(:user) }
     let(:publication) { create(:publication) }
     let(:params) { { user: user, publication: publication, emails: [user.email] } }
