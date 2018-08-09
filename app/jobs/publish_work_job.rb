@@ -19,7 +19,6 @@ class PublishWorkJob < ApplicationJob
     current_user.events << event if current_user
     if published_new?(repository_client, publication, event)
       email_published_notification(current_user, publication)
-      publication.update(pub_at: Time.now)
     end
   rescue StandardError => e
     msg = 'PublishWorkJob.perform'
@@ -82,6 +81,7 @@ class PublishWorkJob < ApplicationJob
     files = stage_attached_files(publication)
     response = repository_work(repository_client, publication, files).publish
     publication.update(pub_url: publication_url(repository_client, response[:response]))
+    publication.publish!
   rescue StandardError => e
     logger.error "#{e.message} => #{e.backtrace}"
   end

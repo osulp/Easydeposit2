@@ -26,7 +26,6 @@ RSpec.describe PublishWorkJob do
     expect(user.events.first.status).to eq 'completed'
     expect(user.events.first.name).to eq 'Publish Work'
     expect(user.events.first.message).to start_with 'Published to the repository at'
-    expect(publication[:pub_at]).to be_truthy
     expect(publication[:pub_url]).to eq 'http://hyrax.server/concern/articles/123'
   end
 

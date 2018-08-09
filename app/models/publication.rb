@@ -3,6 +3,8 @@
 ##
 # A publication, the central model of the application
 class Publication < ActiveRecord::Base
+  include AASM
+
   has_paper_trail on: [:destroy]
 
   scope :by_wos_uid, lambda { |uid|
@@ -15,11 +17,12 @@ class Publication < ActiveRecord::Base
   has_many :events, inverse_of: :publication, dependent: :destroy
   has_and_belongs_to_many :users
   has_and_belongs_to_many :cas_users
-  has_many :author_publications, inverse_of: :publication
+  has_many :author_publications, inverse_of: :publication, dependent: :destroy
 
   serialize :pub_hash, Hash
 
   after_save :update_pub_hash
+  after_create :fetch_authors_jobs
 
   def delete!
     self.deleted = true
@@ -66,7 +69,43 @@ class Publication < ActiveRecord::Base
     end
   end
 
+  aasm do
+    state :initialized, initial: true
+    state :fetching_authors
+    state :recruiting_authors
+    state :awaiting_attachments
+    state :published
+
+    event :fetch_authors do
+      after do
+        FetchAuthorsDirectoryApiJob.perform_later(publication: self)
+        FetchAuthorsEmailsWosJob.perform_later(publication: self)
+      end
+      transitions from: :initialized, to: :fetching_authors
+    end
+    event :recruit_authors do
+      after do
+        EmailArticleRecruitJob.perform_later(publication: self)
+      end
+      transitions from: :fetching_authors, to: :recruiting_authors, guard: :completed_fetching_authors?
+    end
+    event :await_attachments do
+      transitions from: :recruiting_authors, to: :awaiting_attachments
+    end
+    event :publish do
+      after do
+        self.update(pub_at: Time.now)
+      end
+      transitions from: :awaiting_attachments, to: :published, guard: :ready_to_publish?
+    end
+  end
+
+
   private
+
+  def fetch_authors_jobs
+    fetch_authors
+  end
 
   def update_pub_hash
     return unless web_of_science_source_record
@@ -77,5 +116,9 @@ class Publication < ActiveRecord::Base
     logger.error "Duplicate uploads found: #{duplicates}, returning error."
     errors.add :base,
                "Cannot upload duplicate files, found: #{duplicates.join(', ')}"
+  end
+
+  def completed_fetching_authors?
+    events.where(name: [Event::FETCH_AUTHORS_DIRECTORY_API[:name], Event::FETCH_AUTHORS_EMAILS_WOS[:name]], status: Event::COMPLETED[:name]).count == 2
   end
 end
