@@ -94,12 +94,11 @@ class Publication < ActiveRecord::Base
     end
     event :publish do
       after do
-        self.update(pub_at: Time.now)
+        update(pub_at: Time.now)
       end
       transitions from: :awaiting_attachments, to: :published, guard: :ready_to_publish?
     end
   end
-
 
   private
 
