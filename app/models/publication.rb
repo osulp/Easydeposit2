@@ -73,6 +73,7 @@ class Publication < ActiveRecord::Base
     state :initialized, initial: true
     state :fetching_authors
     state :recruiting_authors
+    state :awaiting_claim
     state :awaiting_attachments
     state :published
 
@@ -89,8 +90,11 @@ class Publication < ActiveRecord::Base
       end
       transitions from: :fetching_authors, to: :recruiting_authors, guard: :completed_fetching_authors?
     end
+    event :await_claim do
+      transitions from: :recruiting_authors, to: :awaiting_claim
+    end
     event :await_attachments do
-      transitions from: :recruiting_authors, to: :awaiting_attachments
+      transitions from: :awaiting_claim, to: :awaiting_attachments
     end
     event :publish do
       after do

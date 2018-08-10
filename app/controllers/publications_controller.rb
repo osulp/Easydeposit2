@@ -79,6 +79,7 @@ class PublicationsController < ApplicationController
 
   def claim
     current_user.publications << @publication
+    @publication.await_attachments! unless @publication.awaiting_attachments?
     flash[:warn] = t('publications.claim_message')
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }

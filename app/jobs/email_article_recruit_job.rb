@@ -32,7 +32,7 @@ class EmailArticleRecruitJob < ApplicationJob
       restartable: false,
       status: Event::EMAIL[:name]
     )
-    publication.await_attachments!
+    publication.await_claim!
   rescue => e
     msg = 'EmailArticleRecruitJob.perform'
     NotificationManager.log_exception(logger, msg, e)
