@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'osu_api/client'
+require 'osu_api/person'
 ##
 # Fetch a list of people from the Directory API based on the
 # author names found in the WOS Record
@@ -13,6 +15,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     event.update(
       publication: publication,
       message: "Attempting to fetch authors from directory API at #{Time.now}",
+      restartable: false,
       status: Event::STARTED[:name]
     )
 
@@ -21,15 +24,17 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     # get author names array from WOSSR in publication
     authors = publication.web_of_science_source_record.record.authors
     found_authors = query_api(authors)
-    process_found_authors(found_authors)
+    process_found_authors(found_authors, publication)
 
     message = 'Found no authors for this publication in the Directory API'
     message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length
     event.completed(message: message, restartable: false)
+    logger.debug "FetchAuthorsDirectoryApiJob: Publication.may_recruit_authors? #{publication[:id]} = #{publication.may_recruit_authors?}"
+    publication.recruit_authors! if publication.may_recruit_authors?
   rescue StandardError => e
     msg = 'FetchAuthorsDirectoryApiJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    event.error(message: "#{msg} : #{e.message}")
+    event.error(message: "#{msg} : #{e.message}", restartable: true)
   end
 
   private
@@ -57,7 +62,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
   # Remap the data into the proper shape that an AuthorPublication
   # looks like and provide that array to the publication method to
   # create or update the record.
-  def process_found_authors(found_authors)
+  def process_found_authors(found_authors, publication)
     found_authors.each do |author|
       author_publications = author[:people].map do |person|
         {

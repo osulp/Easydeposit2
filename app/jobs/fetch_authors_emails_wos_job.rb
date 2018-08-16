@@ -13,6 +13,7 @@ class FetchAuthorsEmailsWosJob < ApplicationJob
     event.update(
       publication: publication,
       message: "Attempting to fetch authors emails from Web of Science at #{Time.now}",
+      restartable: false,
       status: Event::STARTED[:name]
     )
 
@@ -25,10 +26,12 @@ class FetchAuthorsEmailsWosJob < ApplicationJob
     message = 'Found no authors emails for this publication in the Web of Science full records'
     message = "Found #{emails.count} author emails in Web of Science full records." if emails.length
     event.completed(message: message, restartable: false)
+    logger.debug "FetchAuthorsEmailsWosJob: Publication.may_recruit_authors? #{publication[:id]} = #{publication.may_recruit_authors?}"
+    publication.recruit_authors! if publication.may_recruit_authors?
   rescue StandardError => e
     msg = 'FetchAuthorsEmailsWosJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    event.error(message: "#{msg} : #{e.message}")
+    event.error(message: "#{msg} : #{e.message}", restartable: true)
   end
 
   private

@@ -1,37 +1,41 @@
 # frozen_string_literal: true
 
 ##
-# Job for sending artilce recruit email
+# Job for sending article recruit email
 class EmailArticleRecruitJob < ApplicationJob
   # Defaults to 0
   # job_options retry: 0
 
-  def perform(publication:, current_user:, previous_job: nil)
-    job = previous_job || Job.create(Job::EMAIL_ARTICLE_RECRUIT.merge(restartable: false, status: Job::STARTED[:name]))
+  def perform(publication:, current_user: nil, previous_event: nil)
+    system_email = ENV['ED2_EMAIL_FROM']
+    event = previous_event || Event.create(Event::EMAIL_ARTICLE_RECRUIT.merge(restartable: false, status: Event::STARTED[:name]))
 
-    job.update(
+    event.update(
       publication: publication,
-      message: "Initiated by #{current_user.email}",
+      message: "Initiated by #{current_user ? current_user[:email] : system_email }",
       restartable: false,
-      status: Job::STARTED[:name]
+      status: Event::STARTED[:name]
     )
 
-    current_user.jobs << job if current_user
+    current_user.events << event if current_user
 
-    emails = [current_user.email]
-    emails << publication.users.map(&:email)
-    emails << publication.cas_users.map(&:email)
+    emails = [system_email]
+    emails << current_user[:email] if current_user
+    emails << publication.author_publications.map(&:email)
+    logger.debug "EmailArticleRecruitJob.perform: Emailing recruitment email to #{emails.join('; ')}"
 
-    ArticleRecruitMailer.with(emails: emails, user: current_user, publication: publication).published_email.deliver_now
+    # TODO: pass all emails to mailer
+    ArticleRecruitMailer.with(emails: emails[0], publication: publication).recruit_email.deliver_now
 
-    job.completed(
-      message: "Email initiated by #{current_user.email} at #{Time.now}",
+    event.completed(
+      message: "Article author recruitment email completed by #{current_user ? current_user[:email] : system_email} at #{Time.now}",
       restartable: false,
-      status: Job::EMAIL[:name]
+      status: Event::EMAIL[:name]
     )
+    publication.await_claim!
   rescue => e
     msg = 'EmailArticleRecruitJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    job.error(restartable: true, message: "#{msg} : #{e.message}")
+    event.error(restartable: true, message: "#{msg} : #{e.message}")
   end
 end

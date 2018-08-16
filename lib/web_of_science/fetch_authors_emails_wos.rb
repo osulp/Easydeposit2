@@ -27,7 +27,6 @@ module WebOfScience
       # prefix_url should be removed for Faraday
       location = links[uid]['sourceURL'].gsub(/#{source_url_prefix}/, '')
       content = ''
-      emails = []
 
       success = false
       until success
@@ -43,10 +42,7 @@ module WebOfScience
         end
       end
       # example: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:adam.t.greer@gmail.com">adam.t.greer@gmail.com</a> </p>
-      content.scan(/mailto:(.*?)\"/) do |m|
-        emails << m
-      end
-      emails
+      content.scan(/mailto:(.*?)\"/).flatten
     end
   end
 end

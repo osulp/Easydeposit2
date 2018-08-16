@@ -20,7 +20,7 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
 
   it 'processes a successful job' do
     allow(job).to receive(:query_api) { api_return }
-    allow(job).to receive(:process_found_authors).with(api_return) { true }
+    allow(job).to receive(:process_found_authors).with(api_return, publication) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.events.count).to eq 1
     expect(user.events.first.status).to eq 'completed'
@@ -30,7 +30,7 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
   end
   it 'processes an job with no authors found' do
     allow(job).to receive(:query_api) { [] }
-    allow(job).to receive(:process_found_authors).with([]) { true }
+    allow(job).to receive(:process_found_authors).with([], publication) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.events.count).to eq 1
     expect(user.events.first.status).to eq 'completed'
@@ -40,7 +40,7 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
   end
   it 'processes an error' do
     allow(job).to receive(:query_api) { [] }
-    allow(job).to receive(:process_found_authors).with([]) { raise 'Boom' }
+    allow(job).to receive(:process_found_authors).with([], publication) { raise 'Boom' }
     job.perform(publication: publication, current_user: user)
     expect(user.events.count).to eq 1
     expect(user.events.first.status).to eq 'error'
