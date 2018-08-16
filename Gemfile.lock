@@ -132,6 +132,8 @@ GEM
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
     database_cleaner (1.7.0)
+    ddtrace (0.13.2)
+      msgpack
     debase (0.2.2)
       debase-ruby_core_source (>= 0.10.2)
     debase-ruby_core_source (0.10.3)
@@ -254,6 +256,7 @@ GEM
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
+    msgpack (1.2.4)
     multi_json (1.13.1)
     multipart-post (2.0.0)
     mysql2 (0.4.10)
@@ -505,6 +508,7 @@ DEPENDENCIES
   config
   coveralls (~> 0.8)
   database_cleaner
+  ddtrace
   debase
   devise
   devise_cas_authenticatable
