@@ -60,6 +60,8 @@ gem 'capistrano3-puma'
 
 gem 'aasm'
 
+gem 'ddtrace'
+
 group :development, :test do
   gem 'debase'
   # Great gem for inspecting the database in development/test at localhost:3000/rails/db
