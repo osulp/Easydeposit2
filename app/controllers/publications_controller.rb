@@ -89,9 +89,9 @@ class PublicationsController < ApplicationController
 
   def publish
     event = @publication.events.where(name: Event::PUBLISH_WORK[:name]).first
-    PublishWorkJob.perform_now(publication: @publication,
-                               current_user: current_user,
-                               previous_event: event)
+    PublishWorkJob.perform_later(publication: @publication,
+                                 current_user: current_user,
+                                 previous_event: event)
     flash[:warn] = 'Publishing work to repository.'
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
