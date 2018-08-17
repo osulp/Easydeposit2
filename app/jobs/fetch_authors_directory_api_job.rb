@@ -34,7 +34,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
   rescue StandardError => e
     msg = 'FetchAuthorsDirectoryApiJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    event.error(message: "#{msg} : #{e.message}", restartable: true)
+    event.error(message: "#{msg} : #{e.message}", restartable: true) if event
   end
 
   private

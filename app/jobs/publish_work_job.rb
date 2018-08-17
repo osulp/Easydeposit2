@@ -23,7 +23,7 @@ class PublishWorkJob < ApplicationJob
   rescue StandardError => e
     msg = 'PublishWorkJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    event.error(message: "#{msg} : #{e.message}")
+    event.error(message: "#{msg} : #{e.message}") if event
   end
 
   private

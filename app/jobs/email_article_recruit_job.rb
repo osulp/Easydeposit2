@@ -36,6 +36,6 @@ class EmailArticleRecruitJob < ApplicationJob
   rescue => e
     msg = 'EmailArticleRecruitJob.perform'
     NotificationManager.log_exception(logger, msg, e)
-    event.error(restartable: true, message: "#{msg} : #{e.message}")
+    event.error(restartable: true, message: "#{msg} : #{e.message}") if event
   end
 end
