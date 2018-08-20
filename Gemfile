@@ -60,7 +60,9 @@ gem 'capistrano3-puma'
 
 gem 'aasm'
 
-gem 'ddtrace'
+group :production, :staging do
+  gem 'ddtrace'
+end
 
 group :development, :test do
   gem 'debase'
