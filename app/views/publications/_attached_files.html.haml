@@ -1,4 +1,4 @@
 %h2 Attached Files
-- unless @publication[:pub_at]
+- if !@publication[:pub_at] && current_page?(action: 'edit')
   = render 'file_form'
 = render 'file_table'
