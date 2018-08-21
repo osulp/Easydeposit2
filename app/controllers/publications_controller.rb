@@ -20,10 +20,7 @@ class PublicationsController < ApplicationController
     @publications = Publication.includes(:web_of_science_source_record, :events).all
   end
 
-  def show
-    redirect_to edit_publication_path(@publication)
-  end
-
+  def show; end
   def edit; end
 
   def update
@@ -94,7 +91,7 @@ class PublicationsController < ApplicationController
                                  previous_event: event)
     flash[:warn] = 'Publishing work to repository.'
     respond_to do |format|
-      format.html { redirect_to edit_publication_path(@publication) }
+      format.html { redirect_to publication_path(@publication) }
       format.json { head :no_content }
     end
   end

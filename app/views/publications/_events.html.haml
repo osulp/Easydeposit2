@@ -1,12 +1,9 @@
 .events
   %hr
   %h2 Processed Events
-  .wrap-collapsible
-    - if @publication.events.count > 3
-      %input#collapsible.toggle{type: 'checkbox'}
-      %label.lbl-toggle{for: 'collapsible'} Show All
-    .collapsible-content
-      .collapsible-inner
+  .publication-events
+    .content
+      .inner
         - @publication.events.order(updated_at: :desc).each do |j|
           .event-row.container{ class: "#{j.restartable ? 'restartable bg-danger text-white' : ''}" }
             .row.justify-content-end
