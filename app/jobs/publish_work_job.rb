@@ -48,12 +48,20 @@ class PublishWorkJob < ApplicationJob
   # @return [Boolean] - true if the Publication was newly published, false if it is already on the server
   def published_new?(repository_client, publication, event)
     if publication_exists?(repository_client, publication)
+      publication.publish_failed!
       event.warn(message: "Publication already exists in the repository. Found #{published_works(repository_client, publication).count} on server with #{publication.web_of_science_source_record[:uid]}. Skipped publishing at #{Time.now}", restartable: false)
       false
     else
-      publish!(repository_client, publication)
-      event.completed(message: "Published to the repository at #{Time.now}", restartable: false)
-      true
+      begin
+        publish!(repository_client, publication)
+        event.completed(message: "Published to the repository at #{Time.now}", restartable: false)
+        true
+      rescue StandardError => e
+        publication.publish_failed!
+        event.error(message: 'Publishing to the repository failed.', restartable: false)
+        logger.error "PublishWorkJob.publish! failed: #{e.message} => #{e.backtrace}"
+        false
+      end
     end
   end
 
@@ -83,8 +91,6 @@ class PublishWorkJob < ApplicationJob
     response = repository_work(repository_client, publication, files).publish
     publication.update(pub_url: publication_url(repository_client, response[:response]))
     publication.publish!
-  rescue StandardError => e
-    logger.error "#{e.message} => #{e.backtrace}"
   end
 
   ##

@@ -75,6 +75,7 @@ class Publication < ActiveRecord::Base
     state :recruiting_authors
     state :awaiting_claim
     state :awaiting_attachments
+    state :publishing_failed
     state :published
 
     event :fetch_authors do
@@ -95,6 +96,9 @@ class Publication < ActiveRecord::Base
     end
     event :await_attachments do
       transitions from: :awaiting_claim, to: :awaiting_attachments
+    end
+    event :publish_failed do
+      transitions from: :awaiting_attachments, to: :publishing_failed
     end
     event :publish do
       after do

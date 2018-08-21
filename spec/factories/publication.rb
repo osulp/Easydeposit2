@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :publication do
     title 'Publication Title'
+    aasm_state 'awaiting_attachments'
     web_of_science_source_record
 
     after(:build) do |p|
