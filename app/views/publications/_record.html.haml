@@ -1,7 +1,7 @@
 - if @publication
   %h1=r[:uid]
 - else
-  %h1=link_to r[:uid], publication_path(r[:uid])
+  %h1=link_to r[:uid], edit_publication_path(r[:uid])
 .fingerprint
   %span (fingerprint)
   %span=r[:source_fingerprint]
