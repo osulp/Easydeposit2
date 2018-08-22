@@ -42,7 +42,7 @@ module Repository
       {
         @work_type.to_s => {
           title: @data['titles'],
-          creator: @data['authors'],
+          nested_ordered_creator_attributes: @data['authors'].map.with_index { |a, i| { creator: a, index: i } },
           admin_set_id: @admin_set_id,
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
