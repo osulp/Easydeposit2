@@ -14,7 +14,8 @@ class PublishWorkJob < ApplicationJob
       publication: publication,
       message: "Attempting to publish at #{Time.now}",
       status: Event::STARTED[:name],
-      restartable: false
+      restartable: false,
+      updated_at: Time.now
     )
 
     current_user.events << event if current_user

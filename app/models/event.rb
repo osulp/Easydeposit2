@@ -88,7 +88,7 @@ class Event < ActiveRecord::Base
   # restartable event related to this record.
   def retry(current_user)
     raise 'Missing reference to the current user.' unless current_user
-    return unless restartable
+    return unless restartable || current_user.admin?
     # check if the restartable method is in the array as a security
     # method to control which classes can be called
     state = JSON.parse(restartable_state)

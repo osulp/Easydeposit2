@@ -16,19 +16,19 @@
       %th Status
   %tbody
     - @events.order(updated_at: :desc).each do |j|
-      %tr{ class: "#{j.restartable ? 'restartable text-white' : ''}" }
+      %tr{ class: "#{j.restartable || j.status == Event::ERROR[:name] ? 'restartable text-white' : ''}" }
         %td
           = j[:name]
           - if j.publication
             %br
-            = link_to j.publication.web_of_science_source_record[:uid], publication_path(j.publication)
+            = link_to j.publication.web_of_science_source_record[:uid], edit_publication_path(j.publication)
         %td= j[:updated_at]
         %td
           - if j.user || j.cas_user
             .badge.badge-primary=j.user.present? ? j.user.email : j.cas_user.email
         %td.message= j[:message]
         %td.text-center
-          - if j.restartable && j.publication
-            .material-icons.bg-danger.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_event_path(j.publication, j)
+          - if (j.restartable || j.status == Event::ERROR[:name]) && j.publication
+            .material-icons.text-white.restart{'data-toggle' => 'tooltip', 'data-placement' => 'top', title: t('tooltip.restart') }= link_to "cached", publication_restart_event_path(j.publication, j)
           - else
             .material-icons{class: "text-#{j.status_hash[:class]}", 'data-toggle' => 'tooltip', 'data-placement' => 'top', title: j.status_hash[:tooltip] }= j.status_hash[:icon]
