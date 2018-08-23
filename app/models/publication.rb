@@ -75,6 +75,7 @@ class Publication < ActiveRecord::Base
     state :recruiting_authors
     state :awaiting_claim
     state :awaiting_attachments
+    state :publication_exists
     state :publishing_failed
     state :published
 
@@ -97,6 +98,12 @@ class Publication < ActiveRecord::Base
     event :await_attachments do
       transitions from: :awaiting_claim, to: :awaiting_attachments
     end
+    event :publish_exists do
+      after do
+        update(pub_at: Time.now)
+      end
+      transitions from: [:awaiting_attachments, :publishing_failed], to: :publication_exists
+    end
     event :publish_failed do
       transitions from: :awaiting_attachments, to: :publishing_failed
     end
@@ -104,7 +111,7 @@ class Publication < ActiveRecord::Base
       after do
         update(pub_at: Time.now)
       end
-      transitions from: :awaiting_attachments, to: :published, guard: :ready_to_publish?
+      transitions from: [:awaiting_attachments, :publishing_failed, :publication_exists], to: :published, guard: :ready_to_publish?
     end
   end
 
