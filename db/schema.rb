@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_07_202909) do
+ActiveRecord::Schema.define(version: 2018_08_23_162401) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -88,8 +88,6 @@ ActiveRecord::Schema.define(version: 2018_08_07_202909) do
   create_table "publications", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.boolean "active"
     t.boolean "deleted"
-    t.string "title"
-    t.integer "year"
     t.integer "lock_version"
     t.text "xml"
     t.text "pub_hash"
@@ -141,10 +139,7 @@ ActiveRecord::Schema.define(version: 2018_08_07_202909) do
     t.text "source_data"
     t.string "source_fingerprint"
     t.string "source_url"
-    t.string "authors"
     t.string "uid"
-    t.string "doi"
-    t.string "pmid"
     t.bigint "publication_id"
     t.string "hashed_uid"
     t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"

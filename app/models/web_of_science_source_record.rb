@@ -41,7 +41,5 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
     self.hashed_uid ||= Digest::SHA2.hexdigest(record.uid)
     self.database ||= record.database
     self.uid ||= record.uid
-    self.doi ||= record.doi if record.doi.present?
-    self.pmid ||= record.pmid if record.pmid.present?
   end
 end

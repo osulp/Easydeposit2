@@ -11,8 +11,20 @@ RSpec.describe Repository::Work do
     {
       client: client,
       data: {
-        title: ['Title'],
-        web_of_science_uid: 'WOS:8675309'
+        'authors' => ['Batman, D. S.'],
+        'biblio_dates' => ['MAR 1'],
+        'biblio_years' => ['2018'],
+        'doctypes' => ['Article'],
+        'dois' => ['10.01.030'],
+        'isbns' => [],
+        'issns' => ['03-27'],
+        'keywords' => ['Logging', 'And low-flow discharge'],
+        'pages' => ['14-17'],
+        'researcher_ids' => [],
+        'researcher_names' => ['Grel, Rob'],
+        'source_titles' => ['FOREST ENT'],
+        'titles' => ['Fish response to contemporary timber harvest practices in a second-growth forest from the central Coast Range of Oregon'],
+        'volumes' => ['420']
       },
       files: [
         {

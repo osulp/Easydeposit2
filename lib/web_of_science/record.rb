@@ -6,8 +6,6 @@ module WebOfScience
   class Record
     extend Forwardable
 
-    # a identifier method in Record class is required for delegation
-    delegate %i[database doi eissn issn pmid uid wos_item_id] => :identifiers
     delegate logger: :WebOfScience
 
     # @!attribute [r] doc
@@ -20,50 +18,40 @@ module WebOfScience
       @doc = WebOfScience::XmlParser.parse(record, encoded_record)
     end
 
-    # @return [Hash<String => String>]
-    def identifiers
-      @identifiers ||= WebOfScience::Identifiers.new(self)
+    def uid
+      doc.search('uid').text
     end
 
-    # @return [Array<String>]
-    def authors
-      doc.search('authors/value').map(&:text)
-    end
-
-    # @return [Array<String>]
-    def doctypes
-      doc.search('doctype/value').map(&:text)
-    end
-
-    # @return [Array<String>]
-    def sources
-      doc.search('source').map { |children| children.search('value').text }
-    end
-
-    # @return [Array<String>]
-    def titles
-      @titles ||= begin
-        titles = doc.search('title/value')
-        titles.map(&:text)
+    ['pages',
+     'published.bibliodate',
+     'published.biblioyear',
+     'sourcetitle',
+     'volume'].each do |key|
+      define_method key.tr('.', '_').to_sym do
+        nodes = doc.search('source').select do |node|
+          node.children.any? { |n| n.text.casecmp(key).zero? }
+        end
+        nodes.map { |children| children.search('value').text }
       end
     end
 
-    # @return [Array<String>]
-    def dois
-      nodes = doc.search('other').select do |nodes|
-        nodes.children.any? { |n| n.text == 'Identifier.Doi' }
+    %w[authors keywords doctype title].each do |key|
+      define_method key.to_sym do
+        doc.search("#{key}/value").map(&:text)
       end
-      nodes.map { |children| children.search('value').text }
     end
 
-    # @return [Array<String>]
-    def keywords
-      doc.search('keywords/value').map(&:text)
-    end
-
-    # @return [Array<String>]
-    def others
-      doc.search('other').map { |children| children.search('value').text }
+    ['identifier.doi',
+     'identifier.issn',
+     'identifier.isbn',
+     'contributor.researcherid.names',
+     'contributor.researcherid.researcherids'].each do |key|
+      define_method key.tr('.', '_').to_sym do
+        nodes = doc.search('other').select do |node|
+          node.children.any? { |n| n.text.casecmp(key).zero? }
+        end
+        nodes.map { |children| children.search('value').text }
+      end
     end
 
     # Pretty print the record in XML
@@ -78,13 +66,9 @@ module WebOfScience
       nil
     end
 
-    # TODO:
-    #
-    # ---------------------------------
-    # Map WOS record data into the SUL PubHash data
     # @return [Hash]
     def pub_hash
-      @pub_hash ||= self.to_h
+      @pub_hash ||= to_h
     end
 
     # Extract the REC fields
@@ -92,12 +76,19 @@ module WebOfScience
     def to_h
       {
         'authors' => authors,
-        'doctypes' => doctypes,
-        'dois' => dois,
-        'titles' => titles,
-        'sources' => sources,
-        'others' => others,
-        'keywords' => keywords
+        'biblio_dates' => published_bibliodate,
+        'biblio_years' => published_biblioyear,
+        'doctypes' => doctype,
+        'dois' => identifier_doi,
+        'isbns' => identifier_isbn,
+        'issns' => identifier_issn,
+        'keywords' => keywords,
+        'pages' => pages,
+        'researcher_ids' => contributor_researcherid_researcherids,
+        'researcher_names' => contributor_researcherid_names,
+        'source_titles' => sourcetitle,
+        'titles' => title,
+        'volumes' => volume
       }
     end
 
@@ -112,50 +103,5 @@ module WebOfScience
     def to_xml
       doc.to_xml(save_with: WebOfScience::XmlParser::XML_OPTIONS).strip
     end
-
-    # ------------------------------------------------------------------------
-    # Elements not available in WebOfScience Lite
-
-    # @return [Array<String>]
-    #def abstracts
-    #  WebOfScience::MapAbstract.new(self).abstracts
-    #end
-
-    # @return [Array<Hash<String => String>>]
-    #def editors
-    #  doc.search('authors/value').map(&:text)
-    #end
-
-    # @return [Hash<String => String>]
-    #def identifiers
-    #  @identifiers ||= WebOfScience::Identifiers.new(self)
-    #end
-
-    # @return [Array<Hash<String => String>>]
-    #def names
-    #  @names ||= begin
-    #    name_elements = doc.search('static_data/summary/names/name').map do |n|
-    #      WebOfScience::XmlParser.attributes_with_children_hash(n)
-    #    end
-    #    name_elements.sort_by { |name| name['seq_no'].to_i }
-    #  end
-    #end
-
-    # @return [Hash<String => [String, Hash<String => String>]>]
-    #def pub_info
-    #  @pub_info ||= begin
-    #    info = doc.at('static_data/summary/pub_info')
-    #    fields = WebOfScience::XmlParser.attributes_map(info)
-    #    fields += info.children.map do |child|
-    #      [child.name, WebOfScience::XmlParser.attributes_map(child).to_h]
-    #    end
-    #    fields.to_h
-    #  end
-    #end
-
-    # @return [WebOfScience::MapPublisher]
-    #def publishers
-    #  WebOfScience::MapPublisher.new(self).publishers
-    #end
   end
 end
