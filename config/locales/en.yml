@@ -32,3 +32,4 @@ en:
     restart_event_message: "Reprocessing event, please check back later for an update."
     update_message: "Publication was successfully updated."
     delete_file_message: "%{filename} was deleted."
+    no_files_attached_message:  "This work cannot be published until the appropriate document(s) have been attached, click 'Upload' to find and attach the document(s)."

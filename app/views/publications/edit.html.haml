@@ -13,4 +13,5 @@
       - if @publication.ready_to_publish?
         = render 'publish_button'
       = render 'attached_files'
-      = render 'events'
+      - if current_user.admin?
+        = render 'events'
