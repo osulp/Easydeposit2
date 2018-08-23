@@ -22,30 +22,28 @@ RSpec.describe PublishWorkJob do
     allow(publication).to receive(:publication_files) { [publication_file] }
     allow(job).to receive(:email_published_notification) { true }
     job.perform(publication: publication, current_user: user)
-    expect(user.events.count).to eq 1
-    expect(user.events.first.status).to eq 'completed'
-    expect(user.events.first.name).to eq 'Publish Work'
-    expect(user.events.first.message).to start_with 'Published to the repository at'
+    expect(user.events.last.status).to eq 'completed'
+    expect(user.events.last.name).to eq 'Publish Work'
+    expect(user.events.last.message).to start_with 'Published to the repository at'
     expect(publication[:pub_url]).to eq 'http://hyrax.server/concern/articles/123'
   end
 
   it 'processes a publication that had already been published job' do
     allow(job).to receive(:published_works) { [{ blah: 'blah' }] }
+    allow(job).to receive(:email_published_notification) { true }
     job.perform(publication: publication, current_user: user)
-    expect(user.events.count).to eq 1
-    expect(user.events.first.status).to eq 'warn'
-    expect(user.events.first.name).to eq 'Publish Work'
-    expect(user.events.first.message).to start_with 'Publication already exists in the repository. Found 1 on server with WOS:1234567890. Skipped publishing at'
-    expect(publication[:pub_at]).to be_falsey
+    expect(user.events.last.status).to eq 'warn'
+    expect(user.events.last.name).to eq 'Publish Work'
+    expect(user.events.last.message).to start_with 'Publication already exists in the repository.'
+    expect(publication[:pub_at]).to be_truthy
   end
 
   it 'processes an error' do
     allow(job).to receive(:published_new?) { raise 'Boom' }
     job.perform(publication: publication, current_user: user)
-    expect(user.events.count).to eq 1
-    expect(user.events.first.status).to eq 'error'
-    expect(user.events.first.name).to eq 'Publish Work'
-    expect(user.events.first.message).to eq 'PublishWorkJob.perform : Boom'
+    expect(user.events.last.status).to eq 'error'
+    expect(user.events.last.name).to eq 'Publish Work'
+    expect(user.events.last.message).to eq 'PublishWorkJob.perform : Boom'
     expect(publication[:pub_at]).to be_falsey
   end
 end

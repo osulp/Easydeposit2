@@ -49,9 +49,9 @@ class PublishWorkJob < ApplicationJob
   # @return [Boolean] - true if the Publication was newly published, false if it is already on the server
   def published_new?(repository_client, publication, event)
     if publication_exists?(repository_client, publication)
-      publication.publish_failed!
-      event.warn(message: "Publication already exists in the repository. Found #{published_works(repository_client, publication).count} on server with #{publication.web_of_science_source_record[:uid]}. Skipped publishing at #{Time.now}", restartable: false)
-      false
+      publication.reload
+      event.warn(message: "Publication already exists in the repository. Make updates at #{publication[:pub_url]}", restartable: false)
+      true
     else
       begin
         publish!(repository_client, publication)
@@ -72,7 +72,14 @@ class PublishWorkJob < ApplicationJob
   # @param publication [Publication] - the publication with a WOS uid
   # @return [Boolean] - true if any number of result documents are found on the server
   def publication_exists?(repository_client, publication)
-    published_works(repository_client, publication).count.positive?
+    works = published_works(repository_client, publication)
+    if works.count.positive?
+      publication.update(pub_url: publication_url(repository_client, id: works.first['id']))
+      publication.publish_exists!
+      true
+    else
+      false
+    end
   end
 
   ##
@@ -90,7 +97,7 @@ class PublishWorkJob < ApplicationJob
   def publish!(repository_client, publication)
     files = stage_attached_files(publication)
     response = repository_work(repository_client, publication, files).publish
-    publication.update(pub_url: publication_url(repository_client, response[:response]))
+    publication.update(pub_url: publication_url(repository_client, response: response[:response]))
     publication.publish!
   end
 
@@ -117,10 +124,15 @@ class PublishWorkJob < ApplicationJob
   ##
   # The full URL to the newly created work on the repository
   # @param repository_client [Repository::Client] - the client to publish to
-  # @param publication [Publication] - the publication record to publish
-  # @return [String] - the full url without any trailing querystring
-  def publication_url(repository_client, response)
-    "#{repository_client.url}#{response.headers[:location].split('?').first}"
+  # @param response [HTTP::Response] - the http response from the server
+  # @param id [String] - the id for the work
+  # @return [String] - the full url
+  def publication_url(repository_client, response: nil, id: nil)
+    if response.nil?
+      "#{repository_client.url}/concern/articles/#{id}"
+    else
+      "#{repository_client.url}#{response.headers[:location]}"
+    end
   end
 
   def repository_work(repository_client, publication, files)
