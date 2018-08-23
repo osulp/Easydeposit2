@@ -39,6 +39,7 @@ REPOSITORY_PUBLISH_WORK_TYPE: Article
 REPOSITORY_PUBLISH_ADMIN_SET_NAME: Self Deposit
 REPOSITORY_PUBLISH_REQUIRES_WORKFLOW_APPROVAL: 'false'
 REPOSITORY_PUBLISH_RIGHTS_STATEMENT: 'http://rightsstatements.org/vocab/InC/1.0/'
+REPOSITORY_PUBLISH_LICENSE: 'http://creativecommons.org/licenses/by/4.0/'
 REPOSITORY_PUBLISH_RESOURCE_TYPE: 'Article'
 
 # Redis for background jobs and notifications

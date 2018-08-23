@@ -41,11 +41,19 @@ module Repository
     def repository_data(file_ids)
       {
         @work_type.to_s => {
-          title: @data['titles'],
-          nested_ordered_creator_attributes: @data['authors'].map.with_index { |a, i| { creator: a, index: i } },
           admin_set_id: @admin_set_id,
+          contributor: @data['researcher_names'],
+          date_issued: "#{@data['biblio_dates'].first} #{@data['biblio_years'].first}",
+          doi: @data['dois'],
+          isbn: @data['isbns'],
+          issn: @data['issns'],
+          journal_title: @data['source_titles'].first,
+          journal_volume: @data['volumes'].first,
+          license: ENV.fetch('REPOSITORY_PUBLISH_LICENSE', 'http://creativecommons.org/licenses/by/4.0/'),
+          nested_ordered_creator_attributes: @data['authors'].map.with_index { |a, i| { creator: a, index: i } },
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
+          title: @data['titles'],
           web_of_science_uid: @web_of_science_uid
         },
         uploaded_files: file_ids,
