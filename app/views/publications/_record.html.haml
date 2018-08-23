@@ -1,29 +1,35 @@
 - if @publication
-  %h1=r[:uid]
+  %h1= r.record.title.first
 - else
-  %h1=link_to r[:uid], edit_publication_path(r[:uid])
-.fingerprint
-  %span (fingerprint)
-  %span=r[:source_fingerprint]
+  %h1= link_to r.record.title.first, edit_publication_path(r[:uid])
+- if current_user.admin?
+  .fingerprint
+    %span (fingerprint)
+    %span= r[:source_fingerprint]
 .published
-  - if @publication
-    %span= "Published: #{@publication[:pub_at] || 'Not yet published to repository.'}"
+  - if @publication.published?
+    %span= "Published: #{@publication[:pub_at]}"
     - if @publication[:pub_url]
       %br
-      %a{href: @publication[:pub_url], target: '_blank'}= @publication[:pub_url]
+      %a{ href: @publication[:pub_url], target: '_blank' }= @publication[:pub_url]
 - unless r.publication
   %i No publication record created.
 - else
   %table.table
     %thead.thead-dark.table-striped.table-bordered
       %tr
-        %th.text-align-right{scope: 'col'} Attribute
+        %th.text-align-right{ scope: 'col' } Attribute
         %th{scope: 'col'} Value(s)
     %tbody
+      %tr
+        %th.text-align-right{ scope: 'row' } wos_uid
+        %td
+          %ul
+            %li= r[:uid]
       - r.publication[:pub_hash].each_pair do |k,v|
         %tr
-          %th.text-align-right{scope: 'row'}=k
+          %th.text-align-right{ scope: 'row' }= k
           %td
             %ul
               - v.to_a.each do |value|
-                %li=value
+                %li= value

@@ -118,9 +118,9 @@ class PublishWorkJob < ApplicationJob
   # The full URL to the newly created work on the repository
   # @param repository_client [Repository::Client] - the client to publish to
   # @param publication [Publication] - the publication record to publish
-  # @return [String] - the full url
+  # @return [String] - the full url without any trailing querystring
   def publication_url(repository_client, response)
-    "#{repository_client.url}#{response.headers[:location]}"
+    "#{repository_client.url}#{response.headers[:location].split('?').first}"
   end
 
   def repository_work(repository_client, publication, files)

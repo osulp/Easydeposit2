@@ -3,9 +3,9 @@
     %tbody
       - @publication.publication_files.each do |f|
         %tr
-          %th.align-items-center{scope: 'row'}=link_to(f.blob.filename, url_for(f), target: '_blank')
+          %th.align-items-center{ scope: 'row' }= link_to(f.blob.filename, url_for(f), target: '_blank')
           %td.align-items-center
             - if !@publication.published? && current_page?(action: 'edit')
               = link_to "Delete", publication_delete_file_path(@wos_record.uid, f.id), method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: "Are you sure you want to delete this file?" }
 - else
-  .bg-danger.text-light.no-files-attached This work cannot be published until the appropriate file(s) have been attached.
+  .bg-danger.text-light.no-files-attached= t('publications.no_files_attached_message')
