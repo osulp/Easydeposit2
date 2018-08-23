@@ -30,6 +30,7 @@ RSpec.describe PublishWorkJob do
 
   it 'processes a publication that had already been published job' do
     allow(job).to receive(:published_works) { [{ blah: 'blah' }] }
+    allow(job).to receive(:email_published_notification) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.events.last.status).to eq 'warn'
     expect(user.events.last.name).to eq 'Publish Work'
