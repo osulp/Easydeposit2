@@ -22,6 +22,13 @@ module WebOfScience
       doc.search('uid').text
     end
 
+    def database
+      @database ||= begin
+        uid_split = uid.split(':')
+        uid_split.length > 1 ? uid_split[0] : nil
+      end
+    end
+
     ['pages',
      'published.bibliodate',
      'published.biblioyear',
