@@ -69,8 +69,6 @@ module WebOfScience
       #process_links(unmatched_recs)
       batch = unmatched_recs.map do |rec|
         attribs = { source_data: rec.to_xml }
-        attribs[:doi] = rec.doi if rec.doi.present?
-        attribs[:pmid] = rec.pmid if rec.pmid.present?
         attribs
       end
       already_fetched_recs + WebOfScienceSourceRecord.create!(batch)
