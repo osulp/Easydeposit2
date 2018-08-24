@@ -75,7 +75,7 @@ class PublicationsController < ApplicationController
   end
 
   def claim
-    current_user.publications << @publication
+    current_user.publications << @publication unless current_user.publications.include?(@publication)
     @publication.await_attachments! unless @publication.awaiting_attachments?
     flash[:warn] = t('publications.claim_message')
     respond_to do |format|
