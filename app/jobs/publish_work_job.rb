@@ -131,7 +131,7 @@ class PublishWorkJob < ApplicationJob
     if response.nil?
       "#{repository_client.url}/concern/articles/#{id}"
     else
-      "#{repository_client.url}#{response.headers[:location]}"
+      "#{repository_client.url}#{response.headers[:location].split('?').first}"
     end
   end
 
