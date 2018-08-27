@@ -22,7 +22,7 @@ class Publication < ActiveRecord::Base
   serialize :pub_hash, Hash
 
   after_save :update_pub_hash
-  after_create :fetch_authors_jobs
+  after_create :fetch_authors!
 
   def delete!
     self.deleted = true
@@ -116,10 +116,6 @@ class Publication < ActiveRecord::Base
   end
 
   private
-
-  def fetch_authors_jobs
-    fetch_authors
-  end
 
   def update_pub_hash
     return unless web_of_science_source_record
