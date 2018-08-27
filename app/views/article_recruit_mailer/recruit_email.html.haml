@@ -1,14 +1,15 @@
-%p
+%h3
   Congratulations on your new publication -
   %i= @publication.web_of_science_source_record.record.title.first
+%p
   The Faculty Senate at Oregon State University passed an Open Access Policy in June 2013
-  %a{ href: 'http://cdss.library.oregonstate.edu/sites/default/files/osu_openacesspolicy_final_single_page.pdf' } http://cdss.library.oregonstate.edu/sites/default/files/osu_openacesspolicy_final_single_page.pdf
+  %a{ href: 'http://cdss.library.oregonstate.edu/sites/default/files/osu_openacesspolicy_final_single_page.pdf' } http://cdss.library.oregonstate.edu/sites/default/files/osu_openacesspolicy_final_single_page.pdf.
   As part of this policy, faculty are asked to deposit their journal articles into ScholarsArchive@OSU to make OSU's research publicly available and increase the reach and impact of our scholarship.
 %p
   We invite you to deposit your article using this link:
   = claim_url(@publication.web_of_science_source_record[:hashed_uid])
 %p
-  Once there, you may upload your article and, publish the article to ScholarsArchive@OSU. For guidance on the version of the article you are allowed to upload, see our deposit guide.
+  Once there, you may upload your article, and publish the article to ScholarsArchive@OSU. For guidance on the version of the article you are allowed to upload, see our deposit guide.
   %a{ href: 'https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles' } https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles
 %p
   Questions? Please follow up with us at
