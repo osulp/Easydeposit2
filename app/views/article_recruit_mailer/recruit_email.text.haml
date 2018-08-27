@@ -1,9 +1,17 @@
-= "Dear Author: Oregon State University Libraries invites you to deposit manuscript of recent publication for open access"
-\-------------------------------------------------
+Congratulations on your new publication -
+= @publication.web_of_science_source_record.record.title.first
+The Faculty Senate at Oregon State University passed an Open Access Policy in June 2013
+http://cdss.library.oregonstate.edu/sites/default/files/osu_openacesspolicy_final_single_page.pdf
+As part of this policy, faculty are asked to deposit their journal articles into ScholarsArchive@OSU to make OSU's research publicly available and increase the reach and impact of our scholarship.
 
-- @publication.web_of_science_source_record.record.title.each do |t|
-  = t
-  \-------------------------------------------------
-
-Attach manuscript with this link:
+We invite you to deposit your article using this link:
 = claim_url(@publication.web_of_science_source_record[:hashed_uid])
+
+Once there, you may upload your article and, publish the article to ScholarsArchive@OSU. For guidance on the version of the article you are allowed to upload, see our deposit guide.
+https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles
+
+Questions? Please follow up with us at
+scholarsarchive@oregonstate.edu
+
+Sincerely,
+The OSU Libraries Digital Repository Team

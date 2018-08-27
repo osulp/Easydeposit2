@@ -1,9 +1,14 @@
-%h2="Your work has been published by #{@user.email}"
-%hr
-- @publication.web_of_science_source_record.record.title.each do |t|
-  %h3= t
-
-Repository:
-%a{href: @publication.pub_url}= @publication.pub_url
-Easy Deposit:
-= link_to @publication.web_of_science_source_record[:uid], publication_url(@publication)
+%p
+  Thank you for depositing your article,
+  %i= @publication.web_of_science_source_record.record.title.first
+  , in ScholarsArchive@OSU.
+%p
+  The permanent URL for your article is:
+  %a{href: @publication.pub_url}= @publication.pub_url
+%p
+  If you have any further questions, concerns, or feedback about your experience with ScholarsArchive@OSU or the OSU Open Access Policy, please contact us at
+  %a{ mailto: 'scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
+%p
+  Best,
+  %br
+  The OSU Libraries Digital Repository Team
