@@ -82,7 +82,7 @@ class Publication < ActiveRecord::Base
     event :fetch_authors do
       after do
         FetchAuthorsDirectoryApiJob.perform_later(publication: self)
-        FetchAuthorsEmailsWosJob.perform_later(publication: self)
+        FetchWosContentJob.perform_later(publication: self)
       end
       transitions from: :initialized, to: :fetching_authors
     end
@@ -129,6 +129,6 @@ class Publication < ActiveRecord::Base
   end
 
   def completed_fetching_authors?
-    events.reload.where(name: [Event::FETCH_AUTHORS_DIRECTORY_API[:name], Event::FETCH_AUTHORS_EMAILS_WOS[:name]], status: Event::COMPLETED[:name]).count == 2
+    events.reload.where(name: [Event::FETCH_AUTHORS_DIRECTORY_API[:name], Event::FETCH_WOS_CONTENT[:name]], status: Event::COMPLETED[:name]).count == 2
   end
 end
