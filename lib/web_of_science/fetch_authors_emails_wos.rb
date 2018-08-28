@@ -41,7 +41,7 @@ module WebOfScience
           content = response.body
         end
       end
-      # example: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:adam.t.greer@gmail.com">adam.t.greer@gmail.com</a> </p>
+      # example: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:john.smith@education.edu">john.smith@education.edu</a> </p>
       content.scan(/mailto:(.*?)\"/).flatten
     end
   end

@@ -6,7 +6,7 @@ module WebOfScience
   # Fetch author emails and abstract from Web Of Science records
   class FetchWoSContentJob
     # @param publication [Publication]
-    # return Hash {email: [String], abstract: <String>}
+    # return Hash {emails: [String], abstract: <String>}
     def self.fetch_from_api(publication)
       wssr = publication.web_of_science_source_record
       uid = wssr.uid
@@ -43,21 +43,20 @@ module WebOfScience
         end
       end
 
-      # example of emails: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:adam.t.greer@gmail.com">adam.t.greer@gmail.com</a> </p>
-      fetched_hash["email"] = content.scan(/mailto:(.*?)\"/).flatten
+      # example of emails: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:john.smith@education.edu">john.smith@education.edu</a> </p>
+      fetched_hash['emails'] = content.scan(/mailto:(.*?)\"/).flatten
 
-      abstract = ''
       # example of abstract: see fixture
-      content.scan(/<div class="title3">Abstract<\/div>((.|\n)*?)<\/p>/) do |match|
+      content.scan(%r{<div class="title3">Abstract<\/div>((.|\n)*?)<\/p>}) do |match|
         # abstract may have multiple lines
         match.each do |line|
           line.delete!(/\n/, '') if line =~ /^\n/
-          line.delete!(/<p class="FR_field">/,'') if line =~ /^<p class="FR_field">/
+          line.delete!(/<p class="FR_field">/, '') if line =~ /^<p class="FR_field">/
           line.delete!('.', '') if line =~ /^\.$/
-          abstract += line
+          fetched_hash['abstract'] += line
         end
       end
-      fetched_hash["abstract"] = abstract
+      fetched_hash
     end
   end
 end
