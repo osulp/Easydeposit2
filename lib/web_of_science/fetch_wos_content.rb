@@ -27,7 +27,7 @@ module WebOfScience
       # prefix_url should be removed for Faraday
       location = links[uid]['sourceURL'].gsub(/#{source_url_prefix}/, '')
       content = ''
-      fetched_hash = {}
+      fetched_hash = { 'emails' => [], 'abstract' => '' }
 
       success = false
       until success

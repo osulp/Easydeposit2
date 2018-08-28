@@ -9,6 +9,7 @@ RSpec.describe Repository::Work do
   let(:uploaded_file) { { 'files' => [{ 'id' => 1 }] } }
   let(:args) do
     {
+      abstract: 'This is an abstract',
       client: client,
       data: {
         'authors' => ['Batman, D. S.'],
