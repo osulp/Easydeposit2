@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'faraday'
+require 'nokogiri'
 
 module WebOfScience
   # Fetch author emails and abstract from Web Of Science records
@@ -46,11 +47,8 @@ module WebOfScience
       # example of emails: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:john.smith@education.edu">john.smith@education.edu</a> </p>
       fetched_hash['emails'] = content.scan(/mailto:(.*?)\"/).flatten
 
-      # example of abstract: see fixture
-      content.scan(Regexp.new('<div class="title3">Abstract<\/div>(.*)<\/p>', Regexp::MULTILINE)).flatten do |match|
-        # abstract may have multiple lines
-        fetched_hash['abstract'] += match
-      end
+      doc = Nokogiri::HTML(content)
+      fetched_hash['abstract'] = doc.xpath('//div[@class="block-record-info"]/div[text()="Abstract"]/../p[@class="FR_field"]').text
       fetched_hash
     end
   end
