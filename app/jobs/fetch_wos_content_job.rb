@@ -21,11 +21,11 @@ class FetchWosContentJob < ApplicationJob
 
     # get emails of authors, and abstract from Web Of Science full records
     wos_content = fetch_wos_content(publication)
-    create_or_update_publication_emails(wos_content[:emails], publication)
-    publication.update(abstract: wos_content[:abstract])
+    create_or_update_publication_emails(wos_content['emails'], publication)
+    publication.update(abstract: wos_content['abstract']) unless wos_content['abstract'].blank?
 
     message = 'Found no authors emails or abstract for this publication in the Web of Science full record'
-    message = "Found #{wos_content[:emails].count} author emails and abstract in Web of Science full records." if wos_content[:emails].length
+    message = "Found #{wos_content['emails'].count} author emails and abstract in Web of Science full records." if wos_content['emails'].length
     event.completed(message: message, restartable: false)
     logger.debug "FetchWosContentJob: Publication.may_recruit_authors? #{publication[:id]} = #{publication.may_recruit_authors?}"
     publication.recruit_authors! if publication.may_recruit_authors?
