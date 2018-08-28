@@ -4,7 +4,7 @@ require 'faraday'
 
 module WebOfScience
   # Fetch author emails and abstract from Web Of Science records
-  class FetchWoSContentJob
+  class FetchWosContent
     # @param publication [Publication]
     # return Hash {emails: [String], abstract: <String>}
     def self.fetch_from_api(publication)

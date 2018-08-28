@@ -39,7 +39,7 @@ class FetchWosContentJob < ApplicationJob
 
   def fetch_wos_content(publication)
     logger.info('Fetch authors emails and abstract from Web of Science full record')
-    WebOfScience::FetchAuthorsEmailsWos.fetch_from_api(publication)
+    WebOfScience::FetchWosContent.fetch_from_api(publication)
   end
 
   def create_or_update_publication_emails(emails, publication)
