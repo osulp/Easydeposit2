@@ -48,13 +48,6 @@ class Publication < ActiveRecord::Base
     duplicates.blank?
   end
 
-  def parsed_abstract
-    s = abstract
-    s.delete!("\n") if s =~ /^\n/
-    s.delete!('<p class=\"FR_field\">') if s =~ /^<p class="FR_field">/
-    s
-  end
-
   def published?
     !pub_at.blank?
   end
