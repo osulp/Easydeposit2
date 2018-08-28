@@ -29,7 +29,9 @@
         %th.text-align-right{ scope: 'row' } abstract
         %td
           %ul
-            %li= @publication[:abstract]
+            %li
+              = @publication.parsed_abstract
+              %div.hidden{ style: 'display: none;' }= @publication[:abstract]
       - r.publication[:pub_hash].each_pair do |k,v|
         %tr
           %th.text-align-right{ scope: 'row' }= k
