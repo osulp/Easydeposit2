@@ -27,7 +27,7 @@ module WebOfScience
       # prefix_url should be removed for Faraday
       location = links[uid]['sourceURL'].gsub(/#{source_url_prefix}/, '')
       content = ''
-      fetched_hash = {}
+      fetched_hash = { 'emails' => [], 'abstract' => '' }
 
       success = false
       until success
@@ -47,14 +47,9 @@ module WebOfScience
       fetched_hash['emails'] = content.scan(/mailto:(.*?)\"/).flatten
 
       # example of abstract: see fixture
-      content.scan(%r{<div class="title3">Abstract<\/div>((.|\n)*?)<\/p>}) do |match|
+      content.scan(Regexp.new('<div class="title3">Abstract<\/div>(.*)<\/p>', Regexp::MULTILINE)).flatten do |match|
         # abstract may have multiple lines
-        match.each do |line|
-          line.delete!('\n') if line =~ /^\n/
-          line.delete!('<p class="FR_field">') if line =~ /^<p class="FR_field">/
-          line.delete!('.') if line =~ /^\.$/
-          fetched_hash['abstract'] += line
-        end
+        fetched_hash['abstract'] += match
       end
       fetched_hash
     end

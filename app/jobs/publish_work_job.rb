@@ -139,6 +139,7 @@ class PublishWorkJob < ApplicationJob
     @repository_work ||= Repository::Work.new(
       client: repository_client,
       data: publication.web_of_science_source_record.record.to_h,
+      abstract: publication.parsed_abstract,
       files: files,
       work_type: ENV.fetch('REPOSITORY_PUBLISH_WORK_TYPE', 'Article').downcase,
       admin_set_title: ENV.fetch('REPOSITORY_PUBLISH_ADMIN_SET_NAME', 'One Step').downcase,

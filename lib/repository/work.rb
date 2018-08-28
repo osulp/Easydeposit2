@@ -19,6 +19,7 @@ module Repository
       @client = args[:client]
       @data = args[:data]
       @files = args[:files]
+      @abstract = args[:abstract]
       @work_type = args[:work_type]
       @admin_set_id = admin_set_id(args[:admin_set_title])
       @web_of_science_uid = args[:web_of_science_uid]
@@ -41,6 +42,7 @@ module Repository
     def repository_data(file_ids)
       {
         @work_type.to_s => {
+          abstract: @abstract,
           admin_set_id: @admin_set_id,
           contributor: @data['researcher_names'],
           date_issued: "#{@data['biblio_dates'].first} #{@data['biblio_years'].first}",
