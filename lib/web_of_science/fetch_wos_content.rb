@@ -50,9 +50,9 @@ module WebOfScience
       content.scan(%r{<div class="title3">Abstract<\/div>((.|\n)*?)<\/p>}) do |match|
         # abstract may have multiple lines
         match.each do |line|
-          line.delete!(/\n/, '') if line =~ /^\n/
-          line.delete!(/<p class="FR_field">/, '') if line =~ /^<p class="FR_field">/
-          line.delete!('.', '') if line =~ /^\.$/
+          line.delete!('\n') if line =~ /^\n/
+          line.delete!('<p class="FR_field">') if line =~ /^<p class="FR_field">/
+          line.delete!('.') if line =~ /^\.$/
           fetched_hash['abstract'] += line
         end
       end
