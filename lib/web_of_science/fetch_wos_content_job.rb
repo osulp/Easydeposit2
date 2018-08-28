@@ -3,10 +3,10 @@
 require 'faraday'
 
 module WebOfScience
-  # Fetch author emails from Web Of Science records
-  class FetchAuthorsEmailsWos
+  # Fetch author emails and abstract from Web Of Science records
+  class FetchWoSContentJob
     # @param publication [Publication]
-    # return Array <String>
+    # return Hash {emails: [String], abstract: <String>}
     def self.fetch_from_api(publication)
       wssr = publication.web_of_science_source_record
       uid = wssr.uid
@@ -27,6 +27,7 @@ module WebOfScience
       # prefix_url should be removed for Faraday
       location = links[uid]['sourceURL'].gsub(/#{source_url_prefix}/, '')
       content = ''
+      fetched_hash = {}
 
       success = false
       until success
@@ -41,8 +42,21 @@ module WebOfScience
           content = response.body
         end
       end
-      # example: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:john.smith@education.edu">john.smith@education.edu</a> </p>
-      content.scan(/mailto:(.*?)\"/).flatten
+
+      # example of emails: <p class="FR_field"> <span class="FR_label">E-mail Addresses:</span><a href="mailto:john.smith@education.edu">john.smith@education.edu</a> </p>
+      fetched_hash['emails'] = content.scan(/mailto:(.*?)\"/).flatten
+
+      # example of abstract: see fixture
+      content.scan(%r{<div class="title3">Abstract<\/div>((.|\n)*?)<\/p>}) do |match|
+        # abstract may have multiple lines
+        match.each do |line|
+          line.delete!(/\n/, '') if line =~ /^\n/
+          line.delete!(/<p class="FR_field">/, '') if line =~ /^<p class="FR_field">/
+          line.delete!('.', '') if line =~ /^\.$/
+          fetched_hash['abstract'] += line
+        end
+      end
+      fetched_hash
     end
   end
 end
