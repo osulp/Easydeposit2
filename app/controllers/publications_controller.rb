@@ -8,6 +8,7 @@ class PublicationsController < ApplicationController
   before_action :user_is_admin?, only: %i[index harvest]
   before_action :user_has_access?, except: %i[index harvest claim]
   before_action :published?, only: %i[update delete_file claim publish]
+  before_action :claim_publication, only: %i[claim edit update]
 
   def harvest
     institution = ENV['ED2_WOS_SEARCH_TERMS'].split('|')
@@ -75,8 +76,6 @@ class PublicationsController < ApplicationController
   end
 
   def claim
-    current_user.publications << @publication unless current_user.publications.include?(@publication)
-    @publication.await_attachments! unless @publication.awaiting_attachments?
     flash[:warn] = t('publications.claim_message')
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
@@ -97,6 +96,11 @@ class PublicationsController < ApplicationController
   end
 
   private
+
+  def claim_publication
+    current_user.publications << @publication unless current_user.publications.include?(@publication)
+    @publication.await_attachments! if @publication.may_await_attachments?
+  end
 
   def record_by_hashed_uid
     @wos_record = WebOfScienceSourceRecord.includes(:publication)
