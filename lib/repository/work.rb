@@ -53,9 +53,9 @@ module Repository
           has_volume: @data['volumes'].first,
           license: ENV.fetch('REPOSITORY_PUBLISH_LICENSE', 'http://creativecommons.org/licenses/by/4.0/'),
           nested_ordered_creator_attributes: @data['authors'].map.with_index { |a, i| { creator: a, index: i } },
+          nested_ordered_title_attributes: @data['titles'].map.with_index { |t, i| { title: t, index: i } },
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
-          title: @data['titles'],
           web_of_science_uid: @web_of_science_uid
         },
         uploaded_files: file_ids,
