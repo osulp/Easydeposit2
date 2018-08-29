@@ -42,7 +42,7 @@ module Repository
     def repository_data(file_ids)
       {
         @work_type.to_s => {
-          abstract: @abstract,
+          abstract: [@abstract],
           admin_set_id: @admin_set_id,
           contributor: @data['researcher_names'],
           date_issued: "#{@data['biblio_dates'].first} #{@data['biblio_years'].first}",
