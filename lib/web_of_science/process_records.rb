@@ -49,8 +49,10 @@ module WebOfScience
           # if a publication already exists for the same uid, update tables in ED2 to link wssr and publication
           wssr.link_publication(pub) if wssr.publication.blank?
         else
-          # else create publication
-          create_publication(rec, wssr) && new_uids << rec.uid
+          doctypes = [wssr.doctype].flatten
+          if doctypes.any? { |dt| dt.casecmp('article').zero? }
+            create_publication(rec, wssr) && new_uids << rec.uid
+          end
         end
       end
       new_uids.uniq
