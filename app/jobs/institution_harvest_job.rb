@@ -11,7 +11,7 @@ class InstitutionHarvestJob < ApplicationJob
   rescue => e
     msg = "InstitutionHarvestJob.perform"
     NotificationManager.log_exception(logger, msg, e)
-    event.error({message: "#{msg} : #{e.message}"}) if event
+    event.error({message: " failed harvesting publications, error has been logged."}) if event
     raise
   end
 
