@@ -22,7 +22,7 @@
   %tbody
     - @publications.order(updated_at: :desc).each do |p|
       - event = p.events.order(updated_at: :desc).first
-      %tr{ class: "#{event.restartable || (current_user.admin? && event.status == Event::ERROR[:name]) ? 'restartable text-white' : ''} #{p.published? ? 'published' : ''}" }
+      %tr{ class: "#{event.restartable || (current_user.admin? && event.status == Event::ERROR[:name]) ? 'restartable text-white' : ''} #{p.published? || p.publication_exists? ? 'published' : ''}" }
         %td
           = link_to p.web_of_science_source_record[:uid], edit_publication_path(p.web_of_science_source_record[:uid])
           - if p[:pub_url]
