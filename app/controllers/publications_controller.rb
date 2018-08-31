@@ -134,7 +134,7 @@ class PublicationsController < ApplicationController
   end
 
   def published?
-    return unless @publication.published?
+    return unless @publication.published? || @publication.publication_exists?
     redirect_to edit_publication_path(@publication),
                 alert: t('publications.published_message')
   end
