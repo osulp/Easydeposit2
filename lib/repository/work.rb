@@ -50,7 +50,7 @@ module Repository
           has_journal: @data['source_titles'].first,
           has_volume: @data['volumes'].first,
           license: ENV.fetch('REPOSITORY_PUBLISH_LICENSE', 'http://creativecommons.org/licenses/by/4.0/'),
-          nested_ordered_abstract_attributes: [ { abstract: @abstract, index: i } ],
+          nested_ordered_abstract_attributes: [{ abstract: @abstract, index: 0 }],
           nested_ordered_contributor_attributes: @data['researcher_names'].map.with_index { |c, i| { contributor: c, index: i } },
           nested_ordered_creator_attributes: @data['authors'].map.with_index { |a, i| { creator: a, index: i } },
           nested_ordered_title_attributes: @data['titles'].map.with_index { |t, i| { title: t, index: i } },
