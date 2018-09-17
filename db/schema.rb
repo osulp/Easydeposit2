@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_27_143500) do
+ActiveRecord::Schema.define(version: 2018_09_17_212229) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -40,6 +40,7 @@ ActiveRecord::Schema.define(version: 2018_08_27_143500) do
     t.string "primary_affiliation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "claim_link"
     t.index ["publication_id"], name: "index_author_publications_on_publication_id"
   end
 
