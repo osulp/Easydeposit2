@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   has_many :events, inverse_of: :user
+  has_many :author_publications, inverse_of: :user
   has_and_belongs_to_many :publications
 
   # Include default devise modules. Others available are:
