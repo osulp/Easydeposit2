@@ -8,4 +8,10 @@ RSpec.describe AuthorPublication, type: :model do
   it 'has an user' do
     expect(author_publication.user).to be_a(User)
   end
+  it 'has an email' do
+    expect(author_publication.email).to eq 'test@test.com'
+  end
+  it 'has a claim_link' do
+    expect(author_publication.claim_link).to eq 'a test link'
+  end
 end
