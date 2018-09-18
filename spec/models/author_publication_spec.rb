@@ -5,14 +5,10 @@ RSpec.describe AuthorPublication, type: :model do
   it 'has a publication' do
     expect(author_publication.publication).to be_a(Publication)
   end
-
-  subject do
-    AuthorPublication.new(email: 'test@test.edu', claim_link: 'test_claim_link') { |a| a.save!(validate: false) }
-  end
   it 'has an email' do
-    expect(subject.email).to eq 'test@test.edu'
+    expect(subject.email).to eq 'test@test.com'
   end
-  it 'has a claim_url' do
-    expect(subject.claim_link).to eq 'test_claim_link'
+  it 'has a claim_link' do
+    expect(subject.claim_link).to eq 'a test link'
   end
 end
