@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_27_143500) do
+ActiveRecord::Schema.define(version: 2018_09_18_220742) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", null: false
@@ -40,7 +40,10 @@ ActiveRecord::Schema.define(version: 2018_08_27_143500) do
     t.string "primary_affiliation"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "claim_link"
+    t.bigint "user_id"
     t.index ["publication_id"], name: "index_author_publications_on_publication_id"
+    t.index ["user_id"], name: "index_author_publications_on_user_id"
   end
 
   create_table "cas_users", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -146,6 +149,7 @@ ActiveRecord::Schema.define(version: 2018_08_27_143500) do
     t.index ["publication_id"], name: "index_web_of_science_source_records_on_publication_id"
   end
 
+  add_foreign_key "author_publications", "users"
   add_foreign_key "events", "cas_users"
   add_foreign_key "events", "publications"
   add_foreign_key "events", "users"

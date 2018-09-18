@@ -3,12 +3,15 @@ FactoryBot.define do
     email 'test@test.com'
     name 'Some User'
     primary_affiliation 'Employee'
+    claim_link 'a test link'
   end
 
-  factory :author_publication_with_publication, class: AuthorPublication do
+  factory :author_publication_with_references, class: AuthorPublication do
     email 'test@test.com'
     name 'Some User'
     primary_affiliation 'Employee'
     publication
+    user
   end
 end
+
