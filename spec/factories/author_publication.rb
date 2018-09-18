@@ -10,6 +10,7 @@ FactoryBot.define do
     email 'test@test.com'
     name 'Some User'
     primary_affiliation 'Employee'
+    claim_link 'a test link'
     publication
   end
 end
