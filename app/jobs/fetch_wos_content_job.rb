@@ -42,9 +42,22 @@ class FetchWosContentJob < ApplicationJob
     WebOfScience::FetchWosContent.fetch_from_api(publication)
   end
 
+  ##
+  # Find and update or create a new AuthorPublication.
+  # The unique key is the email address and publication.
+  #
+  # Extended for claiming publication without user login with:
+  # - create a new user record with email fetch by WoS API
+  # - create a hash_id based on author email and assign it to AuthorPublication
+  # @param Array<String> emails - an array of found emails
+  # @param <Publication> publication
   def create_or_update_publication_emails(emails, publication)
     emails.each do |e|
+      user = User.find_or_initialize_by(email: e)
+      user.save(validate: false) if user.new_record?
       record = AuthorPublication.find_or_create_by(email: e, publication: publication)
+      record.claim_link ||= Digest::SHA2.hexdigest(e)
+      record.user = user
       record.save
     end
   end

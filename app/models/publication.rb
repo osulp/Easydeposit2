@@ -60,11 +60,18 @@ class Publication < ActiveRecord::Base
   # Find and update or create a new AuthorPublication for an array of people
   # supplied. The unique key is the email address and publication.
   #
+  # Extended for claiming publication without user login:
+  # - create a new user record with email fetch by OSU directory API
+  # - create a hash_id based on author email and assign it to AuthorPublication
   # @param Array<Hash<AuthorPublication>> people - an array of people attributes
   def add_author_emails(people)
     people.each do |person|
+      user = User.find_or_initialize_by(email: person[:email])
+      user.save(validate: false) if user.new_record?
       record = AuthorPublication.find_or_initialize_by(email: person[:email], publication: self)
       record.attributes = person
+      record.user = user
+      record.claim_link ||= Digest::SHA2.hexdigest(person[:email])
       record.save
     end
   end
