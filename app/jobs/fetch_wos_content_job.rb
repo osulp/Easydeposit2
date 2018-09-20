@@ -52,13 +52,7 @@ class FetchWosContentJob < ApplicationJob
   # @param Array<String> emails - an array of found emails
   # @param <Publication> publication
   def create_or_update_publication_emails(emails, publication)
-    emails.each do |e|
-      user = User.find_or_initialize_by(email: e)
-      user.save(validate: false) if user.new_record?
-      record = AuthorPublication.find_or_create_by(email: e, publication: publication)
-      record.claim_link ||= Digest::SHA2.hexdigest(e)
-      record.user = user
-      record.save
-    end
+    authors = emails.map { |e| { email: e } }
+    publication.add_author_emails(authors)
   end
 end
