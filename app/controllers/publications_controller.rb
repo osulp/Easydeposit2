@@ -2,9 +2,11 @@
 
 ##
 # Controller to handle actions related to a publication
+# if claim publication requires user login, use
+# before_action :record_by_hashed_uid, only: :claim
 class PublicationsController < ApplicationController
   before_action :record, except: %i[index harvest claim]
-  before_action :record_by_hashed_uid, only: :claim
+  before_action :record_by_hashed_email, only: :claim
   before_action :user_is_admin?, only: %i[index harvest]
   before_action :user_has_access?, except: %i[index harvest claim]
   before_action :published?, only: %i[update delete_file claim publish]
@@ -109,6 +111,15 @@ class PublicationsController < ApplicationController
     @publication = @wos_record.publication
   end
 
+  ##
+  # Use hashed_email (claim_link) to identify the correct publication to be claimed
+  def record_by_hashed_email
+    @author_publication = AuthorPublication.includes(:publication)
+                                           .where(claim_link: params[:claim_link])
+                                           .first
+    @publication = @author_publication.publication
+  end
+  
   def record
     id = params[:id] || params[:publication_id]
     @wos_record = WebOfScienceSourceRecord.includes(:publication)
