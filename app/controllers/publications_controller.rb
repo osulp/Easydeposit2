@@ -119,7 +119,7 @@ class PublicationsController < ApplicationController
                                            .first
     @publication = @author_publication.publication
   end
-  
+
   def record
     id = params[:id] || params[:publication_id]
     @wos_record = WebOfScienceSourceRecord.includes(:publication)

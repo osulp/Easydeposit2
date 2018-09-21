@@ -12,10 +12,9 @@ class ArticleRecruitMailer < ApplicationMailer
     @publication = params[:publication]
     @emails.each do |email|
       @author_publication = AuthorPublication.includes(:publication)
-                                .where(email: email)
-                                .first
-      default to: -> { email }
-      mail subject: "Oregon State University Library invites you to deposit your recent publication: #{@publication.web_of_science_source_record[:uid]}"
+                                             .where(email: email)
+                                             .first
+      mail(to: email, subject: "Oregon State University Library invites you to deposit your recent publication: #{@publication.web_of_science_source_record[:uid]}")
     end
   end
 end
