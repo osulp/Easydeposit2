@@ -2,8 +2,6 @@
 
 ##
 # Controller to handle actions related to a publication
-# if claim publication requires user login, use
-# before_action :record_by_hashed_uid, only: :claim
 class PublicationsController < ApplicationController
   before_action :record, except: %i[index harvest claim]
   before_action :record_by_hashed_email, only: :claim

@@ -3,9 +3,6 @@ Rails.application.routes.draw do
   devise_for :users
   devise_for :cas_users
 
-  ##
-  # if requires user login to claim publication, then
-  # get '/claim/:hashed_uid', to: 'publications#claim', as: 'claim'
   get '/claim/:claim_link', to: 'publications#claim', as: 'claim'
 
   ##
