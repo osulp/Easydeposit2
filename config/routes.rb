@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :users
   devise_for :cas_users
 
-  get '/claim/:hashed_uid', to: 'publications#claim', as: 'claim'
+  get '/claim/:claim_link', to: 'publications#claim', as: 'claim'
 
   ##
   # Endpoint for Pub harvester
