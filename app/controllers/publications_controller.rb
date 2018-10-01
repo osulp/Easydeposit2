@@ -6,7 +6,6 @@ class PublicationsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:claim]
   before_action :login_claim_link_user, only: [:claim]
   before_action :record, except: %i[index harvest claim]
-  before_action :record_by_hashed_email, only: [:claim]
   before_action :user_is_admin?, only: %i[index harvest]
   before_action :user_has_access?, except: %i[index harvest claim]
   before_action :published?, only: %i[update delete_file claim publish]
@@ -112,24 +111,15 @@ class PublicationsController < ApplicationController
   end
 
   ##
-  # Use hashed_email (claim_link) to identify the correct publication to be claimed
-  def record_by_hashed_email
-    authorpublication_by_hashed_email
-    @publication = @author_publication.publication
-  end
-
-  ##
+  # Use hashed_email (claim_link) to identify the correct publication to be claimed, and
   # Login/associate user to a publication by the hashed email (i.e., claim_link)
   def login_claim_link_user
-    authorpublication_by_hashed_email
-    @user = @author_publication.user
-    sign_in(@user)
-  end
-
-  def authorpublication_by_hashed_email
     @author_publication = AuthorPublication.includes(:publication)
                                            .where(claim_link: params[:claim_link])
                                            .first
+    @publication = @author_publication.publication
+    @user = @author_publication.user
+    sign_in(@user)
   end
 
   def record
