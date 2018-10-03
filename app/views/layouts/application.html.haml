@@ -12,3 +12,6 @@
       = render partial: 'layouts/flash_messages'
       = yield
       = console if Rails.env == 'development'
+  %footer
+    .container-fluid
+      = render partial: 'layouts/footer'
