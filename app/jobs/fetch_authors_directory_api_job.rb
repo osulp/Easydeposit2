@@ -25,7 +25,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     authors = publication.web_of_science_source_record.record.authors
     found_authors = query_api(authors)
     process_found_authors(found_authors, publication)
-    process_system_authors
+    process_system_authors(publication)
 
     message = 'Found no authors for this publication in the Directory API'
     message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length
@@ -58,7 +58,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     found_authors
   end
 
-  def process_system_authors
+  def process_system_authors(publication)
     system_emails = [ENV['ED2_EMAIL_FROM'].split(',')].flatten
     system_emails.each do |email|
       publication.add_author_emails([{ email: email }])

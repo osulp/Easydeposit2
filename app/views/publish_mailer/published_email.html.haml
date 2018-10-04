@@ -1,14 +1,14 @@
-%h3
-  Thank you for depositing your article,
+%h2
+  Thank you for depositing your article:
+%h2
   %i= @publication.web_of_science_source_record.record.title.first
-  , in ScholarsArchive@OSU.
 %p
   The permanent URL for your article is:
   %a{href: @publication.pub_url}= @publication.pub_url
 %p
-  If you have any further questions, concerns, or feedback about your experience with ScholarsArchive@OSU or the OSU Open Access Policy, please contact us at
-  %a{ mailto: 'scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
+  If you have any further questions, please contact us at
+  %a{ href: 'mailto:scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
 %p
-  Best,
+  Sincerely,
   %br
-  The OSU Libraries Digital Repository Team
+  OSU Libraries Digital Repository Team

@@ -3,6 +3,7 @@ class EmailPublishedWorkJob < ApplicationJob
   # job_options retry: 0
 
   def perform(publication:, current_user:, previous_event: nil)
+    system_email = ENV['ED2_EMAIL_FROM']
     event = previous_event || Event.create(Event::EMAIL_PUBLISHED.merge({ restartable: false, status: Event::STARTED[:name] }))
 
     event.update(
