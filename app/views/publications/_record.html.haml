@@ -10,7 +10,7 @@
   - if @publication.published? || @publication.publication_exists?
     %span= t('publications.publication_date_message', pub_at: @publication[:pub_at])
     - if @publication[:pub_url]
-    %br
+      %br
       %strong
         %a{ href: @publication[:pub_url], target: '_blank' }= @publication[:pub_url]
 - unless r.publication
