@@ -25,6 +25,7 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     authors = publication.web_of_science_source_record.record.authors
     found_authors = query_api(authors)
     process_found_authors(found_authors, publication)
+    publication.add_author_emails([{ email: 'scholarsarchive@oregonstate.edu', name: 'ScholarsArchive Admin' }])
 
     message = 'Found no authors for this publication in the Directory API'
     message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length

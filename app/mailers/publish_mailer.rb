@@ -1,6 +1,6 @@
 class PublishMailer < ApplicationMailer
-  before_action { @emails = params[:emails] }
-  default to: -> { @emails }
+  before_action { @email = params[:email] }
+  default to: -> { @email }
 
   def published_email
     @user = params[:user]
