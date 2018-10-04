@@ -7,7 +7,7 @@ class ArticleRecruitMailer < ApplicationMailer
 
   def recruit_email
     @publication = params[:publication]
-    @author_publication = @publication.author_publications.where(email: params[:email]).first
-    mail(to: email, subject: "Oregon State University Library invites you to deposit your recent publication: #{@publication.web_of_science_source_record[:uid]}")
+    @author_publication = @publication.author_publications.where(email: @email).first
+    mail(to: @email, subject: "Oregon State University Library invites you to deposit your recent publication: #{@publication.web_of_science_source_record[:uid]}")
   end
 end
