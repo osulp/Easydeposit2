@@ -9,7 +9,7 @@ For guidance on what version of the article you are allowed to upload, see our d
 https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles.
 
 Use this link to deposit your publication into ScholarsArchive:
-= claim_url(@author_publication[:claim_link])
+= claim_url(@author_publication[:claim_link]) if @author_publication
 
 Why do this?
 OSU’s Faculty Senate passed an Open Access Policy in June 2013:

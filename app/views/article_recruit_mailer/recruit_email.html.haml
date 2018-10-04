@@ -11,7 +11,7 @@
   %br
     %strong
       Use this link to deposit your publication into ScholarsArchive:
-      = claim_url(@author_publication[:claim_link])
+      = claim_url(@author_publication[:claim_link]) if @author_publication
   %br
     %strong
       Why do this?

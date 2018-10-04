@@ -19,13 +19,15 @@ class EmailArticleRecruitJob < ApplicationJob
 
     current_user.events << event if current_user
 
-    emails = [system_email]
+    emails = [system_email.split(',')].flatten
     emails << current_user[:email] if current_user
     emails << publication.author_publications.map(&:email)
-    logger.debug "EmailArticleRecruitJob.perform: Emailing recruitment email to #{emails.join('; ')}"
+    # TODO: iterate through all of the emails
+    emails[0..2].each do |email|
+      logger.debug "EmailArticleRecruitJob.perform: Emailing recruitment email to #{email}"
+      ArticleRecruitMailer.with(email: email, publication: publication).recruit_email.deliver_now
+    end
 
-    # TODO: pass all emails to mailer
-    ArticleRecruitMailer.with(emails: emails[0], publication: publication).recruit_email.deliver_now
 
     event.completed(
       message: "Article author recruitment email completed by #{current_user ? current_user[:email] : system_email} at #{Time.now}",

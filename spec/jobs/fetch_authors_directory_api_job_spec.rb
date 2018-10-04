@@ -21,6 +21,7 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
   it 'processes a successful job' do
     allow(job).to receive(:query_api) { api_return }
     allow(job).to receive(:process_found_authors).with(api_return, publication) { true }
+    allow(job).to receive(:process_system_authors) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.events.count).to eq 1
     expect(user.events.first.status).to eq 'completed'
@@ -31,6 +32,7 @@ RSpec.describe FetchAuthorsDirectoryApiJob do
   it 'processes an job with no authors found' do
     allow(job).to receive(:query_api) { [] }
     allow(job).to receive(:process_found_authors).with([], publication) { true }
+    allow(job).to receive(:process_system_authors) { true }
     job.perform(publication: publication, current_user: user)
     expect(user.events.count).to eq 1
     expect(user.events.first.status).to eq 'completed'
