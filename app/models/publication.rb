@@ -71,7 +71,7 @@ class Publication < ActiveRecord::Base
       record = AuthorPublication.find_or_initialize_by(email: person[:email], publication: self)
       record.attributes = person
       record.user = user
-      record.claim_link ||= Digest::SHA2.hexdigest(person[:email])
+      record.claim_link ||= Digest::SHA2.hexdigest("#{to_param}#{person[:email]}")
       record.save
     end
   end

@@ -1,29 +1,28 @@
+%h2 Congratulations on your new publication!
 %h3
-  Congratulations on your new publication -
   %i= @publication.web_of_science_source_record.record.title.first
 %p
   As part of OSU’s Open Access Policy, faculty are asked to deposit their journal articles into ScholarsArchive@OSU.
   This makes your research publicly available and increases the reach and impact of your scholarship.
-  %br
+%p
   The link below will take you to a customized page where you can quickly upload and publish your article to ScholarsArchive@OSU. Please have a PDF of your publication ready.
-  For guidance on what version of the article you are allowed to upload, see our deposit guide:
-  %a{ href: 'https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles' } https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles.
+  For guidance on what version of the article you are allowed to upload,
+  %a{ href: 'https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles' } see our deposit guide.
+%p
+  %strong Use this link to deposit your publication into ScholarsArchive:
+  = claim_url(@author_publication[:claim_link]) if @author_publication
+%p
+  %strong Why do this?
   %br
-    %strong
-      Use this link to deposit your publication into ScholarsArchive:
-      = claim_url(@author_publication[:claim_link]) if @author_publication
-  %br
-    %strong
-      Why do this?
-  %br
-    OSU’s Faculty Senate passed an Open Access Policy in June 2013:
-    %a{ href: 'https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf' } https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf
+  OSU’s Faculty Senate passed an
+  %a{ href: 'https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf' } Open Access Policy
+  in June 2013:
 %p
   Questions? Please visit
-  %a{ href: 'https://osulibrary.oregonstate.edu/oa-faq' } https://osulibrary.oregonstate.edu/oa-faq
-  for more information or follow up with us at scholarsarchive@oregonstate.edu
+  %a{ href: 'https://osulibrary.oregonstate.edu/oa-faq' } the FAQ
+  for more information or follow up with us at
+  %a{ href: 'mailto:scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
 %p
   Sincerely,
   %br
   OSU Libraries Digital Repository Team
-  %a{ href: 'mailto:scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
