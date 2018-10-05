@@ -2,12 +2,8 @@
 %h3
   %i= @publication.web_of_science_source_record.record.title.first
 %p
-  As part of OSU’s Open Access Policy, faculty are asked to deposit their journal articles into ScholarsArchive@OSU.
-  This makes your research publicly available and increases the reach and impact of your scholarship.
-%p
-  The link below will take you to a customized page where you can quickly upload and publish your article to ScholarsArchive@OSU. Please have a PDF of your publication ready.
-  For guidance on what version of the article you are allowed to upload,
-  %a{ href: 'https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles' } see our deposit guide.
+  The link below will take you to a customized page where you can quickly upload and publish your article to ScholarsArchive@OSU. Please have a PDF of your publication ready. For guidance on what version of the article you are allowed to upload, see our
+  %a{ href: 'https://guides.library.oregonstate.edu/Scholars-Archive/FacultyArticles' } deposit guide.
 %p
   %strong Use this link to deposit your publication into ScholarsArchive:
   = claim_url(@author_publication[:claim_link]) if @author_publication
@@ -16,10 +12,10 @@
   %br
   OSU’s Faculty Senate passed an
   %a{ href: 'https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf' } Open Access Policy
-  in June 2013:
+  in June 2013. As part of OSU’s Open Access Policy, faculty are asked to deposit their journal articles into ScholarsArchive@OSU. This makes your research publicly available and increases the reach and impact of your scholarship.
 %p
-  Questions? Please visit
-  %a{ href: 'https://osulibrary.oregonstate.edu/oa-faq' } the FAQ
+  Questions? Please visit the
+  %a{ href: 'https://osulibrary.oregonstate.edu/oa-faq' } help page
   for more information or follow up with us at
   %a{ href: 'mailto:scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
 %p
