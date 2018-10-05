@@ -29,7 +29,6 @@ en:
     published_message: "This publication has already been published, it can only be modified in the repository."
     publication_date_message: "Published to ScholarsArchive@OSU on %{pub_at}"
     not_authorized_message: "You are not authorized to access this page."
-    claim_message: "You've claimed this publication, please update and publish it."
     restart_event_message: "Reprocessing event, please check back later for an update."
     update_message: "Publication was successfully updated."
     delete_file_message: "%{filename} was deleted."
