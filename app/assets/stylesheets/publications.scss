@@ -25,10 +25,14 @@
     font-weight: lighter;
   }
 
+  .tiny {
+    font-size: 0.7rem;
+  }
+
   .attach-files {
     margin-bottom: 20px;
     .custom-file-label:after {
-      content: "Upload";
+      content: "Browse";
     }
   }
 

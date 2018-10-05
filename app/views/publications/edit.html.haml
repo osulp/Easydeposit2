@@ -10,8 +10,8 @@
     .col.col-12.col-lg-6
       = render 'record', r: @wos_record
     .col.col-12.col-lg-6
+      = render 'attached_files'
       - if @publication.ready_to_publish?
         = render 'publish_button'
-      = render 'attached_files'
       - if current_user.admin?
         = render 'events'
