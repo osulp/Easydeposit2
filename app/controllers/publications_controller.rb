@@ -77,7 +77,6 @@ class PublicationsController < ApplicationController
   end
 
   def claim
-    flash[:warn] = t('publications.claim_message')
     respond_to do |format|
       format.html { redirect_to edit_publication_path(@publication) }
       format.json { head :no_content }

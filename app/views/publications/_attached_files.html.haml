@@ -1,10 +1,10 @@
-%h2 Attached Files
 - if !@publication[:pub_at] && current_page?(action: 'edit')
-  = render 'file_form'
-= render 'file_table'
-%p
-  As author of the article, please upload the article manuscript and supplementary files (e.g., data sets) to comply with Oregon State University’s
-  %a{ href: 'https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf' } Open Access Policy.
-  %br
+  %h2 Please upload your file(s)
+  %p.tiny
+    As author of this article, please upload the article manuscript and supplementary files (e.g., data sets) to comply with Oregon State University’s
+    %a{ href: 'https://senate.oregonstate.edu/sites/senate.oregonstate.edu/files/openaccesspolicy_june2013.pdf' } Open Access Policy.
+    %br
     For more details about the Open Access Policy, please check the
     %a{ href: 'https://osulibrary.oregonstate.edu/oa-faq#why' } FAQ page.
+  = render 'file_form'
+= render 'file_table'

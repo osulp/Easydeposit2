@@ -1,4 +1,6 @@
 - if @publication.publication_files.count > 0
+  - if current_page?(action: 'show')
+    %h2 Attached Files
   %table.table
     %tbody
       - @publication.publication_files.each do |f|
@@ -7,14 +9,11 @@
           %td.align-items-center
             - if !@publication.published? && !@publication.publication_exists? && current_page?(action: 'edit')
               = link_to "Delete", publication_delete_file_path(@wos_record.uid, f.id), method: :delete, class: 'btn btn-danger btn-sm', data: { confirm: "Are you sure you want to delete this file?" }
+- if !@publication.published? && !@publication.publication_exists? && current_page?(action: 'edit') && @publication.publication_files.count > 0
   %p
-    Click the “Publish” button after uploading the manuscript and all supplementary files, uploaded files and the bibliographic metadata of your article will be deposited into ScholarsArchive@OSU and made available to researchers worldwide.
-    %br
-    After deposit, you will receive an email with link to published article in ScholarsArchive@OSU.
-    %br
-    Any further update to the article should be made in ScholarsArchive@OSU.
+    Click the “Publish” button after uploading files. Uploaded files and the descriptive metadata will be deposited into ScholarsArchive@OSU and made available to researchers worldwide.
+  %p
+    After depositing the article, you will receive an email with a link to view or make future updates to the metadata in ScholarsArchive@OSU.
   %p
     For questions about open access policy, ScholarsArchive@OSU, and Easy Deposit 2, please email
     %a{ href: 'mailto:scholarsarchive@oregonstate.edu' } scholarsarchive@oregonstate.edu
-- else
-  .bg-danger.text-light.no-files-attached= t('publications.no_files_attached_message')
