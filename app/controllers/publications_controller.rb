@@ -88,7 +88,7 @@ class PublicationsController < ApplicationController
     PublishWorkJob.perform_later(publication: @publication,
                                  current_user: current_user,
                                  previous_event: event)
-    flash[:warn] = 'Publishing work to repository.'
+    flash[:warn] = 'Publishing work to repository. It will take a few seconds...'
     respond_to do |format|
       format.html { redirect_to publication_path(@publication) }
       format.json { head :no_content }
