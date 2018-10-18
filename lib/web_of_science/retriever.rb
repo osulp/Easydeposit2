@@ -86,6 +86,7 @@ module WebOfScience
     # response that contains the entire query response metadata, with query_id and records_found.
     # @return [WebOfScience::Records]
     def batch_one
+      client.session_close
       @batch_one ||= begin
         response = client.search.call(operation, message: query)
         records = response_records(response, response_type)
