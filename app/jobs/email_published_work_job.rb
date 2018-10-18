@@ -19,8 +19,8 @@ class EmailPublishedWorkJob < ApplicationJob
     emails << current_user[:email] if current_user
     emails << publication.author_publications.map(&:email)
 
-    # TODO: iterate through all of the emails
-    emails[0..2].each do |email|
+    # TODO: iterate through only ED2_EMAIL_FROM for staging
+    emails.each do |email|
       logger.debug "EmailPublishedWorkJob.perform: Emailing published email to #{email}"
       PublishMailer.with(email: email, user: current_user, publication: publication).published_email.deliver_now
     end
