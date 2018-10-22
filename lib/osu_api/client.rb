@@ -23,7 +23,13 @@ module OsuApi
       url = "#{ENV.fetch(OSU_API_DIRECTORY_SEARCH)}?q=#{CGI.escape(name)}"
       logger.debug("OsuApi::Client directory query : #{url}")
       json = get(url)
-      json['data'].map { |p| Person.new(p['attributes']) }
+      people = json['data']&.map { |p| Person.new(p['attributes']) } || []
+      people.count == 1 ? people : []
+    rescue Faraday::ClientError => ce
+      if ce.response[:status] == 400
+        logger.debug("OsuApi::Client directory query found too many matches, unable to return a meaningful list of results : #{ce.response[:body]}")
+        return []
+      end
     end
 
     private

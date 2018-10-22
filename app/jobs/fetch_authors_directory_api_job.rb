@@ -24,11 +24,11 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     # get author names array from WOSSR in publication
     authors = publication.web_of_science_source_record.record.authors
     found_authors = query_api(authors)
-    process_found_authors(found_authors, publication)
+    process_found_authors(found_authors, publication) unless found_authors.empty?
     process_system_authors(publication)
 
     message = 'Found no authors for this publication in the Directory API'
-    message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." if found_authors.length
+    message = "Found #{found_authors.count} #{found_authors.count == 1 ? 'person' : 'people'} in Directory API." unless found_authors.empty?
     event.completed(message: message, restartable: false)
     logger.debug "FetchAuthorsDirectoryApiJob: Publication.may_recruit_authors? #{publication[:id]} = #{publication.may_recruit_authors?}"
     publication.recruit_authors! if publication.may_recruit_authors?
@@ -52,8 +52,10 @@ class FetchAuthorsDirectoryApiJob < ApplicationJob
     # iterate through each author and query api
     author_names.each do |a|
       people = client.directory_query(a)
-      logger.debug "Found: #{people.map(&:email_address).join('; ')}"
-      found_authors << { name: a, people: people } unless people.empty?
+      if people.count == 1
+        logger.debug "Found: #{people.map(&:email_address).join('; ')}"
+        found_authors << { name: a, people: people } unless people.empty?
+      end
     end
     found_authors
   end
