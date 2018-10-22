@@ -17,14 +17,11 @@ class EmailPublishedWorkJob < ApplicationJob
 
     emails = [system_email.split(',')].flatten
     emails << current_user[:email] if current_user
-    emails << publication.author_publications.map(&:email)
-
-    # TODO: iterate through all of the emails
-    emails[0..2].each do |email|
+    emails << publication.author_publications.map(&:email) if Rails.env.production?
+    emails.each do |email|
       logger.debug "EmailPublishedWorkJob.perform: Emailing published email to #{email}"
       PublishMailer.with(email: email, user: current_user, publication: publication).published_email.deliver_now
     end
-
     event.completed(
       message: "Email initiated by #{current_user.email} at #{Time.now}",
       restartable: false,
