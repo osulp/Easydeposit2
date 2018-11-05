@@ -60,6 +60,9 @@ gem 'capistrano3-puma'
 
 gem 'aasm'
 
+# Security audit update
+gem 'loofah', '>= 2.2.3'
+
 group :production, :staging do
   gem 'ddtrace'
 end
