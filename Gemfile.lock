@@ -255,8 +255,6 @@ GEM
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    mini_racer (0.2.4)
-      libv8 (>= 6.3)
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
@@ -523,7 +521,6 @@ DEPENDENCIES
   kaminari
   libv8
   loofah (>= 2.2.3)
-  mini_racer
   mysql2 (~> 0.4.10)
   nokogiri (>= 1.7.1)
   paper_trail
