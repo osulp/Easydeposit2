@@ -243,7 +243,7 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
-    libv8 (3.16.14.19)
+    libv8 (6.7.288.46.1)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -255,6 +255,8 @@ GEM
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
+    mini_racer (0.2.4)
+      libv8 (>= 6.3)
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
@@ -362,7 +364,6 @@ GEM
     rb-inotify (0.9.10)
       ffi (>= 0.5.0, < 2)
     redis (4.0.1)
-    ref (2.0.0)
     remotipart (1.4.2)
     request_store (1.4.1)
       rack (>= 1.4)
@@ -457,9 +458,6 @@ GEM
       tins (~> 1.0)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
-    therubyracer (0.12.3)
-      libv8 (~> 3.16.14.15)
-      ref
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.8)
@@ -525,6 +523,7 @@ DEPENDENCIES
   kaminari
   libv8
   loofah (>= 2.2.3)
+  mini_racer
   mysql2 (~> 0.4.10)
   nokogiri (>= 1.7.1)
   paper_trail
@@ -553,7 +552,6 @@ DEPENDENCIES
   simple_form
   simplecov (~> 0.13)
   single_cov
-  therubyracer
   uglifier (~> 4.1)
   vcr
   web-console (~> 3.3)

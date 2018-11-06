@@ -13,7 +13,7 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1'
 # JS Runtime. See https://github.com/rails/execjs#readme for more supported runtimes
-gem 'therubyracer'
+gem 'mini_racer'
 
 gem 'mysql2', '~> 0.4.10'
 
