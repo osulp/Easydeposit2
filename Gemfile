@@ -13,7 +13,7 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1'
 # JS Runtime. See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'mini_racer'
+gem 'mini_racer', '~> 0.1'
 
 gem 'mysql2', '~> 0.4.10'
 
@@ -31,7 +31,7 @@ gem 'identifiers', '~> 0.10'
 gem 'jbuilder'
 gem 'jquery-rails'
 gem 'kaminari'
-gem 'libv8'
+gem 'libv8', '~> 5.3'
 gem 'nokogiri', '>= 1.7.1'
 gem 'paper_trail'
 gem 'pry-rails'

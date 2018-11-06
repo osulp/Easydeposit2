@@ -243,7 +243,7 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
-    libv8 (6.7.288.46.1)
+    libv8 (5.9.211.38.1-x86_64-linux)
     loofah (2.2.3)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -255,6 +255,8 @@ GEM
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
+    mini_racer (0.1.14)
+      libv8 (~> 5.9)
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.13.1)
@@ -519,8 +521,9 @@ DEPENDENCIES
   jbuilder
   jquery-rails
   kaminari
-  libv8
+  libv8 (~> 5.3)
   loofah (>= 2.2.3)
+  mini_racer (~> 0.1)
   mysql2 (~> 0.4.10)
   nokogiri (>= 1.7.1)
   paper_trail
