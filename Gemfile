@@ -59,7 +59,10 @@ gem 'capistrano3-puma'
 gem 'aasm'
 
 # Security audit update
+gem 'activejob', '>= 5.2.1.1'
+gem 'activestorage', '>= 5.2.1.1'
 gem 'loofah', '>= 2.2.3'
+gem 'rack', '>= 2.0.6'
 
 group :production, :staging do
   gem 'ddtrace'
