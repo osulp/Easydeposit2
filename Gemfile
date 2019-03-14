@@ -7,7 +7,6 @@ gem 'responders', '~> 2.4'
 gem 'puma', '~> 3.0'
 gem 'puma_worker_killer'
 
-gem 'bootstrap', '>= 4.1.2'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -30,7 +29,7 @@ gem 'jbuilder'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'libv8'
-gem 'nokogiri', '>= 1.7.1'
+gem 'nokogiri', '>= 1.10.1'
 gem 'paper_trail'
 gem 'pry-rails'
 gem 'rake'
@@ -63,6 +62,9 @@ gem 'activejob', '>= 5.2.1.1'
 gem 'activestorage', '>= 5.2.1.1'
 gem 'loofah', '>= 2.2.3'
 gem 'rack', '>= 2.0.6'
+gem 'railties', '>= 5.2.2.1'
+gem 'bootstrap', '>= 4.3.1'
+gem 'actionview', '>= 5.2.2.1'
 
 group :production, :staging do
   gem 'ddtrace'
