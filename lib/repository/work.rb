@@ -50,10 +50,10 @@ module Repository
           has_journal: @data['source_titles'].first,
           has_volume: @data['volumes'].first,
           license: ENV.fetch('REPOSITORY_PUBLISH_LICENSE', 'http://creativecommons.org/licenses/by/4.0/'),
-          nested_ordered_abstract_attributes: create_nested_attribute([@abstract]),
-          nested_ordered_contributor_attributes: create_nested_attribute(@data['researcher_names']),
-          nested_ordered_creator_attributes: create_nested_attribute(@data['authors']),
-          nested_ordered_title_attributes: create_nested_attribute(@data['titles']),
+          nested_ordered_abstract_attributes: create_nested_attribute([@abstract], 'abstract'),
+          nested_ordered_contributor_attributes: create_nested_attribute(@data['researcher_names'], 'contributor'),
+          nested_ordered_creator_attributes: create_nested_attribute(@data['authors'], 'creator'),
+          nested_ordered_title_attributes: create_nested_attribute(@data['titles'], 'title'),
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
           web_of_science_uid: @web_of_science_uid
@@ -66,12 +66,13 @@ module Repository
     ##
     # Create expected data structure for nested ordered attribute
     # Input: work_data_array: data of work to be published in array
+    #         attribute_name[String]
     # Output: nested hash, for example: "nested_ordered_creator_attributes"=>{"70188320304080"=>{"creator"=>"Yoke, Kaseylin T", "index"=>"0"}, "71739809440388"=>{"creator"=>"Schellman, Dr. Heidi", "index"=>"1"}, "73291298587176"=>{"creator"=>"MINERvA Collaboration, Fermilab", "index"=>"2"}}
-    def create_nested_attribute(work_data_array)
+    def create_nested_attribute(work_data_array, attr_name)
       nested_hash = {}
-      work_data_array.map.with_index { |c, i|
+      work_data_array.map.with_index { |a, i|
         key = Time.now.to_i + i * 10
-        nested_hash[key] = { creator: c, index: i } }
+        nested_hash[key] = { attr_name.to_s => a, index: i } }
     end
 
     def client_publish(work_payload, publish_url)
