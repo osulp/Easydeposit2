@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :publication do
-    aasm_state 'awaiting_attachments'
+    aasm_state { "awaiting_attachments" }
     web_of_science_source_record
 
     after(:build) do |p|
@@ -9,7 +9,7 @@ FactoryBot.define do
 
     factory :publication_with_authors do
       transient do
-        author_count 3
+        author_count { 3 }
       end
       after(:build) do |p|
         p.class.skip_callback(:create, :after, :fetch_authors!, raise: false)
