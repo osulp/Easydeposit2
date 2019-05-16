@@ -17,7 +17,8 @@ class Event < ActiveRecord::Base
     email_published_work: EmailPublishedWorkJob.to_s,
     fetch_authors_directory_api: FetchAuthorsDirectoryApiJob.to_s,
     fetch_wos_content: FetchWosContentJob.to_s,
-    email_article_recruit: EmailArticleRecruitJob.to_s
+    email_article_recruit: EmailArticleRecruitJob.to_s,
+    resend_email_article_recruit: ResendEmailArticleRecruitJob
   }
 
   # Statuses
@@ -50,6 +51,10 @@ class Event < ActiveRecord::Base
                         restartable: true,
                         restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:fetch_wos_content]) }
   EMAIL_ARTICLE_RECRUIT = { name: 'Send article recruit with email saved in AuthorPublication',
+                            status: STARTED[:name],
+                            restartable: true,
+                            restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:email_article_recruit]) }
+  RESEND_EMAIL_ARTICLE_RECRUIT = { name: 'Resend article recruit with email saved in AuthorPublication',
                             status: STARTED[:name],
                             restartable: true,
                             restartable_state: JSON.dump(method: RESTARTABLE_METHODS[:email_article_recruit]) }

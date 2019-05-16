@@ -85,6 +85,7 @@ class Publication < ActiveRecord::Base
     state :publication_exists
     state :publishing_failed
     state :published
+    state :resend_recruiting_authors
 
     event :fetch_authors do
       after do
@@ -100,14 +101,14 @@ class Publication < ActiveRecord::Base
       transitions from: :fetching_authors, to: :recruiting_authors, guard: :completed_fetching_authors?
     end
     event :await_claim do
-      transitions from: :recruiting_authors, to: :awaiting_claim
+      transitions from: [:recruiting_authors, :resend_recruiting_authors], to: :awaiting_claim
     end
     event :await_attachments do
       transitions from: :awaiting_claim, to: :awaiting_attachments
     end
     event :publish_exists do
       after do
-        update(pub_at: Time.now)
+        update(ids, pub_at: Time.now)
       end
       transitions from: [:awaiting_attachments, :publishing_failed], to: :publication_exists
     end
@@ -116,9 +117,15 @@ class Publication < ActiveRecord::Base
     end
     event :publish do
       after do
-        update(pub_at: Time.now)
+        update(ids, pub_at: Time.now)
       end
       transitions from: [:awaiting_attachments, :publishing_failed, :publication_exists], to: :published, guard: :ready_to_publish?
+    end
+    event :resend_recruiting_authors do
+      after do
+        ResendEmailArticleRecruitJob.perform_later(publication: self)
+      end
+      transitions from: :await_claim, to: :resend_recruiting_authors
     end
   end
 
