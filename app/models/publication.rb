@@ -80,6 +80,7 @@ class Publication < ActiveRecord::Base
     state :initialized, initial: true
     state :fetching_authors
     state :recruiting_authors
+    state :resending_recruiting_authors
     state :awaiting_claim
     state :awaiting_attachments
     state :publication_exists
@@ -99,8 +100,14 @@ class Publication < ActiveRecord::Base
       end
       transitions from: :fetching_authors, to: :recruiting_authors, guard: :completed_fetching_authors?
     end
+    event :resend_recruit_authors do
+      after do
+        ResendEmailArticleRecruitJob.perform_later(publication: self)
+      end
+      transitions from: :await_claim, to: :resending_recruiting_authors
+    end
     event :await_claim do
-      transitions from: :recruiting_authors, to: :awaiting_claim
+      transitions from: [:recruiting_authors, :resending_recruiting_authors], to: :awaiting_claim
     end
     event :await_attachments do
       transitions from: :awaiting_claim, to: :awaiting_attachments

@@ -19,7 +19,10 @@ jobs:
       - run:
           name: Update Debian Packages
           command: |
-            echo "deb http://http.debian.net/debian jessie-backports main" | sudo tee -a /etc/apt/sources.list
+            echo "deb http://archive.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list
+            echo "deb-src http://archive.debian.org/debian/ jessie-backports main" | sudo tee -a /etc/apt/sources.list
+            echo "Acquire::Check-Valid-Until false;" | sudo tee -a /etc/apt/apt.conf.d/10-nocheckvalid
+            echo 'Package: *\nPin: origin "archive.debian.org"\nPin-Priority: 500' | sudo tee -a /etc/apt/preferences.d/10-archive-pin
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
             sudo apt-get install -y -f software-properties-common build-essential default-libmysqlclient-dev mysql-client nodejs make apt-utils
