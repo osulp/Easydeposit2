@@ -12,7 +12,7 @@ module WebOfScience
   class Client
     API_VERSION = '3.0'.freeze # Based on USER GUIDE July 7, 2015
     AUTH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate?wsdl'.freeze
-    SEARCH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl'.freeze
+    SEARCH_WSDL = 'http://search.webofknowledge.com/esti/wokmws/ws/WokSearch?wsdl'.freeze
 
     API_SESSION_QUERY_LIMIT = 2000
 
