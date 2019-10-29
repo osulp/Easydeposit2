@@ -2,7 +2,7 @@ config = YAML.safe_load(ERB.new(IO.read(Rails.root + 'config' + 'redis.yml')).re
 
 redis_conn = { url: "redis://#{config[:host]}:#{config[:port]}/" }
 
-Sidekiq::Logging.logger.level = Logger::DEBUG
+#Sidekiq::Logging.logger.level = Logger::DEBUG
 
 Sidekiq.configure_server do |s|
   s.redis = redis_conn
