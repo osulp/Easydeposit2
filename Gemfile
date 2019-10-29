@@ -67,10 +67,6 @@ gem 'railties', '>= 5.2.2.1'
 gem 'bootstrap', '>= 4.3.1'
 gem 'actionview', '>= 5.2.2.1'
 
-group :production, :staging do
-  gem 'ddtrace'
-end
-
 group :development, :test do
   gem 'debase'
   # Great gem for inspecting the database in development/test at localhost:3000/rails/db

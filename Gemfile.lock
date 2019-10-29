@@ -512,7 +512,6 @@ DEPENDENCIES
   config
   coveralls (~> 0.8)
   database_cleaner
-  ddtrace
   debase
   devise
   devise_cas_authenticatable

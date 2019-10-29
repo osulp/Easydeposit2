@@ -83,11 +83,16 @@ module WebOfScience
       end
 
       # @param institutions [Array<String>] a set of institutions
+      # Use options to limit the symbolic time span for harvesting publications; this limit applies
+      # to the dates publications are added or updated in WOS collections, not publication dates.
+      # If symbolicTimeSpan is specified, the timeSpan parameter must be omitted.
       # @return [WebOfScience::Retriever]
       def search_by_institution(institutions = [])
         raise(ArgumentError, 'must enter an institution name') if institutions.empty?
         user_query = "AD=(#{institutions.join(' OR ')})"
-        message = params_for_search_1(user_query)
+        message = params_for_symbolictimespansearch(user_query)
+        # If symbolicTimeSpan is specified, the timeSpan parameter must be omitted.
+        message[:queryParameters].delete(:timeSpan)
         WebOfScience::Retriever.new(:search, message)
       end
   
@@ -119,18 +124,18 @@ module WebOfScience
 
       # @param user_query [String] (defaults to '')
       # @return [Hash] search query parameters for full records
-      def params_for_search_1(user_query = '')
+      def params_for_symbolictimespansearch(user_query = '')
         {
             queryParameters: {
                 databaseId: database,
                 userQuery: user_query,
-                queryLanguage: QUERY_LANGUAGE,
-                symbolicTimeSpan: '4week'
+                symbolicTimeSpan: '4week',
+                queryLanguage: QUERY_LANGUAGE
             },
-            retrieveParameters: retrieve_parameters
+        retrieveParameters: retrieve_parameters
         }
       end
-  
+
       # Params to retrieve specific fields, not the full records; modify the retrieveParameters.
       # The `viewField` option can only be used without reference to the `FullRecord` namespace.
       # Also, the `viewField` must precede the `option` params in retrieveParameters.
