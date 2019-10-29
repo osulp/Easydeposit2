@@ -12,12 +12,13 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1'
 
-gem 'mysql2', '~> 0.4.10'
+gem 'mysql2', '~> 0.5.2'
 
 gem 'config'
 
 # Redis background job queue
-gem 'sidekiq'
+gem 'sidekiq', '5.0.2'
+gem 'ffi', '~> 1.9.24'
 
 gem 'faraday'
 gem 'htmlentities'
