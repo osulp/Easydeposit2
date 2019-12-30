@@ -4,7 +4,7 @@ gem 'rails'
 gem 'responders', '~> 2.4'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 gem 'puma_worker_killer'
 
 # Use SCSS for stylesheets
