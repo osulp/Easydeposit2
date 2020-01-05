@@ -46,6 +46,8 @@ module WebOfScience
       uids = batch_one.uids
       uids += next_batch.uids while next_batch?
       uids
+      # Get only top n uid for testing
+      # uids.reverse.take(1)
     end
 
     # @return [Boolean] are more records available?

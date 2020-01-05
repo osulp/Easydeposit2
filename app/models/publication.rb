@@ -86,10 +86,11 @@ class Publication < ActiveRecord::Base
     state :publishing_failed
     state :published
 
+    # disable fetching email from WoS
     event :fetch_authors do
       after do
         FetchAuthorsDirectoryApiJob.perform_later(publication: self)
-        FetchWosContentJob.perform_later(publication: self)
+        # FetchWosContentJob.perform_later(publication: self)
       end
       transitions from: :initialized, to: :fetching_authors
     end
