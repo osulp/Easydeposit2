@@ -12,8 +12,9 @@ module WebOfScience
     # @return [Nokogiri::XML::Document] WOS record document
     attr_reader :doc
 
-    # @param record [String] record in XML
-    # @param encoded_record [String] record in HTML encoding
+    # JSON will be converted to old SOAP XML
+    # @param xml [String] record in XML
+    # @param json [String] record in JSON
     def initialize(xml: nil, json: nil)
       raise(ArgumentError, 'xml and json cannot both be nil') if xml.nil? && json.nil?
       raise(ArgumentError, 'Only one of xml or json may be used to construct a WOS Record') unless xml.nil? || json.nil?
@@ -21,6 +22,8 @@ module WebOfScience
       @doc = json_to_xml(json) unless (json.nil?)
     end
 
+    # Conver newer REST JSON response to SOAP XML format
+    # @param json [String] record in JSON
     def json_to_xml(json)
       atitle = json['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'item' }.first['content']
       jtitle = json['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'source' }.first['content']

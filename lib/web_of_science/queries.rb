@@ -32,10 +32,10 @@ module WebOfScience
         user_query(inst_query)
       end
   
-      # @param message [Hash] search params (see WebOfScience::Queries#params_for_search)
+      # @param params [Hash] search params (see WebOfScience::Queries#params_for_search)
       # @return [WebOfScience::Retriever]
-      def search(message)
-        WebOfScience::Retriever.new(:search, message)
+      def search(params)
+        WebOfScience::Retriever.new(params)
       end
   
       # Convenience method, does the params_for_search expansion

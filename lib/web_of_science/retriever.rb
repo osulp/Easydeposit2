@@ -10,23 +10,20 @@ module WebOfScience
     attr_reader :records_found
     attr_reader :records_retrieved
 
-    # @param [Symbol] operation SOAP operation like :search, :retrieve_by_id etc.
-    # @param [Hash] message SOAP query message
+    # @param [Hash] REST query params
     # @param [Integer] batch_size number of records to fetch by batch (MAX_RECORDS = 100)
     # @example
     #   WebOfScience::Retriever.new(:cited_references, message)
-    def initialize(operation, message, batch_size = MAX_RECORDS)
+    def initialize(message, batch_size = MAX_RECORDS)
       @batch_iteration = 0
       @batch_size = batch_size
       @query = default_params.merge(message)
-      @operation = operation
-      @response_type = "#{operation}_response".to_sym
     end
 
     def default_params
       {
         databaseId: 'WOS',
-        count: MAX_RECORDS,
+        count: batch_size,
         firstRecord: 1,
       }
     end
@@ -85,10 +82,8 @@ module WebOfScience
     MAX_RECORDS = 100
 
     attr_reader :batch_size
-    attr_reader :operation # SOAP operations, like :search, :retrieve_by_id etc.
     attr_reader :query
     attr_reader :query_id
-    attr_reader :response_type
 
     delegate :client, to: :WebOfScience
 
@@ -121,10 +116,9 @@ module WebOfScience
     end
 
     ###################################################################
-    # WoS SOAP Response Parsers
+    # WoS REST Response Parsers
 
-    # @param response [Savon::Response] a WoS SOAP response
-    # @param response_type [Symbol] a WoS SOAP response type
+    # @param response [Hash] a WoS REST response
     # @return [WebOfScience::Records]
     def response_records(response)
       WebOfScience::Records.new(json: response)
