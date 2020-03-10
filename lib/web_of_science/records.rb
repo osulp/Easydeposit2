@@ -25,8 +25,90 @@ module WebOfScience
 
     # @param records [String] records in XML
     # @param encoded_records [String] records in HTML encoding
-    def initialize(records: nil, encoded_records: nil)
-      @doc = WebOfScience::XmlParser.parse(records, encoded_records)
+    def initialize(xml: nil, json: nil)
+      raise(ArgumentError, 'xml and json cannot both be nil') if xml.nil? && json.nil?
+      raise(ArgumentError, 'Only one of xml or json may be used to construct a WOS Record') unless xml.nil? || json.nil?
+      @doc = WebOfScience::XmlParser.parse(xml, nil) unless (xml.nil?)
+      @doc = json_to_xml(json) unless (json.nil?)
+    end
+
+    def json_to_xml(json)
+      builder = Nokogiri::XML::Builder.new do |xml|
+        xml.return {
+          json['Data']['Records']['records']['REC'].each do |rec|
+            atitle = rec['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'item' }.first
+            jtitle = rec['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'source' }.first
+            doi = rec['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'doi' }.first
+            issn = rec['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'issn' }.first
+            eissn = rec['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'eissn' }.first
+
+            xml.records {
+              xml.uid rec['UID']
+              xml.title {
+                xml.label 'Title'
+                xml.value atitle['content']
+              } unless atitle.nil?
+              xml.doctype {
+                xml.label 'Doctype'
+                xml.value rec['static_data']['summary']['doctypes']['doctype']
+              }
+              xml.source {
+                xml.label 'Issue'
+                xml.value rec['static_data']['summary']['pub_info']['issue']
+              }
+              xml.source {
+                xml.label 'Pages'
+                xml.value rec['static_data']['summary']['pub_info']['page']['content']
+              }
+              xml.source {
+                xml.label 'Published.BiblioDate'
+                xml.value rec['static_data']['summary']['pub_info']['pubmonth']
+              }
+              xml.source {
+                xml.label 'Published.BiblioYear'
+                xml.value rec['static_data']['summary']['pub_info']['pubyear']
+              }
+              xml.source {
+                xml.label 'SourceTitle'
+                xml.value jtitle['content']
+              } unless jtitle.nil?
+              xml.source {
+                xml.label 'Volume'
+                xml.value rec['static_data']['summary']['pub_info']['vol']
+              }
+              xml.authors {
+                xml.label 'Authors'
+                Array.wrap(rec['static_data']['summary']['names']['name']).each do |name|
+                  xml.value name['full_name']
+                end
+              } unless rec['static_data']['summary']['names'].nil?
+              xml.keywords {
+                xml.label 'Keywords'
+                Array.wrap(rec['static_data']['fullrecord_metadata']['keywords']['keyword']).each do |keyword|
+                  xml.value keyword
+                end
+              } unless rec['static_data']['fullrecord_metadata']['keywords'].nil?
+              xml.other {
+                xml.label 'Identifier.Doi'
+                xml.value doi['value']
+              } unless doi.nil?
+              xml.other {
+                xml.label 'Identifier.Eissn'
+                xml.value eissn['value']
+              } unless eissn.nil?
+              xml.other {
+                xml.label 'Identifier.Ids'
+                xml.value rec['static_data']['item']['ids']['content']
+              }
+              xml.other {
+                xml.label 'Identifier.Issn'
+                xml.value issn['value']
+              } unless issn.nil?
+            }
+          end
+        }
+      end
+      WebOfScience::XmlParser.parse(builder.to_xml, nil)
     end
 
     # Group records by the database prefix in the UID
@@ -39,7 +121,7 @@ module WebOfScience
       end
       db_recs.each_key do |db|
         rec_doc = Nokogiri::XML("<records>#{db_recs[db].map(&:to_xml).join}</records>")
-        db_recs[db] = WebOfScience::Records.new(records: rec_doc.to_xml)
+        db_recs[db] = WebOfScience::Records.new(xml: rec_doc.to_xml)
       end
       db_recs
     end
@@ -47,7 +129,7 @@ module WebOfScience
     # Iterate over WebOfScience::WokRecord objects
     # @yield [WebOfScience::Record]
     def each
-      rec_nodes.each { |rec| yield WebOfScience::Record.new(record: rec.to_xml) }
+      rec_nodes.each { |rec| yield WebOfScience::Record.new(xml: rec.to_xml) }
     end
 
     # @return [Array<String>] the rec_nodes UID values (in order)
@@ -108,8 +190,8 @@ module WebOfScience
       # Nokogiri::XML::Document.dup is a deep copy
       docA = doc.dup # do not chain Nokogiri methods
       # merge new records and return a new WebOfScience::Records instance
-      docA.at('records').add_child(new_records(record_setB))
-      WebOfScience::Records.new(records: docA.to_xml)
+      docA.at('records').add_next_sibling(new_records(record_setB))
+      WebOfScience::Records.new(xml: docA.to_xml)
     end
 
     # Pretty print the records in XML

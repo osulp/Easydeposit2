@@ -14,7 +14,7 @@ class WebOfScienceSourceRecord < ActiveRecord::Base
 
   # @return [WebOfScience::Record]
   def record
-    @record ||= WebOfScience::Record.new(record: source_data)
+    @record ||= WebOfScience::Record.new(xml: source_data)
   end
 
   # @param [Publication] pub must already be persisted, like any association.create

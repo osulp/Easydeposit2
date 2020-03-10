@@ -35,6 +35,7 @@ gem 'paper_trail'
 gem 'pry-rails'
 gem 'rake'
 gem 'savon', '~> 2.12'
+gem 'rest-client'
 gem 'simple_form'
 
 gem 'haml'

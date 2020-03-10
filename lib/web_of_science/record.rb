@@ -14,8 +14,86 @@ module WebOfScience
 
     # @param record [String] record in XML
     # @param encoded_record [String] record in HTML encoding
-    def initialize(record: nil, encoded_record: nil)
-      @doc = WebOfScience::XmlParser.parse(record, encoded_record)
+    def initialize(xml: nil, json: nil)
+      raise(ArgumentError, 'xml and json cannot both be nil') if xml.nil? && json.nil?
+      raise(ArgumentError, 'Only one of xml or json may be used to construct a WOS Record') unless xml.nil? || json.nil?
+      @doc = WebOfScience::XmlParser.parse(xml, nil) unless (xml.nil?)
+      @doc = json_to_xml(json) unless (json.nil?)
+    end
+
+    def json_to_xml(json)
+      atitle = json['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'item' }.first['content']
+      jtitle = json['static_data']['summary']['titles']['title'].select { |title| title['type'] == 'source' }.first['content']
+      doi = json['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'doi' }.first['value']
+      issn = json['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'issn' }.first['value']
+      eissn = json['dynamic_data']['cluster_related']['identifiers']['identifier'].select { |identifier| identifier['type'] == 'eissn' }.first['value']
+
+      builder = Nokogiri::XML::Builder.new do |xml|
+        xml.records {
+          xml.uid json['UID']
+          xml.title {
+            xml.label 'title'
+            xml.value atitle
+          }
+          xml.doctype {
+            xml.label 'Doctype'
+            xml.value json['static_data']['summary']['doctypes']['doctype']
+          }
+          xml.source {
+            xml.label 'Issue'
+            xml.value json['static_data']['summary']['pub_info']['issue']
+          }
+          xml.source {
+            xml.label 'Pages'
+            xml.value json['static_data']['summary']['pub_info']['page']['content']
+          }
+          xml.source {
+            xml.label 'Published.BiblioDate'
+            xml.value json['static_data']['summary']['pub_info']['pubmonth']
+          }
+          xml.source {
+            xml.label 'Published.BiblioYear'
+            xml.value json['static_data']['summary']['pub_info']['pubyear']
+          }
+          xml.source {
+            xml.label 'SourceTitle'
+            xml.value jtitle
+          }
+          xml.source {
+            xml.label 'Volume'
+            xml.value json['static_data']['summary']['pub_info']['vol']
+          }
+          xml.authors {
+            xml.label 'Authors'
+            json['static_data']['summary']['names']['name'].each do |name|
+              xml.value name['full_name']
+            end
+          }
+          xml.keywords {
+            xml.label 'Keywords'
+            json['static_data']['fullrecord_metadata']['keywords']['keyword'].each do |keyword|
+              xml.value keyword
+            end
+          }
+          xml.other {
+            xml.label 'Identifier.Doi'
+            xml.value doi
+          }
+          xml.other {
+            xml.label 'Identifier.Eissn'
+            xml.value eissn
+          }
+          xml.other {
+            xml.label 'Identifier.Ids'
+            xml.value json['static_data']['item']['ids']['content']
+          }
+          xml.other {
+            xml.label 'Identifier.Issn'
+            xml.value issn
+          }
+        }
+        WebOfScience::XmlParser.parse(xml.to_xml)
+      end
     end
 
     def uid

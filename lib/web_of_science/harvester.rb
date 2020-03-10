@@ -14,9 +14,9 @@ module WebOfScience
     def process_institution(institution)
       raise(ArgumentError, 'Institution cannot be nil') if institution.nil?
       logger.info('processing')
-      uids = WebOfScience::Queries.new.search_by_institution(institution).merged_uids
-      logger.info("#{uids.count} found by institution query")
-      uids = process_records(queries.retrieve_by_id(uids))
+      retriever = queries.search_by_institution(institution)
+      logger.info("#{retriever.records_retrieved} found by institution query")
+      uids = process_records(retriever)
       logger.info("processed #{uids.count} publications")
       uids
     rescue StandardError => err

@@ -17,11 +17,13 @@ class InstitutionHarvestJob < ApplicationJob
 
   private
 
+  delegate :harvester, to: :WebOfScience
+
   # @param [String] institution
   # @return [void]
   def web_of_science(institution)
     return unless Settings.WOS.enabled
-    uids = WebOfScience.harvester.process_institution(institution)
+    uids = harvester.process_institution(institution)
     logger.info('Harvest by institution complete')
     uids
   end

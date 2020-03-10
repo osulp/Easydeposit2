@@ -18,9 +18,17 @@ module WebOfScience
     def initialize(operation, message, batch_size = MAX_RECORDS)
       @batch_iteration = 0
       @batch_size = batch_size
-      @query = message
+      @query = default_params.merge(message)
       @operation = operation
       @response_type = "#{operation}_response".to_sym
+    end
+
+    def default_params
+      {
+        databaseId: 'WOS',
+        count: MAX_RECORDS,
+        firstRecord: 1,
+      }
     end
 
     # @return [Boolean] all records retrieved?
@@ -82,22 +90,22 @@ module WebOfScience
     attr_reader :query_id
     attr_reader :response_type
 
-    delegate :client, to: WebOfScience
+    delegate :client, to: :WebOfScience
 
     # Fetch the first batch of results.  The first query-response is special; it's the only
     # response that contains the entire query response metadata, with query_id and records_found.
     # @return [WebOfScience::Records]
     def batch_one
-      client.session_close
       @batch_one ||= begin
-        response = client.search.call(operation, message: query)
-        records = response_records(response, response_type)
-        @records_found = response_return(response, response_type)[:records_found].to_i
+        query = @query.merge({firstRecord: 1})
+        response = client.search(query)
+        records = response_records(response)
+        @records_found = response['QueryResult']['RecordsFound']
         @records_retrieved = records.count
-        @query_id = response_return(response, response_type)[:query_id].to_i
+        @query_id = response['QueryResult']['QueryID']
         records
       end
-      end
+    end
 
     # The retrieve operation is different from the first query, because it uses
     # a query_id and a :retrieve operation to retrieve additional records
@@ -105,37 +113,21 @@ module WebOfScience
     def retrieve_batch
       @batch_iteration += 1
       offset = (@batch_iteration * batch_size) + 1
-      retrieve_message = {
-        queryId: query_id,
-        retrieveParameters: query[:retrieveParameters].merge(firstRecord: offset)
-      }
-      response = client.search.call(retrieve_operation, message: retrieve_message)
-      records = response_records(response, "#{retrieve_operation}_response".to_sym)
+      query = @query.merge({firstRecord: offset})
+      response = client.search(query)
+      records = response_records(response)
       @records_retrieved += records.count
       records
-      end
-
-    # The retrieve operation is `:retrieve`, except for a :cited_references query
-    # @return [Symbol] retrieve operation
-    def retrieve_operation
-      operation == :cited_references ? :cited_references_retrieve : :retrieve
-      end
+    end
 
     ###################################################################
     # WoS SOAP Response Parsers
 
     # @param response [Savon::Response] a WoS SOAP response
     # @param response_type [Symbol] a WoS SOAP response type
-    # @return [Hash] return data
-    def response_return(response, response_type)
-      response.body[response_type][:return]
-      end
-
-    # @param response [Savon::Response] a WoS SOAP response
-    # @param response_type [Symbol] a WoS SOAP response type
     # @return [WebOfScience::Records]
-    def response_records(response, _response_type)
-      WebOfScience::Records.new(records: response.xml)
-      end
+    def response_records(response)
+      WebOfScience::Records.new(json: response)
+    end
   end
   end

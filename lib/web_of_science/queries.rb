@@ -3,83 +3,22 @@ module WebOfScience
     # Queries on the Web of Science (or Web of Knowledge)
     class Queries
   
-      # this is the maximum number that can be returned in a single query by WoS
-      MAX_RECORDS = 100
-  
       # this is the _only_ value allowed by the WOS-API
       QUERY_LANGUAGE = 'en'.freeze
   
       attr_reader :database
   
       # @param database [String] a WOS database identifier (default 'WOK')
-      def initialize(database = 'WOK')
+      def initialize(database = 'WOS')
         @database = database
-      end
-  
-      # @param uid [String] a WOS UID
-      # @return [WebOfScience::Retriever]
-      # WoKSearch operation
-      def cited_references(uid)
-        raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
-        options = [ { key: 'Hot', value: 'On' } ]
-        message = base_uid_params.merge(uid: uid,
-                                        retrieveParameters: retrieve_parameters_1(options: options))
-        WebOfScience::Retriever.new(:cited_references, message)
-      end
-  
-      # @param uid [String] a WOS UID
-      # @return [WebOfScience::Retriever]
-      # WoKSearch operation
-      def citing_articles(uid)
-        raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
-        message = base_uid_params.merge(uid: uid)
-        WebOfScience::Retriever.new(:citing_articles, message)
-      end
-  
-      # @param uid [String] a WOS UID
-      # @return [WebOfScience::Retriever]
-      # WoKSearch operation
-      def related_records(uid)
-        raise(ArgumentError, 'uid must be a WOS-UID String') if uid.blank?
-        # The 'WOS' database is the only option for this query
-        message = base_uid_params.merge(uid: uid, databaseId: 'WOS')
-        WebOfScience::Retriever.new(:related_records, message)
       end
   
       # @param uids [Array<String>] a list of WOS UIDs
       # @return [WebOfScience::Retriever]
       def retrieve_by_id(uids)
         raise(ArgumentError, 'uids must be an Enumerable of WOS-UID String') if uids.blank? || !uids.is_a?(Enumerable)
-        message = base_uid_params.merge(uid: uids)
-        WebOfScience::Retriever.new(:retrieve_by_id, message)
-      end
-  
-      # Search for MEDLINE records matching PMIDs
-      # @param pmids [Array<String>] a list of PMIDs
-      # @return [WebOfScience::Retriever]
-      def retrieve_by_pmid(pmids)
-        raise(ArgumentError, 'pmids must be an Enumerable of PMID String') if pmids.blank? || !pmids.is_a?(Enumerable)
-        uids = pmids.map { |pmid| "MEDLINE:#{pmid}" }
-        retrieve_by_id(uids)
-      end
-  
-      # @param doi [String] a digital object identifier (DOI)
-      # @return [WebOfScience::Retriever]
-      def search_by_doi(doi)
-        raise(ArgumentError, 'doi must be a DOI String') if doi.blank?
-        message = params_for_search("DO=#{doi}")
-        message[:retrieveParameters][:count] = 50
-        WebOfScience::Retriever.new(:search, message)
-      end
-  
-      # @param name [String] a CSV name pattern: last_name, first_name [middle_name | middle initial]
-      # @param institutions [Array<String>] a set of institutions the author belongs to
-      # @return [WebOfScience::Retriever]
-      def search_by_name(name, institutions = [])
-        user_query = "AU=(#{name_query(name)})"
-        user_query += " AND AD=(#{institutions.join(' OR ')})" unless institutions.empty?
-        message = params_for_search(user_query)
-        WebOfScience::Retriever.new(:search, message)
+        uid_query = uids.map { |uid| "UT=#{uid}" }.join(' OR ')
+        user_query(uid_query)
       end
 
       # @param institutions [Array<String>] a set of institutions
@@ -89,11 +28,8 @@ module WebOfScience
       # @return [WebOfScience::Retriever]
       def search_by_institution(institutions = [])
         raise(ArgumentError, 'must enter an institution name') if institutions.empty?
-        user_query = "AD=(#{institutions.join(' OR ')})"
-        message = params_for_symbolictimespansearch(user_query)
-        # If symbolicTimeSpan is specified, the timeSpan parameter must be omitted.
-        message[:queryParameters].delete(:timeSpan)
-        WebOfScience::Retriever.new(:search, message)
+        inst_query = institutions.map { |inst| "OG=#{inst}" }.join(' OR ')
+        user_query(inst_query)
       end
   
       # @param message [Hash] search params (see WebOfScience::Queries#params_for_search)
@@ -113,116 +49,10 @@ module WebOfScience
       # @return [Hash] search query parameters for full records
       def params_for_search(user_query = '')
         {
-          queryParameters: {
-            databaseId: database,
-            userQuery: user_query,
-            queryLanguage: QUERY_LANGUAGE
-          },
-          retrieveParameters: retrieve_parameters
+          databaseId: database,
+          usrQuery: "(#{user_query}) AND DT=Article",
+          loadTimeSpan: '4W',
         }
       end
-
-      # @param user_query [String] (defaults to '')
-      # @return [Hash] search query parameters for full records
-      def params_for_symbolictimespansearch(user_query = '')
-        {
-            queryParameters: {
-                databaseId: database,
-                userQuery: user_query,
-                symbolicTimeSpan: '4week',
-                queryLanguage: QUERY_LANGUAGE
-            },
-        retrieveParameters: retrieve_parameters
-        }
-      end
-
-      # Params to retrieve specific fields, not the full records; modify the retrieveParameters.
-      # The `viewField` option can only be used without reference to the `FullRecord` namespace.
-      # Also, the `viewField` must precede the `option` params in retrieveParameters.
-      #
-      # Using a `viewField` with an empty 'fieldName' results in returning only record-UIDs.
-      #
-      # @example
-      # fields = [{ collectionName: "WOS", fieldName: [""] }, { collectionName: "MEDLINE", fieldName: [""] }]
-      #
-      # @param fields [Array<Hash>] as above
-      # @return [Hash] search query parameters for specific fields
-      # viewField is WoKSearch retrieval parameter: http://ipscience-help.thomsonreuters.com/wosWebServicesExpanded/WebServiceOperationsGroup/WSPremiumOperations/wokSearchGroup/retrieve/retrieveParameters.html
-      def params_for_fields(fields)
-        params = params_for_search
-        params[:retrieveParameters] = {
-          firstRecord: 1,
-          count: 100,
-          viewField: fields,
-          option: [{ key: 'RecordIDs', value: 'On' }]
-        }
-        params
-      end
-  
-      private
-  
-        ###################################################################
-        # Search User Query Helpers
-  
-        # Constructs a WoS name query
-        # @param name [String] a CSV name pattern: {last name}, {first_name} [{middle_name} | {middle initial}]
-        def name_query(name)
-          split_name = name.split(',')
-          last_name = split_name[0]
-          first_middle_name = split_name[1]
-          first_name = first_middle_name.split(' ')[0]
-          middle_name = first_middle_name.split(' ')[1]
-          name_query = "#{last_name} #{first_name} OR #{last_name} #{first_name[0]}"
-          name_query += " OR #{last_name} #{first_name[0]}#{middle_name[0]} OR #{last_name} #{first_name} #{middle_name[0]} OR #{last_name} #{first_name} #{middle_name}" if middle_name.present?
-          name_query
-        end
-  
-        ###################################################################
-        # WoS Query Parameters
-  
-        # @return [Hash] UID query parameters
-        def base_uid_params
-          {
-            databaseId: database,
-            uid: [],
-            queryLanguage: QUERY_LANGUAGE,
-            retrieveParameters: retrieve_parameters
-          }
-        end
-  
-        # @param first_record [Integer] the record number offset (defaults to 1)
-        # @param count [Integer] the number of records to retrieve (defaults to 100)
-        # @return [Hash] retrieve parameters
-        def retrieve_parameters_1(count: MAX_RECORDS, first_record: 1, options: retrieve_options)
-          {
-            firstRecord: first_record,
-            count: count,
-            option: options
-          }
-        end
-
-      # @param first_record [Integer] the record number offset (defaults to 1)
-      # @param count [Integer] the number of records to retrieve (defaults to 100)
-      # @return [Hash] retrieve parameters
-      def retrieve_parameters(count: MAX_RECORDS, first_record: 1)
-        {
-            firstRecord: first_record,
-            count: count
-        }
-      end
-
-        # @return [Array<Hash>] retrieve parameter options
-        def retrieve_options
-          [
-            {
-              key: 'RecordIDs',
-              value: 'On'
-            },
-            {
-              key: 'targetNamespace',
-              value: 'http://scientific.thomsonreuters.com/schema/wok5.4/public/FullRecord'
-            }
-          ]
-        end
     end
   end
