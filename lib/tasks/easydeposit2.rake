@@ -2,9 +2,9 @@
 
 require 'csv'
 
-namespace :processimports do
+namespace :easydeposit2 do
   desc 'A rake task to ingest from WoS search CSV dump will be an interim solution to get ED2 ingesting articles again.'
-  task ingest_tsv: :environment do
+  task ingest_csv: :environment do
     csv_file = ENV['csv']
     process_ingest_csv(csv_file)
   end
