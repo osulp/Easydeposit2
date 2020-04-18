@@ -5,17 +5,19 @@ require 'csv'
 namespace :easydeposit2 do
   desc 'A rake task to ingest from WoS search CSV dump will be an interim solution to get ED2 ingesting articles again.'
   task ingest_csv: :environment do
-    csv_file = ENV['csv']
+    csv_file = '/Users/zhanghu/git/Easydeposit2/lib/tasks/test.csv'
+    puts "csv: #{csv_file}"
     process_ingest_csv(csv_file)
   end
 end
 
-def process_ingest_csv(csv_file)
-  datetime_today = Time.now.strftime('%Y%m%d%H%M%S') # "20171021125903"
-  logger = ActiveSupport::Logger.new("#{Rails.root}/log/process-import-csv-#{datetime_today}.log")
-  logger.info "Processing ED2 ingest to works in csv: #{csv_file}"
+def process_ingest_csv(path)
+  # datetime_today = Time.now.strftime('%Y%m%d%H%M%S') # "20171021125903"
+  # logger = ActiveSupport::Logger.new("#{Rails.root}/log/process-import-csv-#{datetime_today}.log")
+  # logger.info "Processing ED2 ingest to works in csv: #{csv_file}"
 
-  csv = CSV.table(csv_file, converters: nil)
+  puts "path: #{path}"
+  csv = CSV.table(path, converters: nil)
   records = []
   csv.each do |row|
     records << create_record(logger, row)
