@@ -18,7 +18,7 @@ def process_ingest_csv(path)
   logger.info "Processing ED2 ingest to works in csv: #{path}"
   csv = CSV.table(path, converters: nil)
   docs = create_records(logger, csv)
-  logger.info("Create Recrods with UIDs of: #{docs.uids.inspect}")
+  logger.info("Create Records with UIDs of: #{docs.uids.inspect}")
 
   # Pass Records into WebOfScience::ProcessRecords and execute
   # This calls execute and creates all the Publications and returns the UIDs.
