@@ -3,11 +3,10 @@
 require 'csv'
 
 namespace :easydeposit2 do
-  desc 'A rake task to ingest from WoS search CSV dump will be an interim solution to get ED2 ingesting articles again.'
-  task ingest_csv: :environment do
-    # csv_file = ENV['csv']
-    # hardcode csv file
-    csv_file = "#{Rails.root}/lib/tasks/test.csv"
+  desc 'A rake task to ingest from WoS search CSV dump will be an interim solution to get ED2 ingesting articles again. call like rake easydeposit2:ingest_csv["/path/to/file"]'
+  task :ingest_csv, [:path] => [:environment] do |t, args|
+    csv_file = args[:path]
+    raise(ArgumentError, 'Path cannot be nil') if args[:path].nil?
     process_ingest_csv(csv_file)
   end
 end
@@ -24,26 +23,24 @@ def process_ingest_csv(path)
   # This calls execute and creates all the Publications and returns the UIDs.
   # Creating the Publications kicks off the FetchAuthor job which will fail and dead end. Ignore this
   uids = []
-  #TODO: debug
+  # ProcessRecords execute will create publications that are article type and new to database
+  # For testing purpose, add something like 'uids << "WOS:999999999999"' where uid of a known Publication
   uids += WebOfScience::ProcessRecords.new(docs).execute
   uids.flatten.compact
-  puts uids.inspect
 
   # find Publication by uid
   # call add_author_email and add abstract on each publication
   # call EmailArticleRecruitJob this will kick off the author emailing job
   uids.each do |uid|
-    puts "uid: #{uid}"
-    pub = Publication.find(uid: uid).first
+    logger.info("Start email processing for publication with UID: #{uid}")
+    pub = Publication.by_wos_uid(uid).first
     logger.error("Cannot find Publication of #{uid}") if pub.nil?
     (emails, abstract) = find_by_uid_csv(csv, uid)
     pub.update(abstract: abstract) unless abstract.blank?
     authors = emails.map { |e| { email: e } }
     pub.add_author_emails(authors)
     pub.recruit_authors!
-    # EmailArticleRecruitJob.perform_later(publication: pub)
   end
-
 end
 
 # Convert WoS export in csv to SOAP XML format, and create Records with the XML
@@ -111,7 +108,6 @@ def create_records(logger, csv)
       end
     }
   end
-  # logger.info(builder.to_xml)
   # Need to call Record.new explicitly as inputs for ProcessRecords
   WebOfScience::Records.new(records: builder.to_xml)
 end
@@ -121,15 +117,17 @@ end
 # return emails [Array] abstract [String]
 def find_by_uid_csv(csv, uid)
   emails = []
+  abstract = ''
   csv.each do |row|
-    if row[:uid].casecmp(uid).zero?
-      if row[:author_emails].include? ";"
+    next unless row[:uid].casecmp(uid).zero?
+      if row[:author_emails].include? ';'
         emails = row[:author_emails].split(';').flatten
       else
         emails << row[:author_emails]
       end
       abstract = row[:abstract] unless row[:abstract].blank?
-    end
+    return emails, abstract
   end
-  return emails, abstract
+  # return empty data when no match is found
+  [[], '']
 end
