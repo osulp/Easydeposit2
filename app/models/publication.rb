@@ -76,13 +76,10 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  # :recruiting_authors state for when abstract and author email are fetched from WoS page
-  # :bypass_fetch_recruiting_authors state for when abstract and author email are loaded from export file
   aasm do
     state :initialized, initial: true
     state :fetching_authors
     state :recruiting_authors
-    state :bypass_fetch_recruiting_authors
     state :awaiting_claim
     state :awaiting_attachments
     state :publication_exists
@@ -102,10 +99,9 @@ class Publication < ActiveRecord::Base
         EmailArticleRecruitJob.perform_later(publication: self)
       end
       transitions from: :fetching_authors, to: :recruiting_authors, guard: :completed_fetching_authors?
-      transitions from: :fetching_authors, to: :bypass_fetch_recruiting_authors
     end
     event :await_claim do
-      transitions from: [:recruiting_authors, :bypass_fetch_recruiting_authors], to: :awaiting_claim
+      transitions from: :recruiting_authors, to: :awaiting_claim
     end
     event :await_attachments do
       transitions from: :awaiting_claim, to: :awaiting_attachments

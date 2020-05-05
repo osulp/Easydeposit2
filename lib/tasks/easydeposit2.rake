@@ -21,21 +21,22 @@ def process_ingest_csv(path)
 
   # Pass Records into WebOfScience::ProcessRecords and execute
   # This calls execute and creates all the Publications and returns the UIDs.
-  # Creating the Publications kicks off the FetchAuthor job which will fail and dead end. Ignore this
+  # Creating the Publications kicks off the FetchAuthor jobs which will fail, need to mark them complete to move forward
   uids = []
   # ProcessRecords execute will create publications that are article type and new to database
-  # For testing purpose, add something like 'uids << "WOS:999999999999"' where uid of a known Publication
   uids += WebOfScience::ProcessRecords.new(docs).execute
   uids.flatten.compact
 
   # find Publication by uid
   # call add_author_email and add abstract on each publication
+  # call event update
   # call EmailArticleRecruitJob this will kick off the author emailing job
   uids.each do |uid|
     logger.info("Start email processing for publication with UID: #{uid}")
     pub = Publication.by_wos_uid(uid).first
     logger.error("Cannot find Publication of #{uid}") if pub.nil?
     (emails, abstract) = find_by_uid_csv(csv, uid)
+    update_pub_event(pub)
     pub.update(abstract: abstract) unless abstract.blank?
     authors = emails.map { |e| { email: e } }
     pub.add_author_emails(authors)
@@ -130,4 +131,27 @@ def find_by_uid_csv(csv, uid)
   end
   # return empty data when no match is found
   [[], '']
+end
+
+# update two fetch author events as complete for the passing publication as required to run recruit_author job
+def update_pub_event(pub)
+  event = Event.create(Event::FETCH_AUTHORS_DIRECTORY_API)
+
+  event.update(
+      publication: pub,
+      message: "Initializing stubbed event for CSV ingest at #{Time.now}",
+      restartable: false,
+      status: Event::STARTED[:name]
+  )
+  event.completed(message: "Completing stubbed event for CSV ingest at #{Time.now}", restartable: false)
+
+  event = Event.create(Event::FETCH_WOS_CONTENT)
+
+  event.update(
+      publication: pub,
+      message: "Initializing stubbed event for CSV ingest at #{Time.now}",
+      restartable: false,
+      status: Event::STARTED[:name]
+  )
+  event.completed(message: "Completing stubbed event for CSV ingest at #{Time.now}", restartable: false)
 end
