@@ -76,5 +76,7 @@ module EasyDeposit2
     config.action_mailer.default_url_options = {
       host: ENV['ED2_APPLICATION_HOST_NAME']
     }
+
+    config.middleware.use ActionDispatch::Session::CookieStore, {:key => '_Easydeposit2_session', :cookie_only => true}
   end
 end
