@@ -47,7 +47,7 @@ gem 'devise_cas_authenticatable'
 gem 'rubycas-client', git: 'https://github.com/osulp/rubycas-client'
 gem 'rubycas-client-rails', git: 'https://github.com/osulp/rubycas-client-rails'
 
-gem 'rails_admin', '~> 1.3'
+gem 'rails_admin', '~> 1.4'
 
 # Use Capistrano for deployment
 gem 'capistrano', '~> 3.8.0'
