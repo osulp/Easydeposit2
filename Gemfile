@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '~> 5.2'
 gem 'responders', '~> 2.4'
 
 # Use Puma as the app server
