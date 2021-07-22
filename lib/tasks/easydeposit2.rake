@@ -5,8 +5,9 @@ require 'csv'
 namespace :easydeposit2 do
   desc 'A rake task to ingest from WoS search CSV dump will be an interim solution to get ED2 ingesting articles again. call like rake easydeposit2:ingest_csv["/path/to/file"]'
   task :ingest_csv, [:path] => [:environment] do |t, args|
-    csv_file = args[:path]
-    raise(ArgumentError, 'Path cannot be nil') if args[:path].nil?
+    # csv_file = args[:path]
+    csv_file = "#{Rails.root}/tmp/wos_export.csv"
+    # raise(ArgumentError, 'Path cannot be nil') if args[:path].nil?
     process_ingest_csv(csv_file)
   end
 end
