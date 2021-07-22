@@ -22,6 +22,7 @@ class EmailArticleRecruitJob < ApplicationJob
     emails = [system_email.split(',')].flatten
     emails << current_user[:email] if current_user
     emails << publication.author_publications.map(&:email) if Rails.env.production?
+    emails.flatten!.uniq!
     emails.each do |email|
       logger.debug "EmailArticleRecruitJob.perform: Emailing recruitment email to #{email}"
       ArticleRecruitMailer.with(email: email, publication: publication).recruit_email.deliver_now
