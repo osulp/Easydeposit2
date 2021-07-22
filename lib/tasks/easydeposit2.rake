@@ -88,7 +88,7 @@ def create_records(csv)
           end
           xml.authors do
             xml.label 'Authors'
-            Array.wrap(row[:authors]).each do |name|
+            Array.wrap(row[:authors].split('; ')).each do |name|
               xml.value name
             end
           end unless row[:authors].nil?
