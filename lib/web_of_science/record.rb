@@ -29,10 +29,14 @@ module WebOfScience
       end
     end
 
-    ['pages',
+    ['conference.title',
+     'conference.location',
+     'funding.text',
+     'pages',
      'published.bibliodate',
      'published.biblioyear',
-     'sourcetitle',
+     'publisher',
+     'source.title',
      'volume'].each do |key|
       define_method key.tr('.', '_').to_sym do
         nodes = doc.search('source').select do |node|
@@ -42,7 +46,7 @@ module WebOfScience
       end
     end
 
-    %w[authors keywords doctype title].each do |key|
+    %w[authors doctype editors keywords languages title].each do |key|
       define_method key.to_sym do
         doc.search("#{key}/value").map(&:text)
       end
@@ -85,15 +89,21 @@ module WebOfScience
         'authors' => authors,
         'biblio_dates' => published_bibliodate,
         'biblio_years' => published_biblioyear,
+        'conference_titles' => conference_title,
+        'conference_locations' => conference_location,
         'doctypes' => doctype,
         'dois' => identifier_doi,
+        'editors' => editors,
+        'funding_text' => funding_text,
         'isbns' => identifier_isbn,
         'issns' => identifier_issn,
         'keywords' => keywords,
+        'languages' => languages,
         'pages' => pages,
+        'publisher' => publisher,
         'researcher_ids' => contributor_researcherid_researcherids,
         'researcher_names' => contributor_researcherid_names,
-        'source_titles' => sourcetitle,
+        'source_titles' => source_title,
         'titles' => title,
         'volumes' => volume
       }
