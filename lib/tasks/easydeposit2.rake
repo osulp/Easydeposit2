@@ -116,7 +116,7 @@ def create_records(csv)
               Array.wrap(row[:be].split('; ')).each do |name|
                 xml.value name
               end
-          end
+          end unless row[:be].nil?
           xml.keywords do
             xml.label 'Keywords'
             Array.wrap(row[:de].split('; ')).each do |keyword|
