@@ -53,59 +53,101 @@ def create_records(csv)
     xml.return do
       csv.each do |row|
         xml.records do
-          xml.uid row[:uid]
+          xml.uid row[:ut]
           xml.title do
             xml.label 'Title'
-            xml.value row[:titles]
-          end unless row[:titles].nil?
+            xml.value row[:ti]
+          end unless row[:ti].nil?
           xml.doctype do
             xml.label 'Doctype'
-            xml.value row[:doctypes]
+            xml.value row[:dt]
           end
           xml.source do
             xml.label 'Issue'
-            xml.value row[:issues]
+            xml.value row[:is]
           end
           xml.source do
             xml.label 'Pages'
-            xml.value row[:pages]
+            xml.value row[:pg]
           end
           xml.source do
             xml.label 'Published.BiblioDate'
-            xml.value row[:Biblio_dates]
+            xml.value row[:pd]
           end
           xml.source do
             xml.label 'Published.BiblioYear'
-            xml.value row[:Biblio_years]
+            xml.value row[:py]
           end
           xml.source do
-            xml.label 'SourceTitle'
-            xml.value row[:source_titles]
-          end unless row[:source_titles].nil?
+            xml.label 'Source.Title'
+            xml.value row[:so]
+          end unless row[:so].nil?
+          xml.source do
+            xml.label 'Conference.Title'
+            xml.value row[:ct]
+          end unless row[:ct].nil?
+          xml.source do
+            xml.label 'Conference.Location'
+            xml.value row[:cl]
+          end unless row[:cl].nil?
+          xml.source do
+            xml.label 'Funding.Text'
+            xml.value row[:fx]
+          end unless row[:fx].nil?
           xml.source do
             xml.label 'Volume'
-            xml.value row[:volumes]
+            xml.value row[:vl]
           end
           xml.authors do
             xml.label 'Authors'
-            Array.wrap(row[:authors]).each do |name|
+            Array.wrap(row[:af].split('; ')).each do |name|
               xml.value name
             end
-          end unless row[:authors].nil?
+            Array.wrap(row[:ca].split('; ')).each do |name|
+              xml.value name
+            end
+          end unless row[:af].nil? && row[:ca].nil?
+          xml.source do
+            xml.label 'Publisher'
+            xml.value row[:pu]
+          end
+          xml.editors do
+              xml.label 'Editors'
+              Array.wrap(row[:be].split('; ')).each do |name|
+                xml.value name
+              end
+          end unless row[:be].nil?
           xml.keywords do
             xml.label 'Keywords'
-            Array.wrap(row[:keywords]).each do |keyword|
+            Array.wrap(row[:de].split('; ')).each do |keyword|
               xml.value keyword
             end
-          end unless row[:keywords].nil?
+          end unless row[:de].nil?
+          xml.languages do
+            xml.label 'Languages'
+            lang = "http://id.loc.gov/vocabulary/iso639-2/#{ISO_639.find_by_english_name(row[:la]).first}"
+            xml.value lang
+          end
           xml.other do
             xml.label 'Identifier.Doi'
-            xml.value row[:dois]
-          end unless row[:dois].nil?
+            xml.value row[:di]
+          end unless row[:di].nil?
+          xml.other do
+            xml.label 'Identifier.Doi'
+            xml.value row[:d2]
+          end unless row[:d2].nil?
           xml.other do
             xml.label 'Identifier.Issn'
-            xml.value row[:issns]
-          end unless row[:issns].nil?
+            xml.value row[:sn]
+          end unless row[:sn].nil?
+          xml.other do
+            xml.label 'Identifier.Issn'
+            xml.value row[:ei]
+          end unless row[:ei].nil?
+          xml.other do
+            xml.label 'Identifier.Isbn'
+            xml.value row[:bn]
+          end unless row[:bn].nil?
         end
       end
     end
@@ -121,14 +163,14 @@ def find_by_uid_csv(csv, uid)
   emails = []
   abstract = ''
   csv.each do |row|
-    next unless row[:uid].casecmp(uid).zero?
+    next unless row[:ut].casecmp(uid).zero?
 
-    if row[:author_emails].include? ';'
-      emails = row[:author_emails].split(';').flatten
+    if row[:em].include? ';'
+      emails = row[:em].split(';').flatten
     else
-      emails << row[:author_emails]
+      emails << row[:em]
     end
-    abstract = row[:abstract] unless row[:abstract].blank?
+    abstract = row[:ab] unless row[:ab].blank?
     return emails, abstract
   end
   # return empty data when no match is found

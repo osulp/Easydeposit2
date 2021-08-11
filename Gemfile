@@ -25,6 +25,7 @@ gem 'htmlentities'
 gem 'httpclient', '~> 2.8'
 # Altmetric utilities related to the extraction, validation and normalization of various scholarly identifiers
 gem 'identifiers', '~> 0.10'
+gem 'iso-639'
 # To use Jbuilder templates for JSON
 gem 'jbuilder'
 gem 'jquery-rails'

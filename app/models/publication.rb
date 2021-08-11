@@ -137,6 +137,6 @@ class Publication < ActiveRecord::Base
   end
 
   def completed_fetching_authors?
-    events.reload.where(name: [Event::FETCH_AUTHORS_DIRECTORY_API[:name], Event::FETCH_WOS_CONTENT[:name]], status: Event::COMPLETED[:name]).count == 2
+    events.reload.where(name: [Event::FETCH_AUTHORS_DIRECTORY_API[:name], Event::FETCH_WOS_CONTENT[:name]], status: Event::COMPLETED[:name]).count >= 2
   end
 end
