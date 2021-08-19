@@ -18,7 +18,13 @@ gem 'config'
 
 # Redis background job queue
 gem 'sidekiq', '5.0.2'
-gem 'ffi', '~> 1.9.24'
+#gem 'ffi', '~> 1.9.24'
+gem 'ffi', '1.13.1'
+gem 'sassc', '< 2.2.0'
+
+# Honeycomb
+gem 'honeycomb-beeline', '>= 2.4.0'
+gem 'libhoney', '>= 1.18.0'
 
 gem 'faraday'
 gem 'htmlentities'
