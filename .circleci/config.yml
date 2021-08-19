@@ -153,7 +153,7 @@ jobs:
             echo export TAG="$DATETIME-$GIT_SHORT_HASH" >> $BASH_ENV
             echo export DEPLOYED_VERSION="$DATETIME-$GIT_SHORT_HASH" >> $BASH_ENV
       - setup_remote_docker:
-        version: 20.10.2
+          version: 20.10.2
       - docker/check:
           registry: registry.library.oregonstate.edu
       - docker/build:
