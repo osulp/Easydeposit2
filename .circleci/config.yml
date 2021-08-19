@@ -180,3 +180,4 @@ workflows:
           requires:
             - test
           repo: ed2-rails-c7
+          environment: production
