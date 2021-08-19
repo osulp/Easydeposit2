@@ -48,9 +48,10 @@ jobs:
       - run:
           name: Install dependencies
           command: bundle install --path=vendor/bundle --jobs=4 --retry=3
-      - run:
-          name: Run Rubocop
-          command: bundle exec rubocop
+      # Disable rubocop, it wasn't setup to run in the old workflow
+      #- run:
+      #    name: Run Rubocop
+      #    command: bundle exec rubocop
       - save_cache:
           name: Save bundle cache
           key: v2-bundle-{{ checksum "Gemfile.lock" }}
