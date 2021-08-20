@@ -1,4 +1,4 @@
-FROM registry.library.oregonstate.edu/centos7-systemd:latest
+FROM registry.library.oregonstate.edu/centos7-systemd:osulp-15
 # Install build tools, mysql libs, nodejs, npm, libffi
 # set default timezone to America/Los_Angeles
 RUN yum -y install make gcc gcc-c++ mysql-devel git && \
