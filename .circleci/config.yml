@@ -37,7 +37,7 @@ jobs:
             echo "deb http://http.debian.net/debian stretch main" | sudo tee -a /etc/apt/sources.list
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y software-properties-common build-essential make apt-utils nodejs libmysqlclient-dev
+            sudo apt-get install -y software-properties-common build-essential make apt-utils nodejs libmariadb-dev
       - restore_cache:
           name: Restore bundle from cache
           keys:
@@ -89,7 +89,7 @@ jobs:
           command: |
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y software-properties-common build-essential nodejs make apt-utils libmysqlclient-dev
+            sudo apt-get install -y software-properties-common build-essential nodejs make apt-utils libmariadb-dev
 
       - restore_cache:
           key: gemfile-{{ checksum "Gemfile.lock" }}
