@@ -24,7 +24,7 @@ jobs:
             - app/**/*
   bundle:
     docker:
-      - image: circleci/ruby:2.5-stretch-node-browsers
+      - image: circleci/ruby:2.5
     environment:
       BUNDLE_PATH: vendor/bundle
     working_directory: ~/app
@@ -37,7 +37,7 @@ jobs:
             echo "deb http://http.debian.net/debian stretch main" | sudo tee -a /etc/apt/sources.list
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y software-properties-common build-essential make apt-utils nodejs
+            sudo apt-get install -y software-properties-common build-essential make apt-utils nodejs mysql-client-dev
       - restore_cache:
           name: Restore bundle from cache
           keys:
@@ -67,7 +67,7 @@ jobs:
             - app/**/*
   test:
     docker:
-      - image: circleci/ruby:2.5-stretch-node-browsers
+      - image: circleci/ruby:2.5
         environment:
           BUNDLE_PATH: vendor/bundle
           USE_CCI: true
@@ -89,7 +89,7 @@ jobs:
           command: |
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y -f software-properties-common build-essential nodejs make apt-utils
+            sudo apt-get install -y software-properties-common build-essential nodejs make apt-utils mysql-client-dev
 
       - restore_cache:
           key: gemfile-{{ checksum "Gemfile.lock" }}
@@ -102,8 +102,9 @@ jobs:
           command: gem install --force bundler
       - run:
           name: Force bundle update (srsly again)
-          command: bundle install --path=vendor/bundle --jobs=4 --retry=3
-
+          command: |
+            bundle update --path=vendor/bundle --jobs=4 --retry=3
+            bundle install --path=vendor/bundle --jobs=4 --retry=3
       - run:
           name: Copy local_env.yml
           command: cp config/local_env.example.yml config/local_env.yml
