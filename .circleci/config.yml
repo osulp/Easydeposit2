@@ -24,7 +24,7 @@ jobs:
             - app/**/*
   bundle:
     docker:
-      - image: circleci/ruby:2.5-stretch
+      - image: circleci/ruby:2.5-stretch-node-browsers
     environment:
       BUNDLE_PATH: vendor/bundle
     working_directory: ~/app
@@ -37,7 +37,7 @@ jobs:
             echo "deb http://http.debian.net/debian stretch main" | sudo tee -a /etc/apt/sources.list
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y software-properties-common build-essential make apt-utils default-libmysqlclient-dev mariadb-client nodejs
+            sudo apt-get install -y software-properties-common build-essential make apt-utils nodejs
       - restore_cache:
           name: Restore bundle from cache
           keys:
@@ -87,7 +87,7 @@ jobs:
           command: |
             sudo apt-get update -qq
             sudo apt-get upgrade -qq
-            sudo apt-get install -y -f software-properties-common build-essential default-libmysqlclient-dev mariadb-client nodejs make apt-utils
+            sudo apt-get install -y -f software-properties-common build-essential nodejs make apt-utils
 
       - restore_cache:
           key: gemfile-{{ checksum "Gemfile.lock" }}
