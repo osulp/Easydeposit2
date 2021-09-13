@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2'
+gem 'rails', '~> 5.2.4.6'
 gem 'responders', '~> 2.4'
 
 # Use Puma as the app server
@@ -69,7 +69,7 @@ gem 'bootstrap', '>= 4.3.1'
 gem 'actionview', '>= 5.2.2.1'
 
 group :development, :test do
-  gem 'debase'
+  gem 'debase', '~> 0.2.5.beta2'
   # Great gem for inspecting the database in development/test at localhost:3000/rails/db
   gem 'rails_db'
   gem 'rspec'
