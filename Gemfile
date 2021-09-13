@@ -4,7 +4,7 @@ gem 'rails', '~> 5.2'
 gem 'responders', '~> 2.4'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.3.8'
 gem 'puma_worker_killer'
 
 # Use SCSS for stylesheets
@@ -55,7 +55,7 @@ gem 'capistrano', '~> 3.8.0'
 gem 'capistrano-passenger'
 gem 'capistrano-rails'
 gem 'capistrano-rbenv'
-gem 'capistrano3-puma'
+gem 'capistrano3-puma', '~> 5.0.0'
 
 gem 'aasm'
 
@@ -69,7 +69,7 @@ gem 'bootstrap', '>= 4.3.1'
 gem 'actionview', '>= 5.2.2.1'
 
 group :development, :test do
-  gem 'debase'
+  gem 'debase', '~> 0.2.5.beta2'
   # Great gem for inspecting the database in development/test at localhost:3000/rails/db
   gem 'rails_db'
   gem 'rspec'

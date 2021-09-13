@@ -93,10 +93,10 @@ GEM
     capistrano-rbenv (2.1.4)
       capistrano (~> 3.1)
       sshkit (~> 1.3)
-    capistrano3-puma (3.1.1)
+    capistrano3-puma (5.0.4)
       capistrano (~> 3.7)
       capistrano-bundler
-      puma (~> 3.4)
+      puma (>= 4.0, < 6.0)
     capybara (3.29.0)
       addressable
       mini_mime (>= 0.1.3)
@@ -130,9 +130,9 @@ GEM
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
     database_cleaner (1.7.0)
-    debase (0.2.4.1)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (0.10.6)
+    debase (0.2.5.beta2)
+      debase-ruby_core_source (>= 0.10.12)
+    debase-ruby_core_source (0.10.12)
     deep_merge (1.2.1)
     devise (4.7.1)
       bcrypt (~> 3.0)
@@ -292,7 +292,8 @@ GEM
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.6)
-    puma (3.12.6)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     puma_worker_killer (0.1.1)
       get_process_mem (~> 0.2)
       puma (>= 2.7, < 5)
@@ -509,12 +510,12 @@ DEPENDENCIES
   capistrano-passenger
   capistrano-rails
   capistrano-rbenv
-  capistrano3-puma
+  capistrano3-puma (~> 5.0.0)
   capybara
   config
   coveralls (~> 0.8)
   database_cleaner
-  debase
+  debase (~> 0.2.5.beta2)
   devise
   devise_cas_authenticatable
   equivalent-xml
@@ -538,7 +539,7 @@ DEPENDENCIES
   poltergeist
   pry-doc
   pry-rails
-  puma (~> 3.12)
+  puma (~> 4.3.8)
   puma_worker_killer
   rack (>= 2.0.6)
   rails (~> 5.2)
