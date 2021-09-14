@@ -51,6 +51,7 @@ ED2_REDIS_HOST: localhost
 # Email configurations
 ED2_EMAIL_FROM: 'user@server.com'
 ED2_APPLICATION_HOST_NAME: 'localhost:3000'
+ED2_EMAIL_DELIVERY_METHOD: 'test'
 
 # Web Of Science Search Terms
 ED2_WOS_SEARCH_TERMS:
