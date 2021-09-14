@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :publications do
-  search_terms = ENV.fetch('ED2_WOS_SEARCH_TERMS').split('|')
+  search_terms = ENV.fetch('ED2_WOS_SEARCH_TERMS', nil)&.split('|')
 
   desc 'Initiate a background job to harvest WOS records.'
   task harvest: :environment do
