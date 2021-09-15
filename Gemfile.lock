@@ -398,6 +398,7 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
+    rb-readline (0.5.5)
     redis (3.3.5)
     regexp_parser (2.1.1)
     remotipart (1.4.4)
@@ -597,6 +598,7 @@ DEPENDENCIES
   rails_db
   railties (>= 5.2.2.1)
   rake
+  rb-readline
   responders (~> 2.4)
   rspec
   rspec-mocks

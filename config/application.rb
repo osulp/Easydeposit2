@@ -67,7 +67,7 @@ module EasyDeposit2
 
     config.active_job.queue_adapter = ENV['ACTIVE_JOB_QUEUE_ADAPTER'].present? ? ENV['ACTIVE_JOB_QUEUE_ADAPTER'].to_sym : :inline
 
-    config.action_mailer.delivery_method = :sendmail
+    config.action_mailer.delivery_method = ENV['ED2_EMAIL_DELIVERY_METHOD'].present? ? ENV['ED2_EMAIL_DELIVERY_METHOD'].to_sym : :test
     config.action_mailer.raise_delivery_errors = true
     config.action_mailer.perform_deliveries = true
     config.action_mailer.default_options = {

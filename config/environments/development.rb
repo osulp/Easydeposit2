@@ -19,7 +19,7 @@ Rails.application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.delivery_method = :file
+  config.action_mailer.delivery_method = ENV['ED2_EMAIL_DELIVERY_METHOD'].present? ? ENV['ED2_EMAIL_DELIVERY_METHOD'].to_sym : :test
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
