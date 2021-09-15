@@ -183,5 +183,8 @@ workflows:
           name: build_and_push_beavernetes
           requires:
             - test
+          filters:
+            branches:
+              only: master
           repo: ed2-rails-c7
           environment: production
