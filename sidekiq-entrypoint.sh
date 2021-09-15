@@ -2,7 +2,8 @@
 
 sleep_secs=300
 export PATH="/data/bin:/usr/local/deploy-rails/bin:$PATH"
-rm -f tmp/pids/server.pid
+mkdir -p tmp/pids
+rm -f tmp/pids/sidekiq.pid
 
 timestamp=`date +'%Y-%m-%d %H:%M:%S'`
 echo "[$timestamp]: Starting Easydeposit2 initialization"
@@ -25,7 +26,7 @@ echo "    $ED2_DB_USERNAME@$ED2_DB_HOST [$ED2_DB]"
 # Run database migrations
 #timestamp=`date +'%Y-%m-%d %H:%M:%S'`
 #echo "[$timestamp]: Running database migrations"
-#/usr/local/bin/bundle exec rails db:migrate 
+#/usr/local/bin/bundle exec rails db:migrate
 
 # Start rails
 timestamp=`date +'%Y-%m-%d %H:%M:%S'`
