@@ -25,7 +25,12 @@ echo "    $ED2_DB_USERNAME@$ED2_DB_HOST [$ED2_DB]"
 # Run database migrations
 timestamp=`date +'%Y-%m-%d %H:%M:%S'`
 echo "[$timestamp]: Running database migrations"
-/usr/local/bin/bundle exec rails db:migrate 
+/usr/local/bin/bundle exec rails db:migrate
+
+# Compile static assets
+timestamp=`date +'%Y-%m-%d %H:%M:%S'`
+echo "[$timestamp] Precompiling assets ($RAILS_ENV)"
+RAILS_ENV=$RAILS_ENV SECRET_KEY_BASE=temporary bundle exec rake assets:precompile
 
 # Start rails
 timestamp=`date +'%Y-%m-%d %H:%M:%S'`
