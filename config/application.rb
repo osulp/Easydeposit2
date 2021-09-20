@@ -76,5 +76,12 @@ module EasyDeposit2
     config.action_mailer.default_url_options = {
       host: ENV['ED2_APPLICATION_HOST_NAME']
     }
+    config.action_mailer.smtp_settings = {
+      address: ENV.fetch('SMTP_HOST', 'smtp.gmail.com'),
+      port: ENV.fetch('SMTP_PORT', 25),
+      enable_starttls_auto: false,
+      tls: false,
+      openssl_verify_mode: 'none'
+    }
   end
 end
