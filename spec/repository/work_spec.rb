@@ -69,6 +69,10 @@ RSpec.describe Repository::Work do
     expect { work.publish }.to raise_error 'Cannot publish, missing file(s) for upload: ["fake/file/path"]'
   end
 
+  it 'will show date in YYYY-MM-DD format' do
+    expect { work.repository_data[:date_issued] }.to equal "2018-03-01"
+  end
+
   context 'without data args' do
     before(:each) do
       args[:data] = nil

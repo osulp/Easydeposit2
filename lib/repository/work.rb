@@ -126,19 +126,22 @@ module Repository
     end
   end
 
+  # Convert Web of Science date into format compatible with ScholarsArchive
+  # Input: biblio_date and biblio_year from Web of Science
+  # Output: date in YYYY-MM-DD format
   def formalize_date(pubdate_str)
     # e.g., DEC 2, 2021
-    formalize_date = Date.strptime(pubdate_str, '%b %d, %Y')
+    formalize_date_obj = Date.strptime(pubdate_str, '%b %d, %Y')
     # e.g., 25-Dec, 2019
-    formalize_date = Date.strptime(pubdate_str, '%d-%b, %Y') if formalize_date.blank?
+    formalize_date_obj = Date.strptime(pubdate_str, '%d-%b, %Y') if formalize_date_obj.blank?
     # e.g., Jul 2019
-    formalize_date = Date.strptime(pubdate_str, '%b %Y') if formalize_date.blank?
+    formalize_date_obj = Date.strptime(pubdate_str, '%b %Y') if formalize_date_obj.blank?
     # e.g., 2019
-    formalize_date = Date.strptime(pubdate_str, '%Y') if formalize_date.blank?
-    if formalize_date.blank?
+    formalize_date = Date.strptime(pubdate_str, '%Y') if formalize_date_obj.blank?
+    if formalize_date_obj.blank?
       formalize_date_str = nil
     else
-      formalize_date_str = formalize_date.to_s
+      formalize_date_str = formalize_date_obj.to_s
     end
   rescue StandardError => e
     Rails.logger.warn "Repository Work formalize date error #{e.message}"
