@@ -70,7 +70,7 @@ RSpec.describe Repository::Work do
   end
 
   it 'will show date in YYYY-MM-DD format' do
-    expect { work.repository_data[:date_issued] }.to equal "2018-03-01"
+    expect { work.repository_data[:date_issued] }.to eq("2018-03-01")
   end
 
   context 'without data args' do

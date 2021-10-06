@@ -65,7 +65,6 @@ gem 'capistrano3-puma'
 
 # Function Supports
 gem 'aasm'
-gem 'edtf', github: 'inukshuk/edtf-ruby', branch: 'master'
 
 # Security audit update
 gem 'activejob', '>= 5.2.1.1'
