@@ -45,7 +45,7 @@ module Repository
           admin_set_id: @admin_set_id,
           conference_name: @data['conference_titles'].first,
           conference_location: @data['conference_locations'].first,
-          date_issued: formalize_date("#{@data['biblio_dates'].first} #{@data['biblio_years'].first}"),
+          date_issued: formalize_date("#{@data['biblio_dates'].first}:#{@data['biblio_years'].first}"),
           doi: "https://doi.org/#{@data['dois'].first}",
           editor: @data['editors'],
           file_extent: @data['pages'].map { |p| "#{p} pages" },
@@ -129,22 +129,20 @@ module Repository
     # Input: biblio_date and biblio_year from Web of Science
     # Output: date in YYYY-MM-DD format
     def formalize_date(pubdate_str)
-      # e.g., DEC 2, 2021
-      formalize_date_obj = Date.strptime(pubdate_str, '%b %d, %Y')
-      # e.g., 25-Dec, 2019
-      formalize_date_obj = Date.strptime(pubdate_str, '%d-%b, %Y') if formalize_date_obj.blank?
-      # e.g., Jul 2019
-      formalize_date_obj = Date.strptime(pubdate_str, '%b %Y') if formalize_date_obj.blank?
-      # e.g., 2019
-      formalize_date_obj = Date.strptime(pubdate_str, '%Y') if formalize_date_obj.blank?
-      if formalize_date_obj.blank?
-        formalize_date_str = nil
-      else
-        formalize_date_str = formalize_date_obj.to_s
+      byebug
+      # Allowed sample date formats: DEC 2:2021; 25-Dec:2019; Jul:2019; :2019
+      wos_formats = ['%b %d:%Y', '%d-%b:%Y', '%b:%Y', ':%Y']
+      parsed = nil
+      wos_formats.each do |format|
+        begin
+          parsed = Date.strptime(pubdate_str, format)
+          break
+        rescue StandardError => e
+          Rails.logger.warn "Repository Work formalize date error #{e.message}"
+          nil
+        end
       end
-    rescue StandardError => e
-      Rails.logger.warn "Repository Work formalize date error #{e.message}"
-      nil
+      return parsed.to_s
     end
   end
 end

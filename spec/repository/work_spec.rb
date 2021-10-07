@@ -70,7 +70,8 @@ RSpec.describe Repository::Work do
   end
 
   it 'will show date in YYYY-MM-DD format' do
-    expect created_work[:work]['date_issued'].to eq '2018-03-01'
+    allow(client).to receive(:admin_sets) { admin_sets }
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:date_issued]).to eq '2018-03-01'
   end
 
   context 'without data args' do
