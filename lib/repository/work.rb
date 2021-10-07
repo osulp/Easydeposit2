@@ -129,7 +129,6 @@ module Repository
     # Input: biblio_date and biblio_year from Web of Science
     # Output: date in YYYY-MM-DD format
     def formalize_date(pubdate_str)
-      byebug
       # Allowed sample date formats: DEC 2:2021; 25-Dec:2019; Jul:2019; :2019
       wos_formats = ['%b %d:%Y', '%d-%b:%Y', '%b:%Y', ':%Y']
       parsed = nil
