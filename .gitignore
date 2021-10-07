@@ -29,3 +29,6 @@ docker-compose.override.yml
 # ActiveStorage file uploading path
 /storage/*
 !/storage/.keep
+
+#
+/public/assets
