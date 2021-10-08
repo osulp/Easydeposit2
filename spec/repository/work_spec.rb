@@ -25,7 +25,7 @@ RSpec.describe Repository::Work do
         'issns' => ['03-27'],
         'keywords' => ['Logging', 'And low-flow discharge'],
         'pages' => ['14-17'],
-        'publisher' => ['OSU Press'],
+        'publisher' => ['OXFORD UNIV PRESS'],
         'researcher_ids' => ['987123456'],
         'researcher_names' => ['Grel, Rob'],
         'source_titles' => ['FOREST ENT'],
@@ -67,6 +67,16 @@ RSpec.describe Repository::Work do
     allow(client).to receive(:set_workflow) { advanced_workflow }
     allow(work).to receive(:missing_files) { [{ path: 'fake/file/path' }] }
     expect { work.publish }.to raise_error 'Cannot publish, missing file(s) for upload: ["fake/file/path"]'
+  end
+
+  it 'will show date in YYYY-MM-DD format' do
+    allow(client).to receive(:admin_sets) { admin_sets }
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:date_issued]).to eq '2018-03-01'
+  end
+
+  it 'will titleize publisher' do
+    allow(client).to receive(:admin_sets) { admin_sets }
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq ['Oxford Univ Press']
   end
 
   context 'without data args' do

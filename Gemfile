@@ -18,7 +18,6 @@ gem 'config'
 
 # Redis background job queue
 gem 'sidekiq', '5.0.2'
-#gem 'ffi', '~> 1.9.24'
 gem 'ffi', '1.13.1'
 gem 'sassc', '< 2.2.0'
 
@@ -64,6 +63,7 @@ gem 'capistrano-rails'
 gem 'capistrano-rbenv'
 gem 'capistrano3-puma'
 
+# Function Supports
 gem 'aasm'
 
 # Security audit update

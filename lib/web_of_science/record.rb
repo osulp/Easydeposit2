@@ -35,8 +35,8 @@ module WebOfScience
      'pages',
      'published.bibliodate',
      'published.biblioyear',
-     'publisher',
      'source.title',
+     'publisher',
      'volume'].each do |key|
       define_method key.tr('.', '_').to_sym do
         nodes = doc.search('source').select do |node|

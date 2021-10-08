@@ -15,7 +15,7 @@ RSpec.describe PublishWorkJob do
       double('Repository::Client',
              url: 'http://hyrax.server',
              search: [],
-             admin_sets: { 'admin_sets' => [{ 'title' => ['self deposit'], 'id' => '123456' }] },
+             admin_sets: { 'admin_sets' => [{ 'title' => ['article'], 'id' => '123456' }] },
              upload_file: { 'files' => ['id' => 1] },
              publish: { work: publication, response: double('HTTPResponse', headers: { location: '/concern/articles/123' }) })
     end

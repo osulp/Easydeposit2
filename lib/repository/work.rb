@@ -45,14 +45,14 @@ module Repository
           admin_set_id: @admin_set_id,
           conference_name: @data['conference_titles'].first,
           conference_location: @data['conference_locations'].first,
-          date_issued: "#{@data['biblio_dates'].first} #{@data['biblio_years'].first}",
+          date_issued: formalize_date("#{@data['biblio_dates'].first}:#{@data['biblio_years'].first}"),
           doi: "https://doi.org/#{@data['dois'].first}",
           editor: @data['editors'],
           file_extent: @data['pages'].map { |p| "#{p} pages" },
           funding_statement: @data['funding_text'],
           isbn: @data['isbns'],
           issn: @data['issns'],
-          has_journal: @data['source_titles'].first,
+          has_journal: @data['source_titles'].first.titleize,
           has_volume: @data['volumes'].first,
           language: @data['languages'],
           license: ENV.fetch('REPOSITORY_PUBLISH_LICENSE', 'http://creativecommons.org/licenses/by/4.0/'),
@@ -60,7 +60,7 @@ module Repository
           nested_ordered_contributor_attributes: create_nested_attribute(@data['researcher_names'], 'contributor'),
           nested_ordered_creator_attributes: create_nested_attribute(@data['authors'], 'creator'),
           nested_ordered_title_attributes: create_nested_attribute(@data['titles'], 'title'),
-          publisher: @data['publisher'],
+          publisher: @data['publisher'].map(&:titleize),
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
           subject: @data['keywords'],
@@ -123,6 +123,25 @@ module Repository
 
     def publish_url
       "/concern/#{@work_type.pluralize}.json"
+    end
+
+    # Convert Web of Science date into format compatible with ScholarsArchive
+    # Input: biblio_date and biblio_year from Web of Science
+    # Output: date in YYYY-MM-DD format
+    def formalize_date(pubdate_str)
+      # Allowed sample date formats: DEC 2:2021; 25-Dec:2019; Jul:2019; :2019
+      wos_formats = ['%b %d:%Y', '%d-%b:%Y', '%b:%Y', ':%Y']
+      parsed = nil
+      wos_formats.each do |format|
+        begin
+          parsed = Date.strptime(pubdate_str, format)
+          break
+        rescue StandardError => e
+          Rails.logger.warn "Repository Work formalize date error #{e.message}"
+          nil
+        end
+      end
+      return parsed.to_s
     end
   end
 end

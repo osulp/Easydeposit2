@@ -25,7 +25,11 @@
     <value>2018</value>
   </source>
   <source>
-    <label>SourceTitle</label>
+    <label>Publisher</label>
+    <value>OXFORD UNIV PRESS</value>
+  </source>
+  <source>
+    <label>Source.Title</label>
     <value>GLOBAL CHANGE BIOLOGY</value>
   </source>
   <source>
