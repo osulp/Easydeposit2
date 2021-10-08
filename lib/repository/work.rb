@@ -60,7 +60,7 @@ module Repository
           nested_ordered_contributor_attributes: create_nested_attribute(@data['researcher_names'], 'contributor'),
           nested_ordered_creator_attributes: create_nested_attribute(@data['authors'], 'creator'),
           nested_ordered_title_attributes: create_nested_attribute(@data['titles'], 'title'),
-          publisher: @data['publisher'].first.titleize,
+          publisher: titleize_publisher(@data['publisher']),
           resource_type: [ENV.fetch('REPOSITORY_PUBLISH_RESOURCE_TYPE', 'Article')],
           rights_statement: ENV.fetch('REPOSITORY_PUBLISH_RIGHTS_STATEMENT', 'http://rightsstatements.org/vocab/InC/1.0/'),
           subject: @data['keywords'],
@@ -142,6 +142,12 @@ module Repository
         end
       end
       return parsed.to_s
+    end
+
+    # Titleize publisher
+    def titleize_publisher(publisher)
+      byebug
+      return publisher.first.titleize
     end
   end
 end

@@ -25,7 +25,7 @@ RSpec.describe Repository::Work do
         'issns' => ['03-27'],
         'keywords' => ['Logging', 'And low-flow discharge'],
         'pages' => ['14-17'],
-        'publisher' => ['OSU Press'],
+        'publisher' => ['OXFORD UNIV PRESS'],
         'researcher_ids' => ['987123456'],
         'researcher_names' => ['Grel, Rob'],
         'source_titles' => ['FOREST ENT'],
@@ -76,7 +76,7 @@ RSpec.describe Repository::Work do
 
   it 'will titleize publisher' do
     allow(client).to receive(:admin_sets) { admin_sets }
-    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq 'Osu Press'
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq 'Oxford Univ Press'
   end
 
   context 'without data args' do
