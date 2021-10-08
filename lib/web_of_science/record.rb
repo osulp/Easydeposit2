@@ -36,6 +36,7 @@ module WebOfScience
      'published.bibliodate',
      'published.biblioyear',
      'source.title',
+     'publisher',
      'volume'].each do |key|
       define_method key.tr('.', '_').to_sym do
         nodes = doc.search('source').select do |node|
@@ -45,7 +46,7 @@ module WebOfScience
       end
     end
 
-    %w[authors doctype editors keywords languages publisher title].each do |key|
+    %w[authors doctype editors keywords languages title].each do |key|
       define_method key.to_sym do
         doc.search("#{key}/value").map(&:text)
       end

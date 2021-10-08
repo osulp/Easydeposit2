@@ -76,7 +76,7 @@ RSpec.describe Repository::Work do
 
   it 'will titleize publisher' do
     allow(client).to receive(:admin_sets) { admin_sets }
-    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq 'Oxford Univ Press'
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq ['Oxford Univ Press']
   end
 
   context 'without data args' do
