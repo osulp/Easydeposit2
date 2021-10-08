@@ -74,6 +74,11 @@ RSpec.describe Repository::Work do
     expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:date_issued]).to eq '2018-03-01'
   end
 
+  it 'will titleize publisher' do
+    allow(client).to receive(:admin_sets) { admin_sets }
+    expect(work.send(:repository_data, uploaded_file['files'].first['id'])['article'][:publisher]).to eq 'Osu Press'
+  end
+
   context 'without data args' do
     before(:each) do
       args[:data] = nil
