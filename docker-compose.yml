@@ -51,8 +51,6 @@ services:
         condition: service_started
       db_test:
         condition: service_started
-      db_migrate:
-        condition: service_started
       redis:
         condition: service_started
     volumes:
@@ -92,8 +90,6 @@ services:
       db:
         condition: service_started
       db_test:
-        condition: service_started
-      db_migrate:
         condition: service_started
       redis:
         condition: service_started
