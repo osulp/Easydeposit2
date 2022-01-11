@@ -1,19 +1,16 @@
-version: '2.3'
+version: '3'
 
 volumes:
   app:
   db:
   redis:
 
-networks:
-  external:
-  internal:
-
 services:
   # Run an instance of MySQL with a database named 'development' for running specs. See config/database.yml
   db:
     image: mysql:5.7
     restart: always
+    container_name: db
     environment:
       - MYSQL_ROOT_PASSWORD=12341234
       - MYSQL_PASSWORD=12341234
@@ -21,8 +18,8 @@ services:
     volumes:
       - db:/var/lib/mysql
       - ./config/mysql/mysqld.cnf:/etc/mysql/conf.d/custom.cnf
-    networks:
-      internal:
+    expose:
+      - 3306
 
   ##
   # Run an instance of MySQL with a database named 'test' for running specs. See config/database.yml. Has no volume
@@ -30,99 +27,90 @@ services:
   db_test:
     image: mysql:5.7
     restart: always
+    container_name: db_test
     environment:
       - MYSQL_ROOT_PASSWORD=12341234
       - MYSQL_PASSWORD=12341234
       - MYSQL_DATABASE=test
     volumes:
       - ./config/mysql/mysqld.cnf:/etc/mysql/conf.d/custom.cnf
-    networks:
-      internal:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - RAILS_ENV=${RAILS_ENV}
+    container_name: web
+    command: >
+      bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -p 3000 -b '0.0.0.0' -e ${RAILS_ENV}"
+    depends_on:
+      caddy:
+        condition: service_started
+      db:
+        condition: service_started
+      db_test:
+        condition: service_started
+      redis:
+        condition: service_started
+    volumes:
+      - .:/data
+      - app:/data/tmp/uploads
+    expose:
+      - 3000
+    stdin_open: true
+    tty: true
 
   ##
-  # Basic image for the rails application server, see Dockerfile
-  app:
-    build: .
+  # Ensure that the database migrations are run on the appropriate database related to the RAILS_ENV running
+  db_migrate:
+      extends: app
+      container_name: db_migrate
+      restart: on-failure
+      command: bundle exec rails db:migrate RAILS_ENV=${RAILS_ENV}
+      depends_on:
+        - db
+
+  ##
+  # Runs sidekiq to process background jobs
+  workers:
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - RAILS_ENV=${RAILS_ENV}
     volumes:
       - .:/data
       - app:/data/tmp/uploads
-    networks:
-      internal:
-
-  ##
-  # Run the application in the currently set RAILS_ENV, set to development by default in the .env file.
-  web:
-    extends: app
-    # Ideally we will replace this set of commands with an entrypoint script that checks to see if these
-    # have been run already have been run and if so it just starts the server without the first three commands
-    # taking time to run.
-    command: >
-      bash -c "rm -f tmp/pids/server.pid
-      && bundle exec rails server -p 3000 -b '0.0.0.0' -e ${RAILS_ENV}"
-    depends_on:
-      db:
-        condition: service_started
-      db_test:
-        condition: service_started
-      db_migrate:
-        condition: service_started
-      redis:
-        condition: service_started
-    expose:
-      - 3000
-    links:
-      - db
-      - db_test
-      - redis
-    stdin_open: true
-    tty: true
-
-  ##
-  # Could be used to bootstrap some data or the application state before running
-  #initialize_app:
-  #  extends: app
-  #  restart: on-failure
-  #  command: echo 'not used'
-
-  ##
-  # Ensure that the database migrations are run on the appropriate database related to the RAILS_ENV running
-  db_migrate:
-    extends: app
-    restart: on-failure
-    command: bundle exec rails db:migrate RAILS_ENV=${RAILS_ENV}
-    depends_on:
-      - db
-      - db_test
-    links:
-      - db
-      - db_test
-
-  ##
-  # Runs sidekiq to process background jobs
-  workers:
-    extends: app
+    container_name: workers
     command: bundle exec sidekiq -L /dev/stdout
     depends_on:
+      caddy:
+        condition: service_started
       db:
         condition: service_started
       db_test:
         condition: service_started
-      db_migrate:
-        condition: service_started
       redis:
         condition: service_started
-    links:
-      - db
-      - db_test
-      - redis
 
   ##
   # Redis for the background job queues
   redis:
     image: redis:alpine
+    container_name: redis
     volumes:
       - redis:/data
-    networks:
-      internal:
+
+  caddy:
+    image: caddy:2.3.0
+    container_name: caddy
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./caddy:/etc/caddy
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH:-JDJhJDE0JE91S1FrN0Z0VEsyWmhrQVpON1VzdHVLSDkyWHdsN0xNbEZYdnNIZm1pb2d1blg4Y09mL0ZP}
+    restart: unless-stopped
