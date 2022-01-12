@@ -5,6 +5,7 @@ volumes:
   db:
   redis:
 
+
 services:
   # Run an instance of MySQL with a database named 'development' for running specs. See config/database.yml
   db:
@@ -43,7 +44,8 @@ services:
       - RAILS_ENV=${RAILS_ENV}
     container_name: web
     command: >
-      bash -c "rm -f tmp/pids/server.pid && bundle exec rails server -p 3000 -b '0.0.0.0' -e ${RAILS_ENV}"
+      bash -c "rm -f tmp/pids/server.pid
+      && bundle exec rails server -p 3000 -b '0.0.0.0' -e ${RAILS_ENV}"
     depends_on:
       caddy:
         condition: service_started
@@ -63,13 +65,13 @@ services:
 
   ##
   # Ensure that the database migrations are run on the appropriate database related to the RAILS_ENV running
-  db_migrate:
-      extends: app
-      container_name: db_migrate
-      restart: on-failure
-      command: bundle exec rails db:migrate RAILS_ENV=${RAILS_ENV}
-      depends_on:
-        - db
+#  db_migrate:
+#    extends: app
+#    container_name: db_migrate
+#    restart: on-failure
+#    command: bundle exec rails db:migrate RAILS_ENV=${RAILS_ENV}
+#    depends_on:
+#      - db
 
   ##
   # Runs sidekiq to process background jobs
