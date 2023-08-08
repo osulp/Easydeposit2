@@ -1,14 +1,14 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2'
-gem 'responders', '~> 2.4'
+gem 'rails', '~> 7.0'
+gem 'responders', '~> 3.1'
 
 # Use Puma as the app server
-gem 'puma', '~> 5.4'
+gem 'puma', '~> 5.6'
 gem 'puma_worker_killer'
 
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails', '~> 6.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1'
 
@@ -17,7 +17,7 @@ gem 'mysql2', '~> 0.5.2'
 gem 'config'
 
 # Redis background job queue
-gem 'sidekiq', '5.0.2'
+gem 'sidekiq', '7.1.2'
 gem 'ffi', '1.13.1'
 gem 'sassc', '< 2.2.0'
 
@@ -54,7 +54,7 @@ gem 'devise_cas_authenticatable'
 gem 'rubycas-client', git: 'https://github.com/osulp/rubycas-client'
 gem 'rubycas-client-rails', git: 'https://github.com/osulp/rubycas-client-rails'
 
-gem 'rails_admin', '~> 1.4'
+gem 'rails_admin', '~> 3.1'
 
 # Use Capistrano for deployment
 gem 'capistrano', '~> 3.8.0'
@@ -81,7 +81,7 @@ group :development, :test do
   gem 'rails_db'
   gem 'rspec'
   gem 'rspec-mocks'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec-rails', '~> 4.0'
   gem 'rspec_junit_formatter'
   gem 'rubocop'
   gem 'ruby-debug-ide'
@@ -91,7 +91,7 @@ group :development do
   gem 'byebug'
   gem 'pry-doc'
   gem 'ruby-prof'
-  gem 'web-console', '~> 3.3'
+  gem 'web-console', '~> 4.2'
 end
 
 group :test do
