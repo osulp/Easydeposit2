@@ -4,7 +4,7 @@ gem 'rails', '~> 5.2'
 gem 'responders', '~> 2.4'
 
 # Use Puma as the app server
-gem 'puma', '~> 5.4'
+gem 'puma', '~> 5.6'
 gem 'puma_worker_killer'
 
 # Use SCSS for stylesheets
@@ -17,7 +17,7 @@ gem 'mysql2', '~> 0.5.2'
 gem 'config'
 
 # Redis background job queue
-gem 'sidekiq', '5.0.2'
+gem 'sidekiq', '6.4.0'
 gem 'ffi', '1.13.1'
 gem 'sassc', '< 2.2.0'
 
