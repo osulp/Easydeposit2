@@ -17,7 +17,7 @@ gem 'mysql2', '~> 0.5.2'
 gem 'config'
 
 # Redis background job queue
-gem 'sidekiq', '7.1.2'
+gem 'sidekiq', '7.1.3'
 gem 'ffi', '1.13.1'
 gem 'sassc', '< 2.2.0'
 
